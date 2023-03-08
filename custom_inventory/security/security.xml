@@ -99,6 +99,5 @@
             <field name="groups" eval="[(4,ref('inventory_admin'))]"/>
         </record>
 
-
     </data>
 </odoo>
