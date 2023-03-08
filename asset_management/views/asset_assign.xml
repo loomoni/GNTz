@@ -1,0 +1,115 @@
+<odoo>
+
+    <record id="asset_assign_tree_view" model="ir.ui.view">
+        <field name="name">asset.assign.tree.view</field>
+        <field name="model">account.asset.assign</field>
+        <field name="arch" type="xml">
+            <tree string="Asset Assignment">
+                <field name="asset_name"/>
+                <field name="asset_category"/>
+                <field name="asset_number"/>
+                <field name="asset_branch"/>
+                <field name="assigned_person"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="asset_assign_search_view" model="ir.ui.view">
+        <field name="name">asset.assign.search.view</field>
+        <field name="model">account.asset.assign</field>
+        <field name="arch" type="xml">
+            <search string="asset assign search">
+                <field name="assignment_no" string="assignment_no" filter_domain="[('assignment_no','ilike',self)]"/>
+                <field name="assigned_person" string="assigned_person"
+                       filter_domain="[('assigned_person','ilike',self)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="asset_assign_form_view" model="ir.ui.view">
+        <field name="name">asset.assign.form.view</field>
+        <field name="model">account.asset.assign</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="button_staff_or_line_manager_request" states="draft" string="Submit Request" type="object"
+                            class="oe_highlight"
+                            groups="asset_management.asset_lm,asset_management.all_staff"/>
+                    <button name="button_line_manager_review" states="send_request" string="Line Manager Review"
+                            type="object" class="oe_highlight"
+                            groups="asset_management.asset_lm"/>
+                    <button name="button_procurement_review" states="line_manager" string="Procurement Assign"
+                            type="object" class="oe_highlight"
+                            groups="asset_management.asset_procurement"/>
+                    <button name="button_assign" states="procurement" string="Approve to Assignment" type="object"
+                            class="oe_highlight"
+                            groups="asset_management.asset_dm,asset_management.asset_cd"/>
+                    <button name="button_unassign" states="assigned" string="Unassign" type="object"
+                            groups="asset_management.asset_dm,asset_management.asset_cd"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,send_request,line_manager,procurement,assigned,unassigned"/>
+                </header>
+                <sheet>
+                    <group string="Employee">
+                        <group>
+                            <field name="assigned_person"/>
+                            <field name="job_title"/>
+                        </group>
+                        <group>
+                            <field name="id_number"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Asset request">
+                            <field name="asset_category_ids" attrs="{'readonly': [('state', 'in', ('line_manager','procurement','assigned'))]}">
+                                 <tree editable="bottom">
+                                    <field name="name" string="Asset" options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Assets To Assign" attrs="{'invisible': [('state', 'in', ('draft', 'send_request'))]}">
+                            <field name="asset_ids" attrs="{'readonly': [('state', 'in', ('approved','unassigned'))]}"
+                                   domain="[('assigned','=', False)]">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="category_id"/>
+                                    <field name="value"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_asset_assign" model="ir.actions.act_window">
+        <field name="name">Asset Assignment</field>
+        <field name="res_model">account.asset.assign</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Ready to create asset assignment?
+            </p>
+            <p>
+                Let's create a asset assignment.
+            </p>
+        </field>
+    </record>
+
+    <menuitem
+            parent="asset_management.menu_root"
+            id="menu_asset_assign"
+            name="Asset Custodian"
+            action="action_asset_assign"
+            sequence="4"
+            groups="asset_management.asset_procurement,asset_management.asset_lm,asset_management.asset_dm"/>
+</odoo>

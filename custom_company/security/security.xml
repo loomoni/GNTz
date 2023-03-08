@@ -1,0 +1,43 @@
+<odoo>
+    <data>
+        <record model="ir.module.category" id="base.module_category_human_resources">
+            <field name="name">Human Resource</field>
+        </record>
+
+        <record id="hr.group_hr_user" model="res.groups">
+            <field name="name">HR Manager</field>
+        </record>
+
+        <record id="hr.group_hr_manager" model="res.groups">
+            <field name="name">HR Admin</field>
+        </record>
+
+        <record model="ir.rule" id="custom_hr_employees_access_manager">
+            <field name="name">Custom HR Employees Access Manager</field>
+            <field name="model_id" ref="hr.model_hr_employee"/>
+            <field name="domain_force">[('department_id.branch_id.hr_manager_id.user_id','=',user.id)]</field>
+            <field name="groups" eval="[(4,ref('hr.group_hr_user'))]"/>
+        </record>
+
+        <record model="ir.rule" id="custom_hr_employees_access_admin">
+            <field name="name">Custom HR Employees Access Admin</field>
+            <field name="model_id" ref="hr.model_hr_employee"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4,ref('hr.group_hr_manager'))]"/>
+        </record>
+
+        <record model="ir.rule" id="custom_hr_contracts_access_manager">
+            <field name="name">Custom HR Contracts Access Manager</field>
+            <field name="model_id" ref="hr_contract.model_hr_contract"/>
+            <field name="domain_force">[('department_id.branch_id.hr_manager_id.user_id','=',user.id)]</field>
+            <field name="groups" eval="[(4,ref('hr.group_hr_user'))]"/>
+        </record>
+
+        <record model="ir.rule" id="custom_hr_contract_access_admin">
+            <field name="name">Custom HR Contract Access Admin</field>
+            <field name="model_id" ref="hr_contract.model_hr_contract"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4,ref('hr.group_hr_manager'))]"/>
+        </record>
+    </data>
+</odoo>

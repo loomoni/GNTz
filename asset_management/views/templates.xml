@@ -1,0 +1,22 @@
+<odoo>
+    <record id="view_account_asset_category_form_inherited" model="ir.ui.view">
+            <field name="name">view.account.asset.category.form.inherited</field>
+            <field name="model">account.asset.category</field>
+            <field name="inherit_id" ref="om_account_asset.view_account_asset_category_form"/>
+            <field name="arch" type="xml">
+<!--                <xpath expr="//field[@name='account_asset_id']" position="replace" >-->
+<!--                     <field name="account_asset_id" nolabel="1" attrs="{'invisible': [('type','=', False)]}"/>-->
+<!--                </xpath>-->
+                <xpath expr="//field[@name='account_analytic_id']" position="replace" >
+                     <field name="account_analytic_id" groups="analytic.group_analytic_accounting" string="Budget Line"/>
+                </xpath>
+                <xpath expr="//field[@name='analytic_tag_ids']" position="replace" />
+                 <xpath expr="//form/sheet/group/group[3]/label[1]" position="attributes">
+                    <attribute name="string">Depreciation Frequency</attribute>
+                </xpath>
+                <xpath expr="//field[@name='method_number']" position="attributes" >
+                     <attribute name="string">Useful Life</attribute>
+                </xpath>
+            </field>
+    </record>
+</odoo>

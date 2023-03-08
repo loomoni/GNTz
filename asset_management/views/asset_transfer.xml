@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <!--    Asset transfer starts -->
+    <!--    Asset transfer tree view-->
+    <record id="asset_transfer_tree_view" model="ir.ui.view">
+        <field name="name">asset.transfer.tree.view</field>
+        <field name="model">account.asset.transfer</field>
+        <field name="arch" type="xml">
+            <tree string="Asset Transfer">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <!--    asset transfer form view -->
+    <record id="asset_transfer_form_view" model="ir.ui.view">
+        <field name="name">asset.transfer.form.view</field>
+        <field name="model">account.asset.transfer</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="button_procurement_review" states="draft" string="Review" type="object"
+                            class="oe_highlight"
+                            groups="asset_management.asset_procurement"/>
+                    <button name="button_am_manager_review" states="procurement" string="AD/Country Director Review"
+                            type="object"
+                            class="oe_highlight"
+                            groups="asset_management.asset_procurement"/>
+                    <button name="button_am_manager_review" states="adm_cd" string="AD/Country Director Review"
+                            type="object"
+                            class="oe_highlight"
+                            groups="asset_management.asset_procurement"/>
+                    <button name="button_am_manager_review" states="country_director" string="AD/Country Director Review"
+                            type="object"
+                            class="oe_highlight"
+                            groups="asset_management.asset_procurement"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,procurement,adm_cd,country_director,staff"/>
+
+
+                </header>
+                <sheet>
+                    <group string="Employee details">
+                        <group>
+                            <field name="name"/>
+                            <field name="employee_no"/>
+                            <field name="position"/>
+                        </group>
+                        <group>
+                            <field name="department"/>
+                            <field name="phone"/>
+                            <field name="email"/>
+                        </group>
+                    </group>
+                    <group string="Asset information">
+                        <group>
+                            <field name="asset_name"/>
+                            <field name="identification_number"/>
+                        </group>
+                        <group>
+                            <field name="asset_condition"/>
+                            <field name="handover_reason"/>
+                        </group>
+                    </group>
+                    <group string="Custodian Information" attrs="{'invisible':[('state','in','draft')]}">
+                        <group>
+                            <p>I here by acknowledging the return of the above-mentioned Asset/Assets.</p>
+                        </group>
+                        <group></group>
+                        <group>
+                            <field name="custodian_name"/>
+                            <field name="custodian_job_title"/>
+                        </group>
+                        <group>
+                            <p></p>
+                            <field name="id_no"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="asset_transfer_action" model="ir.actions.act_window">
+        <field name="name">Asset Transfer</field>
+        <field name="res_model">account.asset.transfer</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                There is no asset transfer yet.!
+            </p>
+        </field>
+    </record>
+
+    <menuitem name="Asset Transfer"
+              id="asset_transfer_menu_id"
+              parent="asset_management.menu_root"
+              action="asset_transfer_action"
+              sequence="12"
+              groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_dm,asset_management.asset_fm,asset_management.asset_procurement"/>
+</odoo>

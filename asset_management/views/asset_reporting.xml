@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <!--    Asset report damage  starts -->
+    <record id="asset_reporting_damage_tree_view" model="ir.ui.view">
+        <field name="name">asset.reporting.damage.tree.view</field>
+        <field name="model">asset.reporting.damage</field>
+        <field name="arch" type="xml">
+            <tree string="Asset Reporting">
+                <field name="name"/>
+                <field name="damage_asset_name"/>
+                <field name="report_date"/>
+                <field name="recommendation" string="Action Taken"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="asset_reporting_damage_form_view" model="ir.ui.view">
+        <field name="name">asset.reporting.form.view</field>
+        <field name="model">asset.reporting.damage</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="button_staff_submit_damage" states="draft" string="Submit report" type="object"
+                            class="oe_highlight"
+                            groups="asset_management.all_staff"
+                    />
+                    <button name="button_line_manager_review" states="submit" string="Submit Recommendation"
+                            type="object"
+                            class="oe_highlight"
+                            groups="asset_management.asset_lm"
+                    />
+                    <button name="button_ict_officer_recommend" states="line_manager" string="ICT Officer Recommendation"
+                            type="object"
+                            class="oe_highlight"
+                            groups="asset_management.ict_hq_officer"
+                            attrs="{'invisible':[('electronic_asset','=','no')]}"
+                    />
+                    <button name="button_procurement_review" states="it_officer,line_manager" string="Procurement Review"
+                            type="object"
+                            class="oe_highlight"
+                            groups="asset_management.asset_procurement"
+                    />
+                    <button name="button_am_manager_review" states="procurement" string="AD/Country Director Review"
+                            type="object"
+                            class="oe_highlight"
+                            groups="asset_management.asset_dm,asset_management.asset_cd"
+                    />
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,submit,line_manager,it_officer,procurement,adm_cd"/>
+
+                    <!-- if the damaged asset is the IT asset-->
+
+                    <!--                    <button name="button_staff_submit_damage_it" IT_states="draft_it" string="Submit report it"-->
+                    <!--                            type="object"-->
+                    <!--                            class="oe_highlight"-->
+                    <!--                            groups="asset_management.all_staff"-->
+                    <!--                            attrs="{'invisible':[('electronic_asset','=','no')]}"-->
+                    <!--                            />-->
+                    <!--                    <button name="button_line_manager_review_it" states="submit_it" string="Submit Recommendation"-->
+                    <!--                            type="object"-->
+                    <!--                            class="oe_highlight"-->
+                    <!--                            groups="asset_management.asset_lm"-->
+                    <!--                    />-->
+                    <!--                    <button name="button_ict_officer_recommend_it" states="line_manager_it"-->
+                    <!--                            string="ICT Officer Recommend"-->
+                    <!--                            type="object"-->
+                    <!--                            class="oe_highlight"-->
+                    <!--                            groups="asset_management.ict_hq_officer"-->
+                    <!--                    />-->
+                    <!--                    <button name="button_procurement_review_it" states="it_officer_it" string="Review"-->
+                    <!--                            type="object"-->
+                    <!--                            class="oe_highlight"-->
+                    <!--                            groups="asset_management.asset_procurement"-->
+                    <!--                    />-->
+                    <!--                    <button name="button_am_manager_review_it" states="procurement_it"-->
+                    <!--                            string="AD/Country Director Review"-->
+                    <!--                            type="object"-->
+                    <!--                            class="oe_highlight"-->
+                    <!--                            groups="asset_management.asset_dm,asset_management.asset_cd"-->
+                    <!--                    />-->
+                    <!--                    <field name="state" widget="statusbar"-->
+                    <!--                           statusbar_visible="draft_it,submit_it,line_manager_it,it_officer_it,procurement_it,adm_cd_it"-->
+                    <!--                           attrs="{'invisible':[('electronic_asset','=','no')]}"/>-->
+                </header>
+                <sheet>
+                    <group string="Damage - Reported By">
+                        <group>
+                            <field name="name" options="{'no_open': True}"/>
+                            <field name="employee_no"/>
+                            <field name="position"/>
+                        </group>
+                        <group>
+                            <field name="department"/>
+                            <field name="phone"/>
+                            <field name="email"/>
+                        </group>
+                    </group>
+                    <group string="Incident Information">
+                        <group>
+                            <field name="incident_date"/>
+                            <field name="report_date"/>
+                        </group>
+                        <group>
+                            <field name="incident_location"/>
+                            <field name="electronic_asset" attrs="{'readonly':[('state','!=','draft')]}"/>
+                        </group>
+                    </group>
+                    <group string="Supervisor recommendation" attrs="{'invisible':[('state', 'in', 'draft')]}">
+                        <field name="recommendation"/>
+                    </group>
+                    <notebook>
+                        <page string="Equipment Information">
+                            <field name="asset_reporting_damage_line_ids">
+                                <tree editable="bottom">
+                                    <field name="name"
+                                           options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
+                                    <field name="identification_number"/>
+                                    <field name="location"/>
+                                    <field name="state" invisible="1"/>
+                                    <field name="damage_description"/>
+                                    <field name="cost" attrs="{'readonly': [('state', 'in', ('draft', 'submit'))]}"/>
+                                    <field name="person_responsible"
+                                           attrs="{'readonly': [('state', 'in', ('draft', 'submit'))]}"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Line Manager Recommendation" attrs="{'invisible':[('state', 'in', 'draft')]}">
+                            <group>
+                                <field name="line_manager_comment"/>
+                            </group>
+                        </page>
+                        <page string="ICT Officer Recommendation" attrs="{'invisible': ['&amp;', ('electronic_asset', '=', 'no'), ('state', 'in', ('draft', 'submit'))]}">
+                            <group>
+                                <field name="ict_officer_comment"/>
+                            </group>
+                        </page>
+                        <page string="Procurement Comment" attrs="{'invisible': [('state', 'in', ('draft', 'submit'))]}">
+                            <group>
+                                <field name="procurement_comment"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="asset_reporting_damage_action" model="ir.actions.act_window">
+        <field name="name">Asset Damage Reporting</field>
+        <field name="res_model">asset.reporting.damage</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                There is no asset reported yet.!
+            </p>
+        </field>
+    </record>
+
+    <!--    Asset damage reporting end -->
+
+    <!--    Asset lost/theft starts -->
+    <!--    Asset lost tree view-->
+    <record id="asset_reporting_lost_tree_view" model="ir.ui.view">
+        <field name="name">asset.reporting.lost.tree.view</field>
+        <field name="model">asset.reporting.lost</field>
+        <field name="arch" type="xml">
+            <tree string="Asset Reporting">
+                <field name="name"/>
+                <field name="equipment_name"/>
+                <field name="location" string="Incident Location"/>
+                <field name="incident_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <!--    Asset lost/theft form view -->
+    <record id="asset_reporting_lost_form_view" model="ir.ui.view">
+        <field name="name">asset.reporting.form.view</field>
+        <field name="model">asset.reporting.lost</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="button_line_manager_review" states="draft" string="Line Manager Review" type="object"
+                            class="oe_highlight"
+                            groups="asset_management.asset_lm"/>
+                    <button name="button_procurement_review" states="line_manager" string="Review" type="object"
+                            class="oe_highlight"
+                            groups="asset_management.asset_procurement"/>
+                    <button name="button_am_manager_review" states="procurement" string="AD/Country Director Review"
+                            type="object"
+                            class="oe_highlight"
+                            groups="asset_management.asset_procurement"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,line_manager,procurement,adm_cd"/>
+                </header>
+                <sheet>
+                    <group string="Lost/Theft - Reported By">
+                        <group>
+                            <field name="name"/>
+                            <field name="employee_no"/>
+                            <field name="position"/>
+                        </group>
+                        <group>
+                            <field name="department"/>
+                            <field name="phone"/>
+                            <field name="email"/>
+                        </group>
+                    </group>
+                    <group string="Incident Information">
+                        <group>
+                            <field name="incident_date"/>
+                            <field name="report_date"/>
+                        </group>
+                        <group>
+                            <field name="incident_location"/>
+                        </group>
+
+                    </group>
+                    <group string="Equipment Information">
+                        <group>
+                            <field name="equipment_name"/>
+                            <field name="identification_number"/>
+                            <field name="location"/>
+                        </group>
+                        <group>
+                            <field name="damage_description"/>
+                            <field name="cost"/>
+                            <field name="person_responsible"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="police_report"/>
+                        </group>
+                    </group>
+                    <group string="Police Loss/Theft Report Information"
+                           attrs="{'invisible':[('police_report', '=', 'no')]}">
+                        <group>
+                            <field name="office_incharge"/>
+                            <field name="station"/>
+                            <field name="police_file" filename="police_file_name"/>
+                            <field name="police_file_name" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="police_phone"/>
+                            <field name="police_email"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Asset lost/theft action -->
+    <record id="asset_reporting_lost_action" model="ir.actions.act_window">
+        <field name="name">Asset Lost Reporting</field>
+        <field name="res_model">asset.reporting.lost</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                There is no asset reported yet.!
+            </p>
+        </field>
+    </record>
+
+    <menuitem name="Asset Reporting"
+              id="asset_reporting_menu"
+              parent="asset_management.menu_root"
+              sequence="4"
+              groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_dm,asset_management.asset_fm,asset_management.asset_procurement"/>
+    <menuitem name="Damage"
+              id="asset_reporting_damage"
+              action="asset_reporting_damage_action"
+              parent="asset_management.asset_reporting_menu"
+              sequence="1"
+              groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_dm,asset_management.asset_fm,asset_management.asset_procurement"/>
+    <menuitem name="Loss/Theft"
+              id="asset_reporting_lost"
+              action="asset_reporting_lost_action"
+              parent="asset_management.asset_reporting_menu"
+              sequence="2"
+              groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_dm,asset_management.asset_fm,asset_management.asset_procurement"/>
+</odoo>

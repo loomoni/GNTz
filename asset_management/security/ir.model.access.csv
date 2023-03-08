@@ -1,0 +1,40 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+asset_type_hod,Asset Type HOD Group,model_account_asset_category,,1,1,1,1
+asset_type_dfa,Asset Type DFA Group,model_account_asset_category,,1,1,1,1
+asset_type_es,Asset Type ES Group,model_account_asset_category,,1,1,1,1
+
+asset_management_hod,Asset HOD Group,model_account_asset_asset,,1,1,1,1
+asset_management_dfa,Asset DFA Group,model_account_asset_asset,,1,1,1,1
+asset_management_es,Asset ES Group,model_account_asset_asset,,1,1,1,1
+
+asset_assign_hod,Asset Assign HOD Group,model_account_asset_assign,,1,1,1,1
+asset_assign_dfa,Asset Assign DFA Group,model_account_asset_assign,,1,1,1,1
+asset_assign_es,Asset Assign ES Group,model_account_asset_assign,,1,1,1,1
+
+asset_dispose_hod,Asset Dispose HOD Group,model_account_asset_disposal,,1,1,1,1
+asset_dispose_dfa,Asset Dispose DFA Group,model_account_asset_disposal,,1,1,1,1
+asset_dispose_es,Asset Dispose ES Group,model_account_asset_disposal,,1,1,1,1
+
+asset_dispose_lines_hod,Asset Dispose Lines HOD Group,model_account_asset_disposal_lines,,1,1,1,1
+asset_dispose_lines_dfa,Asset Dispose Lines DFA Group,model_account_asset_disposal_lines,,1,1,1,1
+asset_dispose_lines_es,Asset Dispose Lines ES Group,model_account_asset_disposal_lines,,1,1,1,1
+
+account_asset_reevaluation_hod,Asset Reevaluation HOD Group,model_account_asset_reevaluation,,1,1,1,1
+account_asset_reevaluation_dfa,Asset Reevaluation DFA Group,model_account_asset_reevaluation,,1,1,1,1
+account_asset_reevaluation_es,Asset Reevaluation ES Group,model_account_asset_reevaluation,,1,1,1,1
+
+account_asset_reporting,Asset Reporting,model_asset_reporting_damage,,1,1,1,1
+
+account_asset_reporting_damage_line,Asset Reporting Damage Line,model_asset_reporting_damage_line,,1,1,1,1
+
+account_asset_reporting_lost,Asset Reporting lost,model_asset_reporting_lost,,1,1,1,1
+
+account_asset_transfer,Asset Reporting lost,model_account_asset_transfer,,1,1,1,1
+
+account_asset_chechout,Asset Checkout,model_account_asset_checkout,,1,1,1,1
+
+account_asset_assign_category_line,account asset assign category line,model_account_asset_assign_category_line,,1,1,1,1
+
+account_asset_reevaluation_depreciation_lines_hod,Asset Reevaluation Deprec Lines HOD Group,model_account_asset_reevaluation_depreciation_lines,,1,1,1,1
+account_asset_asset_reevaluation_depreciation_lines_dfa,Asset Reevaluation Deprec Lines DFA Group,model_account_asset_reevaluation_depreciation_lines,,1,1,1,1
+account_asset_asset_reevaluation_depreciation_lines_es,Asset Reevaluation Deprec Lines ES Group,model_account_asset_reevaluation_depreciation_lines,,1,1,1,1

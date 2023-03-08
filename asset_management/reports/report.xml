@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <report
+            id="asset_management_qr_code"
+            model="account.asset.asset"
+            string="Asset Barcode"
+            menu="True"
+            report_type="qweb-pdf"
+            name="asset_management.asset_management_qr_code_template"
+            file="asset_management.asset_management_qr_code_template"
+    />
+</odoo>

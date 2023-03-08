@@ -1,0 +1,120 @@
+<odoo>
+
+    <!--      Tree view for the asset list -->
+    <record id="asset_list_tree_view" model="ir.ui.view">
+        <field name="name">asset.list.tree.view</field>
+        <field name="model">account.asset.asset</field>
+        <field name="inherit_id" ref="om_account_asset.view_account_asset_asset_purchase_tree"/>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="branch"/>
+                <field name="value"/>
+                <field name="value_residual" widget="monetary"/>
+                <field name="currency_id" groups="base.group_multi_currency"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <!--    form inherit-->
+    <record id="om_account_asset_view_form_inherited" model="ir.ui.view">
+        <field name="name">om.account.asset.view.form.inherited</field>
+        <field name="model">account.asset.asset</field>
+        <field name="inherit_id" ref="om_account_asset.view_account_asset_asset_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='department_id']" position="after">
+                <field name="branch"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!--    Tree view for the fixed asset report -->
+    <record id="fixed_asset_tree_view" model="ir.ui.view">
+        <field name="name">fixed.asset.tree.view</field>
+        <field name="model">account.asset.asset</field>
+        <field name="arch" type="xml">
+            <tree string="Fixed Asset Report" create="false">
+                <field name="name" string="Asset Name"/>
+                <field name="category_id" string="Class of Asset"/>
+                <field name="code" string="Asset No."/>
+                <field name="value" string="Original Cost"/>
+                <field name="cummulative_amount" string="Accumulated Depreciation"/>
+                <field name="value_residual" string="Net Book Value"/>
+                <field name="date" string="Purchase Date"/>
+                <field name="invoice_id" string="Invoice No"/>
+                <field name="partner_id" string="Supplier"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="fixed_assets_search_view" model="ir.ui.view">
+        <field name="name">fixed.assets.search.view</field>
+        <field name="model">account.asset.asset</field>
+        <field name="arch" type="xml">
+            <search string="Fixed Assets Report Search">
+                <field name="name" string="Asset"/>
+                <field name="date" string="Purchase Date"/>
+                <filter string="Current" name="current" domain="[('state','in', ('draft','open'))]"
+                        help="Assets in draft and open states"/>
+                <filter string="Closed" name="closed" domain="[('state','=', 'close')]" help="Assets in closed state"/>
+                <field name="category_id" string="Asset Category"/>
+                <field name="partner_id" filter_domain="[('partner_id','child_of',self)]"/>
+                <group expand="0" string="Group By...">
+                    <filter string="Purchase Date" name="month" domain="[]" context="{'group_by':'date'}"/>
+                    <filter string="Asset Category" name="category" domain="[]" context="{'group_by':'category_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_fixed_assets" model="ir.actions.act_window">
+        <field name="name">Fixed Asset Report</field>
+        <field name="res_model">account.asset.asset</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="fixed_asset_tree_view"/>
+        <field name="search_view_id" ref="fixed_assets_search_view"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                This is a list of all running assets in your company
+            </p>
+        </field>
+    </record>
+
+    <record id="om_account_asset_view_account_asset_search_inherited" model="ir.ui.view">
+        <field name="name">om.account.asset.view.account.asset.search.inherited</field>
+        <field name="model">account.asset.asset</field>
+        <field name="inherit_id" ref="om_account_asset.view_account_asset_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='closed']" position="attributes">
+                <attribute name="string">Disposed</attribute>
+            </xpath>
+            <xpath expr="//filter[@name='closed']" position="after">
+                <filter string="Draft" name="draft" domain="[('state','=', 'draft')]" help="Assets in draft state"/>
+            </xpath>
+        </field>
+    </record>
+
+    <menuitem name="Asset Management"
+              id="asset_management.menu_root"/>
+    <menuitem parent="asset_management.menu_root"
+              name="Categories"
+              id="menu_asset_types"
+              action="om_account_asset.action_account_asset_asset_list_normal_purchase"
+              sequence="2"
+              groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_fm,asset_management.asset_procurement"/>
+    <menuitem name="Recording"
+              id="menu_assets"
+              action="om_account_asset.action_account_asset_asset_form"
+              parent="asset_management.menu_root"
+              sequence="3"
+              groups="asset_management.branch_staff,asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_dm,asset_management.asset_fm,asset_management.asset_procurement"/>
+    <menuitem name="Fixed Assets Report"
+              id="menu_fixed_assets_report"
+              action="action_fixed_assets"
+              parent="asset_management.menu_root"
+              sequence="9"
+              groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_fm,asset_management.asset_dm"/>
+</odoo>

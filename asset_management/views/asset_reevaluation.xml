@@ -1,0 +1,121 @@
+<odoo>
+    <record id="asset_reevaluation_tree_view" model="ir.ui.view">
+      <field name="name">asset.reevaluation.tree.view</field>
+      <field name="model">account.asset.reevaluation</field>
+      <field name="arch" type="xml">
+          <tree string="Asset Revaluation">
+               <field name="date_created"/>
+               <field name="asset_id"/>
+              <field name="original_value"/>
+              <field name="evaluated_value"/>
+              <field name="state"/>
+          </tree>
+      </field>
+    </record>
+
+  <record id="asset_reevaluation_search_view" model="ir.ui.view">
+    <field name="name">asset.reevaluation.search.view</field>
+     <field name="model">account.asset.reevaluation</field>
+    <field name="arch" type="xml">
+        <search string="asset reevaluation search">
+            <field name="state" string="state" filter_domain="[('state','ilike',self)]"/>
+            <field name="asset_id" string="asset_id" filter_domain="[('asset_id','ilike',self)]"/>
+        </search>
+    </field>
+  </record>
+
+   <record id="asset_reevaluation_form_view" model="ir.ui.view">
+        <field name="name">asset.reevaluation.form.view</field>
+        <field name="model">account.asset.reevaluation</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+<!--                    <button name="button_fm_approve" states="draft" string="FM Approve" type="object" class="oe_highlight"-->
+<!--                            groups="asset_management.asset_fm"/>-->
+                    <button name="button_reject" states="asset_evaluated,md_approved" string="Reject" type="object"
+                            groups="asset_management.asset_fm,asset_management.asset_dm"/>
+
+                    <button name="button_evaluate" class="oe_highlight" states="draft" string="Evaluate Assets" type="object"
+                            groups="asset_management.asset_lm,asset_management.asset_fm,asset_management.asset_dm"/>
+
+                     <button name="button_md_approve" states="asset_evaluated" string="AD Manager/CD Approve" type="object"
+                            groups="asset_management.asset_dm"/>
+
+                    <button name="button_reevaluate" states="md_approved" string="Complete Asset Evaluation" type="object"
+                            groups="asset_management.asset_fm,asset_management.asset_dm"/>
+
+                    <field name="state" widget="statusbar" statusbar_visible="draft,asset_evaluated,md_approved,asset_reevaluated"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                        <group>
+                            <field name="date_created"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="asset_id"/>
+                        </group>
+                        <group>
+                            <field name="original_value"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="account_id"/>
+                        </group>
+                        <group>
+                            <field name="journal_id"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="evaluated_value"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Theoretical Depreciation Lines">
+                            <field name="line_ids" attrs="{'readonly': [('state', 'in', ('draft','asset_reevaluated','md_approved'))]}">
+                                <tree editable="bottom">
+                                    <field name="depreciation_date" />
+                                    <field name="amount" />
+                                    <field name="depreciated_value" />
+                                    <field name="remaining_value" />
+                                    <field name="reason_for_disposal" />
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_asset_reevaluation" model="ir.actions.act_window">
+        <field name="name">Asset Revaluation</field>
+        <field name="res_model">account.asset.reevaluation</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p class="o_view_nocontent_smiling_face">
+              Ready to create asset reevaluation?
+          </p><p>
+              Let's create a asset reevaluation.
+          </p>
+        </field>
+    </record>
+
+      <menuitem
+        parent="asset_management.menu_root"
+        id="menu_asset_reevaluation"
+        action="action_asset_reevaluation"
+        sequence="7"
+        groups="asset_management.asset_lm,asset_management.asset_fm,asset_management.asset_dm"/>
+</odoo>

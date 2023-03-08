@@ -1,0 +1,207 @@
+<odoo>
+    <data>
+        <record id="branches_list_action" model="ir.actions.act_window">
+            <field name="name">Branches</field>
+            <field name="res_model">hr.branches</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No Branch Configured Yet?
+                </p>
+            </field>
+        </record>
+
+        <record id="branches_list_tree_view" model="ir.ui.view">
+            <field name="name">branches.list.tree.view</field>
+            <field name="model">hr.branches</field>
+            <field name="arch" type="xml">
+                <tree string="Branches">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="manager_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="branches_list_kanban_view" model="ir.ui.view">
+            <field name="name">branches.list.kanban.view</field>
+            <field name="model">hr.branches</field>
+            <field name="arch" type="xml">
+                <kanban>
+                    <field name="id"/>
+                    <field name="image_small"/>
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="manager_id"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click">
+                                <div class="o_kanban_image">
+                                    <img t-att-src="kanban_image('hr.branches', 'image_small', record.id.raw_value)"
+                                         alt="Branch"/>
+                                </div>
+                                <div class="oe_kanban_details">
+                                    <strong class="o_kanban_record_title">
+                                        <field name="name"/>
+                                    </strong>
+                                    <div name="tags"/>
+                                    <ul>
+                                        <li>Branch Manager:
+                                            <field name="manager_id"/>
+                                        </li>
+                                    </ul>
+                                    <div name="tags"/>
+                                    <strong>
+                                        <field name="code"/>
+                                    </strong>
+                                    <div name="tags"/>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="branches_list_search" model="ir.ui.view">
+            <field name="name">branches.list.search</field>
+            <field name="model">hr.branches</field>
+            <field name="arch" type="xml">
+                <search string="Branches">
+                    <field name="name" filter_domain="[('name', 'ilike', self)]"/>
+                    <field name="code" filter_domain="[('code', 'ilike', self)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="branches_list_form_view" model="ir.ui.view">
+            <field name="name">branches.list.form.view</field>
+            <field name="model">hr.branches</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                            </group>
+                            <group>
+                                <field name="code"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="manager_id"/>
+                                <!--                            <field name="hr_manager_id"/>-->
+
+                            </group>
+                            <group>
+                                <!--                            <field name="accountant_id"/>-->
+                                <!--                            <field name="cashier_id"/>-->
+                                <field name="main_branch"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_department_form_inherited" model="ir.ui.view">
+            <field name="name">hr.department.form.inherited</field>
+            <field name="model">hr.department</field>
+            <field name="inherit_id" ref="hr.view_department_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='manager_id']" position="after">
+                    <field name="branch_id"/>
+                    <field name="code"/>
+                </xpath>
+                <xpath expr="//field[@name='parent_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='manager_id']" position="attributes">
+                    <attribute name="string">Supervisor</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="hr_department_search_inherited" model="ir.ui.view">
+            <field name="name">hr.department.search.inherited</field>
+            <field name="model">hr.department</field>
+            <field name="inherit_id" ref="hr.view_department_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <group name="groupby">
+                        <filter name="branch_dept_groupby" string="Branch" context="{'group_by': 'branch_id'}"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="hr_employees_form_inherited" model="ir.ui.view">
+            <field name="name">hr.employees.form.inherited</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='coach_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='parent_id']" position="attributes">
+                    <attribute name="string">Department Supervisor</attribute>
+                </xpath>
+                <xpath expr="//field[@name='parent_id']" position="after">
+                    <field name="is_po"/>
+                    <field name="is_fm"/>
+                    <field name="is_md"/>
+                </xpath>
+                <xpath expr="//field[@name='work_phone']" position="after">
+                    <field name="tin_no"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="hr_contracts_employees_form_inherited" model="ir.ui.view">
+            <field name="name">hr.contracts.employees.form.inherited</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr_contract.hr_hr_employee_view_form2"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='manager']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="res_partner_bank_form_inherited" model="ir.ui.view">
+            <field name="name">res.partner.bank.form.inherited</field>
+            <field name="model">res.bank</field>
+            <field name="inherit_id" ref="base.view_res_bank_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="branch_name"/>
+                </xpath>
+            </field>
+        </record>
+
+        <menuitem
+                id="hr.menu_hr_root"
+                name="Human Resource"
+                groups="hr.group_hr_manager,hr.group_hr_user"
+                web_icon="hr,static/description/icon.png"
+                sequence="75"/>
+
+        <menuitem
+                id="menu_custom_branches"
+                name="Branches"
+                parent="hr.menu_hr_root"
+                action="branches_list_action"
+                sequence="1"
+                groups="hr.group_hr_manager"
+        />
+
+        <menuitem
+                action="hr.open_module_tree_department"
+                id="hr.menu_hr_department_tree"
+                parent="hr.menu_hr_root"
+                sequence="2"
+                groups="hr.group_hr_manager"/>
+    </data>
+</odoo>

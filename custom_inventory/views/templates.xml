@@ -1,0 +1,194 @@
+<odoo>
+
+    <record id="stockout_tree_view" model="ir.ui.view">
+      <field name="name">stockout.tree.view</field>
+      <field name="model">inventory.stockout</field>
+      <field name="arch" type="xml">
+          <tree string="Stock Out">
+              <field name="name"/>
+<!--              <field name="outlet_name"/>-->
+              <field name="request_date"/>
+              <field name="requester_id"/>
+              <field name="state"/>
+          </tree>
+      </field>
+    </record>
+
+    <record id="stockout_search_view" model="ir.ui.view">
+    <field name="name">stockout.search.view</field>
+     <field name="model">inventory.stockout</field>
+    <field name="arch" type="xml">
+        <search string="Stock Out Search">
+            <field name="name" string="Name" filter_domain="[('name','ilike',self)]"/>
+<!--            <field name="outlet_name" string="Outlet Name" filter_domain="[('outlet_name','ilike',self)]"/>-->
+            <field name="state" string="State" filter_domain="[('state','ilike',self)]"/>
+            <group name="groupby">
+                <filter name="state_groupby" string="State" context="{'group_by': 'state'}"/>
+                <filter name="department_id_groupby" string="Department" context="{'group_by': 'department_id'}"/>
+              </group>
+        </search>
+    </field>
+    </record>
+
+   <record id="stockout_form_view" model="ir.ui.view">
+        <field name="name">stockout.form.view</field>
+        <field name="model">inventory.stockout</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="button_requested" states="draft" string="Request" type="object" class="btn-primary"
+                            groups="custom_inventory.inventory_hod"/>
+                    <button name="button_checked" states="requested" string="Procurement Check" type="object" class="btn-primary"
+                            groups="custom_inventory.inventory_bm"/>
+                    <button name="button_issue" states="checked" string="Issue Goods Out" type="object" class="btn-primary"
+                            groups="custom_inventory.inventory_store"/>
+                    <button name="button_reject" states="requested,checked" string="Reject" type="object" class="btn-primary"
+                            groups="custom_inventory.inventory_hod,custom_inventory.inventory_bm"/>
+                    <button name="button_reset" states="requested,checked" string="Review" type="object" class="btn-primary"
+                            groups="custom_inventory.inventory_store,custom_inventory.inventory_hod,custom_inventory.inventory_bm"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,requested,checked,issued,rejected"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" />
+                            <field name="request_date" />
+                            <field name="department_id" />
+                        </group>
+                        <group>
+<!--                            <field name="outlet_name" />-->
+                            <field name="requester_id" />
+                            <field name="issuer_id" />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Stock Out Lines">
+                            <field name="line_ids">
+                                <tree editable="bottom">
+                                    <field name="product_id"  attrs="{'readonly':[('state','in','issued')]}"/>
+                                    <field name="balance_stock" attrs="{'readonly':[('state','in','issued')]}"/>
+                                    <field name="requested_quantity" attrs="{'readonly':[('state','in','issued')]}"/>
+                                    <field name="state" invisible="1" attrs="{'readonly':[('state','in','issued')]}"/>
+                                    <field name="issued_quantity" attrs="{'readonly':[('state','in',['draft','requested','issued'])]}"/>
+                                </tree>
+                                <form>
+                                    <sheet>
+                                        <group>
+                                            <field name="product_id"/>
+                                            <field name="balance_stock"/>
+                                            <field name="requested_quantity"/>
+                                            <field name="issued_quantity"/>
+                                        </group>
+                                    </sheet>
+                                </form>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+   </record>
+
+   <record id="action_inventory_stockout" model="ir.actions.act_window">
+        <field name="name">Stock Out</field>
+        <field name="res_model">inventory.stockout</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p class="o_view_nocontent_smiling_face">
+              Ready to create a stockout entry?
+          </p><p>
+              Let's create a stockout entry.
+          </p>
+        </field>
+   </record>
+
+   <record id="stock_products_action" model="ir.actions.act_window">
+        <field name="name">Stock Products</field>
+        <field name="res_model">product.template</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">[('purchase_ok','=',True)]</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_empty_folder">
+                There is no products created
+            </p>
+        </field>
+   </record>
+
+   <record id="inherit_product_template_only_form_view" model="ir.ui.view">
+            <field name="name">inherit.product.template.only.form.view</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook/page[3]" position="after">
+                    <page string="Inventory">
+                        <group>
+                            <field name="purchased_quantity"/>
+                            <field name="issued_quantity"/>
+                            <field name="balance_stock"/>
+                        </group>
+                    </page>
+                    <page string="Stock In Lines">
+                        <field name="stockin_ids" readonly="1">
+                            <tree create="false">
+                                <field name="quantity"/>
+                                <field name="uom_id"/>
+                                <field name="state"/>
+                            </tree>
+                            <form>
+                                <sheet>
+                                    <group>
+                                        <field name="quantity"/>
+                                        <field name="uom_id"/>
+                                        <field name="state"/>
+                                    </group>
+                                </sheet>
+                            </form>
+                        </field>
+                    </page>
+                    <page string="Stock Out Lines">
+                        <field name="stockout_ids" readonly="1">
+                            <tree create="false">
+                                <field name="requested_quantity"/>
+                                <field name="issued_quantity"/>
+                                <field name="uom_id"/>
+                                <field name="state"/>
+                            </tree>
+                            <form>
+                                <sheet>
+                                    <group>
+                                        <field name="requested_quantity"/>
+                                        <field name="issued_quantity"/>
+                                        <field name="uom_id"/>
+                                        <field name="state"/>
+                                    </group>
+                                </sheet>
+                            </form>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+   </record>
+
+
+   <menuitem
+        parent="custom_inventory.menu_root"
+        name="Stock Out"
+        id="menu_inventory_stockout"
+        action="action_inventory_stockout"
+        sequence="4"
+        groups="custom_inventory.inventory_staff,custom_inventory.inventory_store,custom_inventory.inventory_hod,custom_inventory.inventory_bm,custom_inventory.inventory_admin"/>
+
+   <menuitem
+        parent="custom_inventory.menu_root"
+        name="Stock Products"
+        id="menu_inventory_products"
+        action="stock_products_action"
+        sequence="5"
+        groups="custom_inventory.inventory_store,custom_inventory.inventory_hod,custom_inventory.inventory_bm,custom_inventory.inventory_admin"/>
+</odoo>
