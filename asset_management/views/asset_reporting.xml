@@ -23,7 +23,7 @@
                 <header>
                     <button name="button_staff_submit_damage" states="draft" string="Submit report" type="object"
                             class="oe_highlight"
-                            groups="asset_management.all_staff"
+                            groups="asset_management.all_staff,asset_management.asset_lm"
                     />
                     <button name="button_line_manager_review" states="submit" string="Submit Recommendation"
                             type="object"

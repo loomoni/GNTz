@@ -156,6 +156,7 @@ class AssetReportingDamageLine(models.Model):
 
     SELECTION = [
         ("draft", "Draft"),
+        ("it_officer", "IT officer"),
         ("submit", "Submitted"),
         ("line_manager", "Line Manager"),
         ("procurement", "Procurement"),
