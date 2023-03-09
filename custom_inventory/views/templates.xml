@@ -138,6 +138,7 @@
                     <group>
                         <field name="purchased_quantity"/>
                         <field name="issued_quantity"/>
+                        <field name="adjustment_quantity"/>
                         <field name="balance_stock"/>
                     </group>
                 </page>

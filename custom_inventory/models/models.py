@@ -102,7 +102,6 @@ class InventoryStockOut(models.Model):
         ("draft", "Draft"),
         ("requested", "Requested"),
         ("checked", "Procurement Checked"),
-        # ("approved", "Approved StockOut"),
         ("issued", "Issued Out"),
         ("rejected", "Rejected")
     ]
@@ -237,8 +236,9 @@ class InventoryProductStock(models.Model):
     department_id = fields.Many2one(comodel_name='hr.department', string="Department", required=True)
     stockout_ids = fields.One2many('inventory.stockout.lines', 'product_id', string="Stock Out Lines", index=True,
                                    track_visibility='onchange', store=True)
-    stock_adjustment_ids = fields.One2many('inventory.stock.adjustment.line', 'product_id', string="Inventory Adjustment", index=True,
-                                   track_visibility='onchange', store=True)
+    stock_adjustment_ids = fields.One2many('inventory.stock.adjustment.line', 'product_id',
+                                           string="Inventory Adjustment", index=True,
+                                           track_visibility='onchange', store=True)
     qty_available = fields.Float('On hand', digits=(12, 2), store=True, compute='_amount_quantity')
     virtual_available = fields.Float('Forecasted', digits=(12, 2), store=True, compute='_amount_quantity')
 
@@ -285,6 +285,8 @@ class InventoryProductStockAdjustment(models.Model):
     @api.multi
     def button_approve(self):
         self.write({'state': 'approved'})
+        for line in self.stock_adjustment_line_ids:
+            line.product_id._amount_quantity()
         return True
 
     @api.multi
