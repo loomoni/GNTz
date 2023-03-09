@@ -71,7 +71,7 @@
                                     <field name="balance_stock" attrs="{'readonly':[('state','in','issued')]}"/>
                                     <field name="requested_quantity" attrs="{'readonly':[('state','in','issued')]}"/>
                                     <field name="state" invisible="1" attrs="{'readonly':[('state','in','issued')]}"/>
-                                    <field name="issued_quantity" attrs="{'readonly':[('state','in',['draft','requested','issued'])]}"/>
+                                    <field name="issued_quantity" attrs="{'readonly':[('state','in',['draft','checked','issued'])]}"/>
                                 </tree>
                                 <form>
                                     <sheet>
