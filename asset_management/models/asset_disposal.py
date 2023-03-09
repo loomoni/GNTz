@@ -9,13 +9,20 @@ class AssetDisposal(models.Model):
     _description = "Asset Disposal"
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
+    # STATE_SELECTION = [
+    #     ("draft", "Draft"),
+    #     ("fm_approved", "Procurement Approved"),
+    #     ("asset_evaluation", "Asset Evaluation"),
+    #     ("asset_evaluated", "Asset Evaluated"),
+    #     ("md_approved", "AD Manager/CD Approved"),
+    #     ("asset_disposed", "Asset Disposed"),
+    #     ("rejected", "Rejected"),
+    # ]
+
     STATE_SELECTION = [
         ("draft", "Draft"),
-        ("fm_approved", "FM Approved"),
-        ("asset_evaluation", "Asset Evaluation"),
-        ("asset_evaluated", "Asset Evaluated"),
-        ("md_approved", "AD Manager/CD Approved"),
-        ("asset_disposed", "Asset Disposed"),
+        ("procurement_evaluate", "Procurement Evaluate"),
+        ("ad_manager_approve", "AD Manager/ Country Director Approve "),
         ("rejected", "Rejected"),
     ]
 
@@ -64,14 +71,16 @@ class AssetDisposal(models.Model):
             self.write({'state': 'asset_evaluated'})
         return True
 
-    @api.multi
-    def button_evaluate(self):
-        self.write({'state': 'asset_evaluated'})
-        return True
+
 
     @api.multi
     def button_md_approve(self):
         self.write({'state': 'md_approved'})
+        return True
+
+    @api.multi
+    def button_procurement_evaluate(self):
+        self.write({'state': 'procurement_evaluate'})
         return True
 
     @api.multi
@@ -293,7 +302,7 @@ class AssetDisposal(models.Model):
                     line.write({'move_id': move.id})
 
             line.asset_id.write({'state': 'close'})
-        self.write({'state': 'asset_disposed'})
+        self.write({'state': 'ad_manager_approve'})
         return True
 
 

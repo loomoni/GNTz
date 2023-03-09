@@ -32,19 +32,13 @@
                 <header>
 <!--                    <button name="button_fm_approve" states="draft" string="FM Approve" type="object" class="oe_highlight"-->
 <!--                            groups="asset_management.asset_fm"/>-->
-                    <button name="button_reject" states="asset_evaluated,md_approved" string="Reject" type="object"
+                    <button name="button_reject" states="asset_evaluated" string="Reject" type="object"
                             groups="asset_management.asset_fm,asset_management.asset_dm"/>
-
-                    <button name="button_evaluate" class="oe_highlight" states="draft" string="Evaluate Assets" type="object"
-                            groups="asset_management.asset_lm,asset_management.asset_fm,asset_management.asset_dm"/>
-
-                     <button name="button_md_approve" states="asset_evaluated" string="AD Manager/CD Approve" type="object"
-                            groups="asset_management.asset_dm"/>
-
-                    <button name="button_reevaluate" states="md_approved" string="Complete Asset Evaluation" type="object"
-                            groups="asset_management.asset_fm,asset_management.asset_dm"/>
-
-                    <field name="state" widget="statusbar" statusbar_visible="draft,asset_evaluated,md_approved,asset_reevaluated"/>
+                    <button name="button_evaluate" class="oe_highlight" states="draft" string="Procurement Evaluate Assets" type="object"
+                            groups="asset_management.asset_procurement"/>
+                    <button name="button_reevaluate" states="asset_evaluated"  class="oe_highlight"  string="AD Manager/CD Approve Revaluation" type="object"
+                            groups="asset_management.asset_cd,asset_management.asset_dm"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,asset_evaluated,asset_reevaluated"/>
                 </header>
                 <sheet>
                     <group>

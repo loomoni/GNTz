@@ -69,17 +69,13 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="button_fm_approve" states="draft" string="FM Approve" type="object" class="oe_highlight"
-                            groups="asset_management.asset_fm"/>
-                    <button name="button_reject" states="fm_approved,asset_evaluation,asset_evaluated,md_approved" string="Reject" type="object"
-                            groups="asset_management.asset_fm,asset_management.asset_dm"/>
-                    <button name="button_evaluate" states="asset_evaluation" string="Evaluate Assets" type="object"
-                            groups="asset_management.asset_lm,asset_management.asset_fm,asset_management.asset_dm"/>
-                     <button name="button_md_approve" states="asset_evaluated" string="MD Approve" type="object"
-                            groups="asset_management.asset_dm"/>
-                    <button name="button_dispose" states="md_approved" string="Complete Asset Evaluation" type="object"
-                            groups="asset_management.asset_fm,asset_management.asset_dm"/>
-                    <field name="state" widget="statusbar" statusbar_visible="draft,md_approved,asset_disposed"/>
+                    <button name="button_procurement_evaluate" states="draft" string="Procurement Submit Evaluation" type="object" class="oe_highlight"
+                            groups="asset_management.asset_procurement"/>
+                    <button name="button_dispose" states="procurement_evaluate" string="Approve Disposal" type="object"
+                            groups="asset_management.asset_dm,asset_management.asset_cd"/>
+                    <button name="button_reject" states="procurement_evaluate" string="Reject" type="object"
+                            groups="asset_management.asset_dm,asset_management.asset_cd"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,procurement_evaluate,ad_manager_approve,rejected"/>
                 </header>
                 <sheet>
                     <group string="Reference No">
@@ -108,7 +104,7 @@
                                     <field name="journal_id" />
                                     <field name="original_disposal_amount" />
                                     <field name="reason_for_disposal" />
-                                    <field name="evaluated_disposal_amount" attrs="{'invisible': [('check_evaluation', '=', False)]}"/>
+                                    <field name="evaluated_disposal_amount"/>
 <!--                                    <field name="partner_id" attrs="{'invisible': [('check_evaluation', '=', False)]}"/>-->
                                 </tree>
                             </field>
