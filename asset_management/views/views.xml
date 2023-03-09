@@ -17,7 +17,7 @@
         </field>
     </record>
 
-    <!--    form inherit-->
+    <!--    account asset form inherit-->
     <record id="om_account_asset_view_form_inherited" model="ir.ui.view">
         <field name="name">om.account.asset.view.form.inherited</field>
         <field name="model">account.asset.asset</field>
@@ -26,6 +26,7 @@
             <xpath expr="//field[@name='department_id']" position="after">
                 <field name="branch"/>
             </xpath>
+
         </field>
     </record>
 

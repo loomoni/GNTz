@@ -73,6 +73,14 @@ class AccountAssetAsset(models.Model):
     _description = 'Asset/Revenue Recognition'
     _inherit = ['mail.thread']
 
+    SELECTION = [
+        ('draft', 'Draft'),
+        ('open', 'Unassigned'),
+        ('inuse', 'Running'),
+        ('repair', 'Repair'),
+        ('close', 'Close')
+    ]
+
     entry_count = fields.Integer(compute='_entry_count', string='# Asset Entries')
     name = fields.Char(string='Asset Name', required=True, readonly=True, states={'draft': [('readonly', False)]})
     code = fields.Char(string='Reference', size=32, readonly=True, states={'draft': [('readonly', False)]})
@@ -84,7 +92,7 @@ class AccountAssetAsset(models.Model):
     note = fields.Text()
     category_id = fields.Many2one('account.asset.category', string='Category', required=True, change_default=True, readonly=True, states={'draft': [('readonly', False)]})
     date = fields.Date(string='Date', required=True, readonly=True, states={'draft': [('readonly', False)]}, default=fields.Date.context_today, oldname="purchase_date")
-    state = fields.Selection([('draft', 'Draft'), ('open', 'Running'), ('close', 'Close')], 'Status', required=True, copy=False, default='draft',
+    state = fields.Selection(SELECTION, 'Status', required=True, copy=False, default='draft',
         help="When an asset is created, the status is 'Draft'.\n"
             "If the asset is confirmed, the status goes in 'Running' and the depreciation lines can be posted in the accounting.\n"
             "You can manually close an asset when the depreciation is over. If the last line of depreciation is posted, the asset automatically goes in that status.")

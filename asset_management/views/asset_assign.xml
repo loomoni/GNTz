@@ -39,7 +39,7 @@
                     <button name="button_line_manager_review" states="send_request" string="Line Manager Review"
                             type="object" class="oe_highlight"
                             groups="asset_management.asset_lm"/>
-                    <button name="button_procurement_review" states="line_manager" string="Procurement Assign"
+                    <button name="button_procurement_assign" states="line_manager" string="Procurement Assign"
                             type="object" class="oe_highlight"
                             groups="asset_management.asset_procurement"/>
                     <button name="button_assign" states="procurement" string="Approve to Assignment" type="object"

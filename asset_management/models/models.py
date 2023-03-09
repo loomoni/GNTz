@@ -34,7 +34,6 @@ class AssetsInherit(models.Model):
     #             pass
     #     return 'GNTZ-' + str(department_code) + '-' + str(x)
 
-
     def _default_department(self):
         employee = self.env['hr.employee'].sudo().search(
             [('user_id', '=', self.env.uid)], limit=1)
@@ -263,9 +262,10 @@ class AssetAssign(models.Model):
         return True
 
     @api.multi
-    def button_procurement_review(self):
+    def button_procurement_assign(self):
         for asset in self.asset_ids:
             asset.write({'procurement': True})
+            asset.write({'state': 'inuse'})
         self.write({'state': 'procurement'})
         return True
 

@@ -13,13 +13,13 @@ class AssetReportingDamage(models.Model):
                                         required=True, )
 
     SELECTION = [
-                    ('draft', 'Draft'),
-                    ('submit', 'Submitted'),
-                    ('line_manager', 'Line Manager'),
-                    ('it_officer', 'IT Officer'),
-                    ('procurement', 'Procurement'),
-                    ('adm_cd', 'AD Manager/Country Director')
-                ]
+        ('draft', 'Draft'),
+        ('submit', 'Submitted'),
+        ('line_manager', 'Line Manager'),
+        ('it_officer', 'IT Officer'),
+        ('procurement', 'Procurement'),
+        ('adm_cd', 'AD Manager/Country Director')
+    ]
 
     IT_SELECTION = [
         ("draft_it", "Draft"),
@@ -59,11 +59,25 @@ class AssetReportingDamage(models.Model):
         return True
 
     @api.multi
+    @api.depends('recommendation')
     def button_procurement_review(self):
-        for asset in self.asset_reporting_damage_line_ids:
-            asset.write({'state': 'procurement'})
-        self.write({'state': 'procurement'})
-        return True
+        if self.recommendation == "repair":
+            for asset in self.asset_reporting_damage_line_ids:
+                asset.write({'state': 'procurement'})
+                for reported_asset in asset.name:
+                    for asset_name in reported_asset.asset_ids:
+                        asset_name.write({'state': 'repair'})
+
+            self.write({'state': 'procurement'})
+            return True
+        else:
+            for asset in self.asset_reporting_damage_line_ids:
+                asset.write({'state': 'procurement'})
+                for reported_asset in asset.name:
+                    for asset_name in reported_asset.asset_ids:
+                        asset_name.write({'state': 'close'})
+            self.write({'state': 'procurement'})
+            return True
 
     @api.multi
     def button_procurement_review_it(self):
@@ -99,7 +113,6 @@ class AssetReportingDamage(models.Model):
             asset.write({'IT_state': 'adm_cd_it'})
         self.write({'IT_state': 'adm_cd_it'})
         return True
-
 
     def _default_employee(self):
         return self.env.context.get('default_employee_id') or self.env['hr.employee'].search(

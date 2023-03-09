@@ -42,8 +42,8 @@
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
 
-        <record id="branch_staff" model="res.groups">
-            <field name="name">Branch Staff</field>
+        <record id="branch_manager" model="res.groups">
+            <field name="name">Branch Manager</field>
             <field name="category_id" ref="asset_security_category"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
