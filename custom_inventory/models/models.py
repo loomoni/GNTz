@@ -242,7 +242,7 @@ class InventoryProductStock(models.Model):
     qty_available = fields.Float('On hand', digits=(12, 2), store=True, compute='_amount_quantity')
     virtual_available = fields.Float('Forecasted', digits=(12, 2), store=True, compute='_amount_quantity')
 
-    @api.depends('stockin_ids.quantity', 'stockout_ids.issued_quantity')
+    @api.depends('stockin_ids.quantity', 'stockout_ids.issued_quantity', 'stock_adjustment_ids.adjustment')
     def _amount_quantity(self):
         for record in self:
             stockins = 0
@@ -263,7 +263,6 @@ class InventoryProductStock(models.Model):
             record.balance_stock = stockins - stockouts - adjustement
             record.qty_available = record.balance_stock
             record.virtual_available = record.qty_available
-        #     record.balance_stock = 2
 
 
 class InventoryProductStockAdjustment(models.Model):
