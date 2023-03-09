@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="stock_adjustment_tree_view" model="ir.ui.view">
+        <field name="name">stock.adjustment.tree.view</field>
+        <field name="model">inventory.stock.adjustment</field>
+        <field name="arch" type="xml">
+            <tree string="Stock Adjustment">
+                <field name="name"/>
+                <field name="employee"/>
+                <field name="date"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="stock_adjustment_form_view" model="ir.ui.view">
+        <field name="name">stock.adjustment.form.view</field>
+        <field name="model">inventory.stock.adjustment</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="button_submit" states="draft" string="Submit" type="object" class="btn-primary"
+                            groups="custom_inventory.inventory_procurement"/>
+                    <button name="button_approve" states="submit" string="Approve" type="object" class="btn-primary"
+                            groups="custom_inventory.inventory_admin"/>
+                    <button name="button_reject" states="submit" string="Reject" type="object"
+                            groups="custom_inventory.inventory_admin"/>
+                    <button name="button_review" states="submit" string="Review" type="object" class="btn-primary"
+                            groups="custom_inventory.inventory_admin"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,submit,approved,rejected"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="employee"/>
+                        </group>
+                        <group>
+                            <field name="date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Inventory Adjustment">
+                            <field name="stock_adjustment_line_ids">
+                                <tree editable="bottom">
+                                    <field name="product_id"
+                                           options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
+                                    <field name="Actual_value"/>
+                                    <field name="adjustment"/>
+                                    <field name="reason"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!--    Action view -->
+    <record id="inventory_adjustment_action_view" model="ir.actions.act_window">
+        <field name="name">Inventory Adjustment</field>
+        <field name="res_model">inventory.stock.adjustment</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Ready to create adjustment entry?
+            </p>
+            <p>
+                Let's create a adjustment entry.
+            </p>
+        </field>
+    </record>
+
+    <menuitem
+            parent="custom_inventory.menu_root"
+            name="Inventory Adjustment"
+            id="menu_inventory_adjustment"
+            action="inventory_adjustment_action_view"
+            sequence="6"
+            groups="custom_inventory.inventory_admin,custom_inventory.inventory_procurement"/>
+</odoo>

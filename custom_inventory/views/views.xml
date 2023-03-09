@@ -153,11 +153,5 @@
             sequence="3"
             groups="custom_inventory.inventory_procurement,custom_inventory.inventory_store,custom_inventory.inventory_hod,custom_inventory.inventory_bm,custom_inventory.inventory_admin"/>
 
-        <menuitem
-            parent="custom_inventory.menu_root"
-            name="Inventory Adjustment"
-            id="menu_inventory_adjustment"
-            action="stock.action_inventory_form"
-            sequence="4"
-            groups="custom_inventory.inventory_procurement,custom_inventory.inventory_store,custom_inventory.inventory_hod,custom_inventory.inventory_bm,custom_inventory.inventory_admin"/>
+
 </odoo>

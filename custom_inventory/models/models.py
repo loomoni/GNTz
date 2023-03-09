@@ -230,11 +230,14 @@ class InventoryProductStock(models.Model):
 
     purchased_quantity = fields.Float('Purchased Quantity', digits=(12, 2), store=True, compute='_amount_quantity')
     issued_quantity = fields.Float('Issued Quantity', digits=(12, 2), store=True, compute='_amount_quantity')
+    adjustment_quantity = fields.Float('Adjusted Quantity', digits=(12, 2), store=True, compute='_amount_quantity')
     balance_stock = fields.Float('Balance Stock', digits=(12, 2), store=True, compute='_amount_quantity')
     stockin_ids = fields.One2many('inventory.stockin.lines', 'product_id', string="Stock In Lines", index=True,
                                   track_visibility='onchange', store=True)
     department_id = fields.Many2one(comodel_name='hr.department', string="Department", required=True)
     stockout_ids = fields.One2many('inventory.stockout.lines', 'product_id', string="Stock Out Lines", index=True,
+                                   track_visibility='onchange', store=True)
+    stock_adjustment_ids = fields.One2many('inventory.stock.adjustment.line', 'product_id', string="Inventory Adjustment", index=True,
                                    track_visibility='onchange', store=True)
     qty_available = fields.Float('On hand', digits=(12, 2), store=True, compute='_amount_quantity')
     virtual_available = fields.Float('Forecasted', digits=(12, 2), store=True, compute='_amount_quantity')
@@ -250,9 +253,68 @@ class InventoryProductStock(models.Model):
             for line in record.stockout_ids:
                 if line.stockout_id.state == "issued":
                     stockouts += line.issued_quantity
+            adjustement = 0
+            for line in record.stock_adjustment_ids:
+                if line.product_line_id.state == "approved":
+                    adjustement += line.adjustment
             record.purchased_quantity = stockins
             record.issued_quantity = stockouts
-            record.balance_stock = stockins - stockouts
+            record.adjustment_quantity = adjustement
+            record.balance_stock = stockins - stockouts - adjustement
             record.qty_available = record.balance_stock
             record.virtual_available = record.qty_available
         #     record.balance_stock = 2
+
+
+class InventoryProductStockAdjustment(models.Model):
+    _name = "inventory.stock.adjustment"
+    _description = "Stock Inventory Adjustment"
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+
+    STATE_SELECTION = [
+        ("draft", "Draft"),
+        ("submit", "Submitted"),
+        ("approved", "Approved"),
+        ("rejected", "Rejected")
+    ]
+
+    @api.multi
+    def button_submit(self):
+        self.write({'state': 'submit'})
+        return True
+
+    @api.multi
+    def button_approve(self):
+        self.write({'state': 'approved'})
+        return True
+
+    @api.multi
+    def button_review(self):
+        self.write({'state': 'draft'})
+        return True
+
+    @api.multi
+    def button_reject(self):
+        self.write({'state': 'rejected'})
+        return True
+
+    name = fields.Char(string='Inventory Reference', required=True)
+    date = fields.Date(string='Date')
+    employee = fields.Many2one(comodel_name='hr.employee', string='Employee')
+    state = fields.Selection(STATE_SELECTION, index=True, track_visibility='onchange',
+                             readonly=True, required=True, copy=False, default='draft', store=True)
+    stock_adjustment_line_ids = fields.One2many('inventory.stock.adjustment.line', 'product_line_id',
+                                                string="Stock Adjustment Lines")
+
+
+class InventoryProductStockAdjustmentLines(models.Model):
+    _name = "inventory.stock.adjustment.line"
+    _description = "Stock Adjustment Lines"
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+
+    product_id = fields.Many2one(comodel_name="product.template", string="Product")
+    Actual_value = fields.Float(string="Available", related='product_id.balance_stock')
+    adjustment = fields.Float(string="Adjustment")
+    reason = fields.Text(string="Adjustment Reason")
+    product_line_id = fields.Many2one(comodel_name='inventory.stock.adjustment', string="Stock Adjustment",
+                                      required=False)

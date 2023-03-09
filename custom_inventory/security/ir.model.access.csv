@@ -32,3 +32,8 @@ access_inventory_product_template_hod,Product Template HOD Group,product.model_p
 access_inventory_product_template_bm,Product Template BM Group,product.model_product_template,inventory_bm,1,1,1,1
 access_inventory_product_template_admin,Product Template ADMIN Group,product.model_product_template,inventory_admin,1,1,1,1
 access_inventory_product_template_inventory_procurement,Product Template inventory procurement Group,product.model_product_template,inventory_procurement,1,1,1,1
+
+
+access_inventory_inventory_stock_adjustment,Product inventory stock adjustment Group,model_inventory_stock_adjustment,,1,1,1,1
+
+access_inventory_inventory_stock_adjustment_line,Product inventory stock adjustment line Group,model_inventory_stock_adjustment_line,,1,1,1,1

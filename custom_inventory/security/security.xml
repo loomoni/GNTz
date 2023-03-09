@@ -37,10 +37,11 @@
         </record>
 
         <record id="inventory_admin" model="res.groups">
-            <field name="name">Inventory Admin</field>
+            <field name="name">AD Manager</field>
             <field name="category_id" ref="inventory_security_category"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
+
 
         <record model="ir.rule" id="inventory_store_access_stockin">
             <field name="name">Inventory Store Access Stockin</field>
