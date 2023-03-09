@@ -41,10 +41,12 @@
                     <button name="button_checked" states="requested" string="Procurement Check" type="object" class="btn-primary"
                             groups="custom_inventory.inventory_bm"/>
                     <button name="button_issue" states="checked" string="Issue Goods Out" type="object" class="btn-primary"
-                            groups="custom_inventory.inventory_store"/>
+                            groups="custom_inventory.inventory_hod,custom_inventory.inventory_procurement"/>
                     <button name="button_reject" states="requested,checked" string="Reject" type="object" class="btn-primary"
+                            groups="custom_inventory.inventory_procurement,custom_inventory.inventory_hod"/>
+                    <button name="button_reset" states="requested" string="Review" type="object" class="btn-primary"
                             groups="custom_inventory.inventory_procurement"/>
-                    <button name="button_reset" states="requested,checked" string="Review" type="object" class="btn-primary"
+                    <button name="button_checked" states="requested" string="Check" type="object" class="btn-primary"
                             groups="custom_inventory.inventory_procurement"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,requested,checked,issued,rejected"/>
                 </header>
