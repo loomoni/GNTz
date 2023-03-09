@@ -28,6 +28,7 @@
             </xpath>
             <xpath expr="//form/header" position="replace">
                 <header>
+                    <button name="validate" states="draft" string="Confirm Asset" type="object" class="oe_highlight" groups="asset_management.asset_dm"/>
                      <field name="state" widget="statusbar" statusbar_visible="draft,open,inuse,repair,close"/>
                 </header>
             </xpath>
