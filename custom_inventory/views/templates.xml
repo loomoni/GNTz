@@ -182,7 +182,7 @@
         id="menu_inventory_stockout"
         action="action_inventory_stockout"
         sequence="4"
-        groups="custom_inventory.inventory_staff,custom_inventory.inventory_store,custom_inventory.inventory_hod,custom_inventory.inventory_bm,custom_inventory.inventory_admin"/>
+        groups="custom_inventory.inventory_staff,custom_inventory.inventory_procurement,custom_inventory.inventory_store,custom_inventory.inventory_hod,custom_inventory.inventory_bm,custom_inventory.inventory_admin"/>
 
    <menuitem
         parent="custom_inventory.menu_root"
@@ -190,5 +190,5 @@
         id="menu_inventory_products"
         action="stock_products_action"
         sequence="5"
-        groups="custom_inventory.inventory_store,custom_inventory.inventory_hod,custom_inventory.inventory_bm,custom_inventory.inventory_admin"/>
+        groups="custom_inventory.inventory_store,custom_inventory.inventory_procurement,custom_inventory.inventory_hod,custom_inventory.inventory_bm,custom_inventory.inventory_admin"/>
 </odoo>

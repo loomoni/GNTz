@@ -117,5 +117,5 @@
         id="menu_asset_reevaluation"
         action="action_asset_reevaluation"
         sequence="7"
-        groups="asset_management.asset_lm,asset_management.asset_fm,asset_management.asset_dm"/>
+        groups="asset_management.asset_procurement,asset_management.asset_lm,asset_management.asset_fm,asset_management.asset_dm"/>
 </odoo>

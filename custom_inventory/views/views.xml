@@ -37,16 +37,16 @@
             <form>
                 <header>
                     <button name="button_submit" states="draft" string="Submit" type="object" class="btn-primary"
-                            groups="custom_inventory.inventory_staff"/>
+                            groups="custom_inventory.inventory_hod,custom_inventory.inventory_staff"/>
                     <button name="button_procurement" states="submit" string="Review" type="object" class="btn-primary"
-                            groups="custom_inventory.inventory_hod"/>
+                            groups="custom_inventory.inventory_procurement"/>
                     <button name="button_approve" states="procurement" string="Approve" type="object"
                             class="btn-primary"
-                            groups="custom_inventory.inventory_hod"/>
+                            groups="custom_inventory.inventory_hod,custom_inventory.inventory_procurement"/>
                     <button name="button_reset" states="rejected" string="Review" type="object" class="btn-primary"
-                            groups="custom_inventory.inventory_hod"/>
-                    <button name="button_reject" states="submit" string="Reject" type="object" class="btn-primary"
-                            groups="custom_inventory.inventory_hod"/>
+                            groups="custom_inventory.inventory_procurement"/>
+                    <button name="button_reject" states="submit,procurement" string="Reject" type="object" class="btn-primary"
+                            groups="custom_inventory.inventory_hod,custom_inventory.inventory_procurement"/>
                     <field name="state" widget="statusbar"
                            statusbar_visible="draft,submit,procurement,approved,rejected"/>
                 </header>
@@ -143,7 +143,7 @@
     </record>
 
     <menuitem name="Inventory Management" id="custom_inventory.menu_root"
-              groups="custom_inventory.inventory_staff,custom_inventory.inventory_store,custom_inventory.inventory_hod,custom_inventory.inventory_bm,custom_inventory.inventory_admin"/>
+              groups="custom_inventory.inventory_staff,custom_inventory.inventory_procurement,custom_inventory.inventory_store,custom_inventory.inventory_hod,custom_inventory.inventory_bm,custom_inventory.inventory_admin"/>
 
     <menuitem
             parent="custom_inventory.menu_root"
@@ -151,7 +151,7 @@
             id="menu_inventory_stockin"
             action="action_inventory_stockin"
             sequence="3"
-            groups="custom_inventory.inventory_store,custom_inventory.inventory_hod,custom_inventory.inventory_bm,custom_inventory.inventory_admin"/>
+            groups="custom_inventory.inventory_procurement,custom_inventory.inventory_store,custom_inventory.inventory_hod,custom_inventory.inventory_bm,custom_inventory.inventory_admin"/>
 
         <menuitem
             parent="custom_inventory.menu_root"
@@ -159,5 +159,5 @@
             id="menu_inventory_adjustment"
             action="stock.action_inventory_form"
             sequence="4"
-            groups="custom_inventory.inventory_store,custom_inventory.inventory_hod,custom_inventory.inventory_bm,custom_inventory.inventory_admin"/>
+            groups="custom_inventory.inventory_procurement,custom_inventory.inventory_store,custom_inventory.inventory_hod,custom_inventory.inventory_bm,custom_inventory.inventory_admin"/>
 </odoo>

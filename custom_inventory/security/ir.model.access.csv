@@ -1,30 +1,34 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_inventory_stocking_staff,Stockin Staff Group,model_inventory_stockin,inventory_staff,1,0,0,0
+access_inventory_stocking_staff,Stockin Staff Group,model_inventory_stockin,inventory_staff,1,1,1,0
 access_inventory_stocking_store,Stockin Store Group,model_inventory_stockin,inventory_store,1,1,1,1
-access_inventory_stocking_hod,Stockin HOD Group,model_inventory_stockin,inventory_hod,1,1,0,1
-access_inventory_stocking_bm,Stockin BM Group,model_inventory_stockin,inventory_bm,1,1,0,1
+access_inventory_stocking_hod,Stockin HOD Group,model_inventory_stockin,inventory_hod,1,1,1,1
+access_inventory_stocking_bm,Stockin BM Group,model_inventory_stockin,inventory_bm,1,1,1,1
 access_inventory_stocking_admin,Stockin ADMIN Group,model_inventory_stockin,inventory_admin,1,1,1,1
+access_inventory_stocking_inventory_procurement,Stockin inventory procurement Group,model_inventory_stockin,inventory_procurement,1,1,1,1
 
-access_inventory_stocking_lines_staff,Stockin Lines Staff Group,model_inventory_stockin_lines,inventory_staff,1,0,0,0
+access_inventory_stocking_lines_staff,Stockin Lines Staff Group,model_inventory_stockin_lines,inventory_staff,1,1,1,0
 access_inventory_stocking_lines_store,Stockin Lines Store Group,model_inventory_stockin_lines,inventory_store,1,1,1,1
-access_inventory_stocking_lines_hod,Stockin Lines HOD Group,model_inventory_stockin_lines,inventory_hod,1,1,0,1
-access_inventory_stocking_lines_bm,Stockin Lines BM Group,model_inventory_stockin_lines,inventory_bm,1,1,0,1
+access_inventory_stocking_lines_hod,Stockin Lines HOD Group,model_inventory_stockin_lines,inventory_hod,1,1,1,1
+access_inventory_stocking_lines_bm,Stockin Lines BM Group,model_inventory_stockin_lines,inventory_bm,1,1,1,1
 access_inventory_stocking_lines_admin,Stockin Lines ADMIN Group,model_inventory_stockin_lines,inventory_admin,1,1,1,1
+access_inventory_stocking_lines_inventory_procurement,Stockin Lines inventoryprocurement Group,model_inventory_stockin_lines,inventory_procurement,1,1,1,1
 
 access_inventory_stockout_staff,Stockout Staff Group,model_inventory_stockout,inventory_staff,1,1,1,0
 access_inventory_stockout_store,Stockout Store Group,model_inventory_stockout,inventory_store,1,1,1,1
 access_inventory_stockout_hod,Stockout HOD Group,model_inventory_stockout,inventory_hod,1,1,1,1
 access_inventory_stockout_bm,Stockout BM Group,model_inventory_stockout,inventory_bm,1,1,1,1
 access_inventory_stockout_admin,Stockout ADMIN Group,model_inventory_stockout,inventory_admin,1,1,1,1
+access_inventory_stockout_inventory_procurement,Stockout inventory procurement Group,model_inventory_stockout,inventory_procurement,1,1,1,1
 
 access_inventory_stockout_line_staff,Stockout Line Staff Group,model_inventory_stockout_lines,inventory_staff,1,1,1,0
 access_inventory_stockout_line_store,Stockout Line Store Group,model_inventory_stockout_lines,inventory_store,1,1,1,1
 access_inventory_stockout_line_hod,Stockout Line HOD Group,model_inventory_stockout_lines,inventory_hod,1,1,1,1
 access_inventory_stockout_line_bm,Stockout Line BM Group,model_inventory_stockout_lines,inventory_bm,1,1,1,1
-access_inventory_stockout_line_admin,Stockout Line ADMIN Group,model_inventory_stockout_lines,inventory_admin,1,1,1,1
+access_inventory_stockout_line_inventory_procurement,Stockout Line inventory procurement Group,model_inventory_stockout_lines,inventory_procurement,1,1,1,1
 
-access_inventory_product_template_staff,Product Template Staff Group,product.model_product_template,inventory_staff,1,0,0,0
+access_inventory_product_template_staff,Product Template Staff Group,product.model_product_template,inventory_staff,1,1,1,0
 access_inventory_product_template_store,Product Template Store Group,product.model_product_template,inventory_store,1,1,1,1
 access_inventory_product_template_hod,Product Template HOD Group,product.model_product_template,inventory_hod,1,1,1,1
 access_inventory_product_template_bm,Product Template BM Group,product.model_product_template,inventory_bm,1,1,1,1
 access_inventory_product_template_admin,Product Template ADMIN Group,product.model_product_template,inventory_admin,1,1,1,1
+access_inventory_product_template_inventory_procurement,Product Template inventory procurement Group,product.model_product_template,inventory_procurement,1,1,1,1
