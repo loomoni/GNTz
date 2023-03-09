@@ -67,7 +67,6 @@ class AssetReportingDamage(models.Model):
                 for reported_asset in asset.name:
                     for asset_name in reported_asset.asset_ids:
                         asset_name.write({'state': 'repair'})
-
             self.write({'state': 'procurement'})
             return True
         else:

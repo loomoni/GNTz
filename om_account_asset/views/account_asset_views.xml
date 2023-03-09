@@ -165,7 +165,7 @@
                     <button name="set_to_draft" string="Set to Draft" type="object"
                             attrs="{'invisible': ['|', ('entry_count', '!=', 0), ('state', '!=', 'open')]}"/>
                     <button name="%(action_asset_modify)d" states="open" string="Modify Depreciation" type="action"/>
-                    <field name="state" widget="statusbar" statusbar_visible="draft,open,inuse,repair,close"/>
+                     <field name="state" widget="statusbar" statusbar_visible="draft,open,inuse,repair,close"/>
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
