@@ -17,17 +17,17 @@ class AssetsInherit(models.Model):
         ("procured", "Procured"),
     ]
 
-    # SELECTION = [
-    #     ('draft', 'Draft'),
-    #     ('open', 'Unassigned'),
-    #     ('inuse', 'Running'),
-    #     ('repair', 'Repair'),
-    #     ('close', 'Close')
-    # ]
-    # state = fields.Selection(SELECTION, 'Status', required=True, copy=False, default='draft',
-    #     help="When an asset is created, the status is 'Draft'.\n"
-    #         "If the asset is confirmed, the status goes in 'Running' and the depreciation lines can be posted in the accounting.\n"
-    #         "You can manually close an asset when the depreciation is over. If the last line of depreciation is posted, the asset automatically goes in that status.")
+    SELECTION = [
+        ('draft', 'Draft'),
+        ('open', 'Unassigned'),
+        ('inuse', 'Running'),
+        ('repair', 'Repair'),
+        ('close', 'Close')
+    ]
+    state = fields.Selection(SELECTION, 'Status', required=True, copy=False, default='draft',
+                             help="When an asset is created, the status is 'Draft'.\n"
+                                  "If the asset is confirmed, the status goes in 'Running' and the depreciation lines can be posted in the accounting.\n"
+                                  "You can manually close an asset when the depreciation is over. If the last line of depreciation is posted, the asset automatically goes in that status.")
 
     @api.depends('department_id')
     def _default_serial_no(self):

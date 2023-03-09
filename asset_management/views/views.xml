@@ -26,11 +26,11 @@
             <xpath expr="//field[@name='department_id']" position="after">
                 <field name="branch"/>
             </xpath>
-<!--            <xpath expr="/form/*" position="attributes">-->
-<!--                <header>-->
-<!--                    <field name="state" widget="statusbar" statusbar_visible="draft,open,inuse,repair,close"/>-->
-<!--                </header>-->
-<!--            </xpath>-->
+            <xpath expr="//form/header" position="replace">
+                <header>
+                     <field name="state" widget="statusbar" statusbar_visible="draft,open,inuse,repair,close"/>
+                </header>
+            </xpath>
         </field>
     </record>
 
