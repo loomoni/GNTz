@@ -197,7 +197,7 @@
                     <button name="button_am_manager_review" states="procurement" string="AD/Country Director Review"
                             type="object"
                             class="oe_highlight"
-                            groups="asset_management.asset_procurement"/>
+                            groups="asset_management.asset_dm,asset_management.asset_cd"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,line_manager,procurement,adm_cd"/>
                 </header>
                 <sheet>

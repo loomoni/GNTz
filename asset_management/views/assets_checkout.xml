@@ -8,6 +8,9 @@
         <field name="arch" type="xml">
             <tree string="Asset Transfer">
                 <field name="name"/>
+                <field name="department"/>
+                <field name="asset_name"/>
+                <field name="state"/>
             </tree>
         </field>
     </record>
@@ -19,23 +22,31 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="button_procurement_review" states="draft" string="Review" type="object"
+                    <button name="button_submit" states="draft" string="Submit Report"
+                            type="object"
+                            class="oe_highlight"
+                            groups="asset_management.ict_hq_officer,asset_management.branch_staff,asset_management.all_staff,asset_management.asset_lm,asset_management.asset_dm"/>
+                    <button name="button_line_manager_review" states="submit" string="Line Manager Review"
+                            type="object"
+                            class="oe_highlight"
+                            groups="asset_management.asset_dm"/>
+                    <button name="button_procurement_review" states="line_manager" string="Review" type="object"
                             class="oe_highlight"
                             groups="asset_management.asset_procurement"/>
                     <button name="button_am_manager_review" states="procurement" string="AD/Country Director Review"
                             type="object"
                             class="oe_highlight"
-                            groups="asset_management.asset_procurement"/>
-                    <button name="button_am_manager_review" states="adm_cd" string="AD/Country Director Review"
+                            groups="asset_management.asset_cd,asset_management.asset_dm"/>
+<!--                    <button name="button_am_manager_review" states="procurement" string="Director Review"-->
+<!--                            type="object"-->
+<!--                            class="oe_highlight"-->
+<!--                            groups="asset_management.asset_cd"/>-->
+                    <button name="button_confirm_receipt" states="adm_cd" string="Director Review"
                             type="object"
                             class="oe_highlight"
-                            groups="asset_management.asset_procurement"/>
-                    <button name="button_am_manager_review" states="country_director" string="Director Review"
-                            type="object"
-                            class="oe_highlight"
-                            groups="asset_management.asset_cd"/>
+                            groups="asset_management.ict_hq_officer,asset_management.branch_staff,asset_management.all_staff,asset_management.asset_lm,asset_management.asset_dm"/>
                     <field name="state" widget="statusbar"
-                           statusbar_visible="draft,procurement,adm_cd,country_director,staff"/>
+                           statusbar_visible="draft,submit,line_manager,procurement,adm_cd,country_director,staff"/>
                 </header>
                 <sheet>
                     <group string="Employee details">
@@ -52,7 +63,8 @@
                     </group>
                     <group string="Asset information">
                         <group>
-                            <field name="asset_name"/>
+                            <field name="asset_category"/>
+                            <field name="asset_name" attrs="{'invisible': [('state', 'in', ('draft', 'submit'))]}"/>
                             <field name="identification_number"/>
                             <field name="purpose"/>
                         </group>
@@ -64,13 +76,16 @@
                     </group>
                     <group>
                         <group>
-                            <strong><u>Remarks:</u></strong>
+                            <strong>
+                                <u>Remarks:</u>
+                            </strong>
                         </group>
                         <group></group>
                         <group>
-                            <p>1. I here by acknowledging the return of the above-mentioned Asset/Assets. I here by acknowledging the return of the above-mentioned Asset/Assets.</p>
-<!--                            <p>I here by acknowledging the return of the above-mentioned Asset/Assets.</p>-->
-<!--                            <p>I here by acknowledging the return of the above-mentioned Asset/Assets.</p>-->
+                            <p>1. Once asset is in staff custody, it is staff responsibility to properly manage them and to ensure safety and good condition at all times.
+                            </p>
+                            <!--                            <p>I here by acknowledging the return of the above-mentioned Asset/Assets.</p>-->
+                            <!--                            <p>I here by acknowledging the return of the above-mentioned Asset/Assets.</p>-->
                         </group>
                     </group>
                 </sheet>

@@ -208,6 +208,8 @@ class AssetReportingLost(models.Model):
 
     @api.multi
     def button_am_manager_review(self):
+        for asset in self.equipment_name:
+            asset.write({'state': 'close'})
         self.write({'state': 'adm_cd'})
         return True
 

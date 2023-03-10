@@ -7,12 +7,17 @@ class AccountAssetCheckout(models.Model):
 
     SELECTION = [
         ("draft", "Draft"),
-        # ("line_manager", "Line Manager"),
+        ("submit", "Submitted"),
+        ("line_manager", "Line Manager"),
         ("procurement", "Procurement"),
-        ("adm_cd", "AD Manager"),
-        ("country_director", "Country Director"),
+        ("adm_cd", "AD Manager/ Country Director"),
         ("staff", "Confirm Receipt"),
     ]
+
+    @api.multi
+    def button_submit(self):
+        self.write({'state': 'submit'})
+        return True
 
     @api.multi
     def button_line_manager_review(self):
@@ -22,11 +27,18 @@ class AccountAssetCheckout(models.Model):
     @api.multi
     def button_procurement_review(self):
         self.write({'state': 'procurement'})
+        for asset in self.asset_name:
+            asset.write({'state': 'inuse'})
         return True
 
     @api.multi
     def button_am_manager_review(self):
         self.write({'state': 'adm_cd'})
+        return True
+
+    @api.multi
+    def button_confirm_receipt(self):
+        self.write({'state': 'staff'})
         return True
 
     name = fields.Many2one(comodel_name='hr.employee', string='Employee Name',
@@ -40,7 +52,8 @@ class AccountAssetCheckout(models.Model):
     email = fields.Char(string='Email', related='name.work_email')
 
     # Asset information
-    asset_name = fields.Many2one(comodel_name="account.asset.asset", string="Asset")
+    asset_category = fields.Many2one(comodel_name="account.asset.category", string="Asset Name")
+    asset_name = fields.Many2one(comodel_name="account.asset.asset", string="Assign Asset")
     identification_number = fields.Char(string="Code", related="asset_name.code")
     taken_date = fields.Date(string="Taken Date")
     returning_date = fields.Date(string="Returning Date")

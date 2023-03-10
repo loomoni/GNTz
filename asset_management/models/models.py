@@ -29,11 +29,11 @@ class AssetsInherit(models.Model):
                                   "If the asset is confirmed, the status goes in 'Running' and the depreciation lines can be posted in the accounting.\n"
                                   "You can manually close an asset when the depreciation is over. If the last line of depreciation is posted, the asset automatically goes in that status.")
 
-    @api.depends('department_id')
+    @api.depends('category_id.asset_category_code')
     def _default_serial_no(self):
         x = self.env['account.asset.asset'].sudo().search_count([]) + 1
-        department = self.category_id.name
-        return 'GNTZ-' + str(department) + '-' + str(x)
+        code = self.category_id.asset_category_code
+        return 'GNTZ' + '-' + str(x)
 
     # @api.depends('department_id')
     # def _default_serial_no(self):
@@ -313,6 +313,7 @@ class AssetInherited(models.Model):
 class AssetCategoryInherited(models.Model):
     _inherit = 'account.asset.category'
 
+    asset_category_code = fields.Char(string="Category Code")
     account_depreciation_id = fields.Many2one('account.account', string='Depreciation Entries: Credit Account',
                                               required=True,
                                               domain=[('internal_type', '=', 'other'), ('deprecated', '=', False)],
