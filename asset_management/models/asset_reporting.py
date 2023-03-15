@@ -74,7 +74,7 @@ class AssetReportingDamage(models.Model):
                 asset.write({'state': 'procurement'})
                 for reported_asset in asset.name:
                     for asset_name in reported_asset.asset_ids:
-                        asset_name.write({'state': 'close'})
+                        asset_name.write({'state': 'replace'})
             self.write({'state': 'procurement'})
             return True
 

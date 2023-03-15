@@ -33,7 +33,8 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="button_staff_or_line_manager_request" states="draft" string="Submit Request" type="object"
+                    <button name="button_staff_or_line_manager_request" states="draft" string="Submit Request"
+                            type="object"
                             class="oe_highlight"
                             groups="asset_management.asset_lm,asset_management.all_staff"/>
                     <button name="button_line_manager_review" states="send_request" string="Line Manager Review"
@@ -60,15 +61,22 @@
                             <field name="id_number"/>
                         </group>
                     </group>
+                    <group string="Attachment">
+                        <field name="attachment" filename="attachment_name"/>
+                        <field name="attachment_name" invisible="1"/>
+                    </group>
                     <notebook>
                         <page string="Asset request">
-                            <field name="asset_category_ids" attrs="{'readonly': [('state', 'in', ('line_manager','procurement','assigned'))]}">
-                                 <tree editable="bottom">
-                                    <field name="name" string="Asset" options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
+                            <field name="asset_category_ids"
+                                   attrs="{'readonly': [('state', 'in', ('line_manager','procurement','assigned'))]}">
+                                <tree editable="bottom">
+                                    <field name="name" string="Asset"
+                                           options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
                                 </tree>
                             </field>
                         </page>
-                        <page string="Assets To Assign" attrs="{'invisible': [('state', 'in', ('draft', 'send_request'))]}">
+                        <page string="Assets To Assign"
+                              attrs="{'invisible': [('state', 'in', ('draft', 'send_request'))]}">
                             <field name="asset_ids" attrs="{'readonly': [('state', 'in', ('approved','unassigned'))]}"
                                    domain="[('assigned','=', False)]">
                                 <tree>
@@ -108,7 +116,7 @@
     <menuitem
             parent="asset_management.menu_root"
             id="menu_asset_assign"
-            name="Asset Custodian"
+            name="Asset Assignment"
             action="action_asset_assign"
             sequence="4"
             groups="asset_management.asset_procurement,asset_management.asset_lm,asset_management.asset_dm"/>

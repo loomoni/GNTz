@@ -17,7 +17,8 @@
                 <xpath expr="//field[@name='method_number']" position="attributes" >
                      <attribute name="string">Useful Life</attribute>
                 </xpath>
-                <xpath expr="//field[@name='name']" position="after" >
+                <xpath expr="//div[@class='oe_title']" position="after" >
+                    <group></group>
                     <group>
                         <field name="asset_category_code"/>
                     </group>

@@ -22,6 +22,7 @@ class AssetsInherit(models.Model):
         ('open', 'Unassigned'),
         ('inuse', 'Running'),
         ('repair', 'Repair'),
+        ('replace', 'Replace'),
         ('close', 'Close')
     ]
     state = fields.Selection(SELECTION, 'Status', required=True, copy=False, default='draft',
@@ -61,6 +62,7 @@ class AssetsInherit(models.Model):
     department_id = fields.Many2one('hr.department', string='Asset Location/Department', required=True,
                                     default=_default_department, store=True)
     branch = fields.Char(string='Branch', related='department_id.branch_id.name')
+    asset_id_no = fields.Char(string='ASSET ID #')
     account_id = fields.Many2one('account.account', string='Credit Account')
     journal_id = fields.Many2one('account.journal', string='Credit Account Journal')
 
@@ -236,6 +238,8 @@ class AssetAssign(models.Model):
 
     date_created = fields.Date('Date / Time', readonly=True, required=True, index=True,
                                default=fields.date.today(), store=True)
+    attachment = fields.Binary(string="Attachment", attachment=True, store=True, )
+    attachment_name = fields.Char('Attachment Name')
     assignment_no = fields.Char('Assignment No', readonly=True, store=True)
     assigned_by = fields.Many2one('res.users', 'Assigned By', default=lambda self: self.env.uid, readonly=True)
     assigned_person = fields.Many2one('hr.employee', 'Assigned Person', default=lambda self: self.env.uid, )

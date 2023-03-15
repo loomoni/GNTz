@@ -26,10 +26,14 @@
             <xpath expr="//field[@name='department_id']" position="after">
                 <field name="branch"/>
             </xpath>
+            <xpath expr="//field[@name='category_id']" position="after">
+                <field name="asset_id_no"/>
+            </xpath>
             <xpath expr="//form/header" position="replace">
                 <header>
-                    <button name="validate" states="draft" string="Confirm Asset" type="object" class="oe_highlight" groups="asset_management.asset_dm"/>
-                     <field name="state" widget="statusbar" statusbar_visible="draft,open,inuse,repair,close"/>
+                    <button name="validate" states="draft" string="Confirm Asset" type="object" class="oe_highlight"
+                            groups="asset_management.asset_dm"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,open,inuse,repair,replace,close"/>
                 </header>
             </xpath>
         </field>
