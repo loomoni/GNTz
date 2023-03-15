@@ -36,19 +36,20 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="button_submit" states="draft" string="Submit" type="object" class="btn-primary"
-                            groups="custom_inventory.inventory_hod,custom_inventory.inventory_staff"/>
-                    <button name="button_procurement" states="submit" string="Review" type="object" class="btn-primary"
-                            groups="custom_inventory.inventory_procurement"/>
-                    <button name="button_approve" states="procurement" string="Approve" type="object"
+                    <!--                    <button name="button_submit" states="draft" string="Submit" type="object" class="btn-primary"-->
+                    <!--                            groups="custom_inventory.inventory_hod,custom_inventory.inventory_staff"/>-->
+                    <!--                    <button name="button_procurement" states="submit" string="Review" type="object" class="btn-primary"-->
+                    <!--                            groups="custom_inventory.inventory_procurement"/>-->
+                    <button name="button_approve" states="draft" string="Approve" type="object"
                             class="btn-primary"
                             groups="custom_inventory.inventory_hod,custom_inventory.inventory_procurement"/>
-                    <button name="button_reset" states="rejected" string="Review" type="object" class="btn-primary"
-                            groups="custom_inventory.inventory_procurement"/>
-                    <button name="button_reject" states="submit,procurement" string="Reject" type="object" class="btn-primary"
+                    <!--                    <button name="button_reset" states="rejected" string="Review" type="object" class="btn-primary"-->
+                    <!--                            groups="custom_inventory.inventory_procurement"/>-->
+                    <button name="button_reject" states="draft" string="Reject" type="object"
+                            class="btn-primary"
                             groups="custom_inventory.inventory_hod,custom_inventory.inventory_procurement"/>
                     <field name="state" widget="statusbar"
-                           statusbar_visible="draft,submit,procurement,approved,rejected"/>
+                           statusbar_visible="draft,approved,rejected"/>
                 </header>
                 <sheet>
                     <group>
@@ -70,20 +71,30 @@
                             <field name="supplier_id"/>
                             <field name="invoice_no"/>
                         </group>
+                        <group>
+                            <field name="delivery_attachment" filename="delivery_attachment_name"/>
+                            <field name="delivery_attachment_name" invisible="1"/>
+                        </group>
                     </group>
                     <notebook>
                         <page string="Stock In Lines">
                             <field name="line_ids">
                                 <tree editable="bottom">
-                                    <field name="product_id"  options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
+                                    <field name="product_id"
+                                           options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
                                     <field name="quantity"/>
+                                    <field name="project"/>
+                                    <field name="cost"/>
                                     <field name="uom_id"/>
                                 </tree>
                                 <form>
                                     <sheet>
                                         <group>
-                                            <field name="product_id" options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
+                                            <field name="product_id"
+                                                   options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
                                             <field name="quantity"/>
+                                            <field name="project"/>
+                                            <field name="cost"/>
                                             <field name="uom_id"/>
                                         </group>
                                     </sheet>
@@ -136,11 +147,64 @@
         <field name="model">product.template</field>
         <field name="inherit_id" ref="product.product_template_only_form_view"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='type']"  position="before">
-                  <field name="department_id"/>
+            <xpath expr="//field[@name='type']" position="before">
+                <field name="department_id"/>
             </xpath>
         </field>
     </record>
+
+    <!--    Project configuration start tree view -->
+    <record id="project_configuration_tree_view" model="ir.ui.view">
+        <field name="name">project.configuration.tree.view</field>
+        <field name="model">project.configuration</field>
+        <field name="arch" type="xml">
+            <tree string="Projects">
+                <field name="name"/>
+                <field name="location"/>
+            </tree>
+        </field>
+    </record>
+
+    <!--    Project configuration form view -->
+    <record id="project_configuration_form_view" model="ir.ui.view">
+        <field name="name">project.configuration.form.view</field>
+        <field name="model">project.configuration</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                        <group>
+                            <field name="location"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!--    Project Configuration action view -->
+    <record id="action_project_configuration" model="ir.actions.act_window">
+        <field name="name">Projects</field>
+        <field name="res_model">project.configuration</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Ready to create a Projects entry?
+            </p>
+            <p>
+                Let's create a Project entry.
+            </p>
+        </field>
+    </record>
+
 
     <menuitem name="Inventory Management" id="custom_inventory.menu_root"
               groups="custom_inventory.inventory_staff,custom_inventory.inventory_procurement,custom_inventory.inventory_store,custom_inventory.inventory_hod,custom_inventory.inventory_bm,custom_inventory.inventory_admin"/>
@@ -153,5 +217,19 @@
             sequence="3"
             groups="custom_inventory.inventory_procurement,custom_inventory.inventory_store,custom_inventory.inventory_hod,custom_inventory.inventory_bm,custom_inventory.inventory_admin"/>
 
+    <menuitem
+            parent="custom_inventory.menu_root"
+            name="Configuration"
+            id="menu_inventory_configuration"
+            sequence="9"
+            groups="custom_inventory.inventory_procurement,custom_inventory.inventory_store,custom_inventory.inventory_hod,custom_inventory.inventory_bm,custom_inventory.inventory_admin"/>
+
+    <menuitem
+            parent="menu_inventory_configuration"
+            name="Projects"
+            id="project_menu_id"
+            action="action_project_configuration"
+            sequence="1"
+            groups="custom_inventory.inventory_procurement,custom_inventory.inventory_bm,custom_inventory.inventory_admin"/>
 
 </odoo>

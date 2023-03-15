@@ -32,6 +32,8 @@ class InventoryStockIn(models.Model):
             return employee.id
 
     name = fields.Char('Serial No', required=True, default=_default_reference)
+    delivery_attachment = fields.Binary(string="Delivery Attachment", attachment=True, store=True, )
+    delivery_attachment_name = fields.Char('Delivery Attachment Name')
     delivery_note_no = fields.Char('Delivery Note No', required=True)
     goods_received_date = fields.Date(string="Goods Received Date", required=True, default=fields.Date.today())
     receiver_id = fields.Many2one('hr.employee', string="Received By", required=True, default=_default_receiver)
@@ -85,11 +87,19 @@ class InventoryStockInLines(models.Model):
 
     product_id = fields.Many2one('product.template', string="Product", required=True)
     quantity = fields.Float('Quantity', digits=(12, 2), required=True, default=1)
+    project = fields.Many2one(comodel_name='project.configuration', string='Project')
+    cost = fields.Float('Total Cost', digits=(12, 2), required=True, default=1)
+    received_date = fields.Date('Received Date', compute="compute_date")
     uom_id = fields.Many2one('uom.uom', string='Unit of Measure',
                              default=lambda self: self.env['uom.uom'].search([], limit=1, order='id'))
     stockin_id = fields.Many2one('inventory.stockin', string="Stock In")
     state = fields.Selection(STATE_SELECTION, index=True, track_visibility='onchange', related='stockin_id.state',
                              store=True)
+
+    @api.depends('stockin_id.goods_received_date')
+    def compute_date(self):
+        for rec in self:
+            rec.received_date = rec.stockin_id.goods_received_date
 
 
 class InventoryStockOut(models.Model):
@@ -101,6 +111,7 @@ class InventoryStockOut(models.Model):
     STATE_SELECTION = [
         ("draft", "Draft"),
         ("requested", "Requested"),
+        ("line_manager", "Line Manager Reviewed"),
         ("checked", "Procurement Checked"),
         ("issued", "Issued Out"),
         ("rejected", "Rejected")
@@ -123,7 +134,7 @@ class InventoryStockOut(models.Model):
             return employee.department_id.id
 
     name = fields.Char('Serial No', required=True, default=_default_reference)
-    # outlet_name = fields.Char('Outlet Name', required=True)
+
     request_date = fields.Date(string="Request Date", required=True, default=fields.Date.today())
     requester_id = fields.Many2one('hr.employee', string="Requested By", required=True, default=_default_requester,
                                    readonly=True, store=True, states={'draft': [('readonly', False)]})
@@ -141,8 +152,18 @@ class InventoryStockOut(models.Model):
         return True
 
     @api.multi
+    def button_line_manager(self):
+        self.write({'state': 'line_manager'})
+        return True
+
+    @api.multi
     def button_checked(self):
+        for line in self.line_ids:
+            if line.issued_quantity <= 0:
+                raise ValidationError(_("You can't issue 0 goods"))
         self.write({'state': 'checked'})
+        for line in self.line_ids:
+            line.product_id._amount_quantity()
         return True
 
     @api.multi
@@ -185,14 +206,22 @@ class InventoryStockOutLines(models.Model):
     ]
 
     product_id = fields.Many2one('product.template', string="Product", required=True)
+    request_reason = fields.Text(string='Purpose', required=True)
+    project = fields.Many2one(comodel_name='project.configuration', string='Project', required=True)
     requested_quantity = fields.Float('Requested Quantity', digits=(12, 2), required=True, default=1)
     issued_quantity = fields.Float('Issued Quantity', digits=(12, 2))
+    requested_date = fields.Date(string='Requested Date', compute="requested_date_compute")
     balance_stock = fields.Float('Balance Stock', digits=(12, 2), required=True)
     uom_id = fields.Many2one('uom.uom', string='Unit of Measure',
                              default=lambda self: self.env['uom.uom'].search([], limit=1, order='id'))
     stockout_id = fields.Many2one('inventory.stockout', string="Stock Out")
     state = fields.Selection(STATE_SELECTION, index=True, track_visibility='onchange', related='stockout_id.state',
                              store=True)
+
+    @api.depends('stockout_id.request_date')
+    def requested_date_compute(self):
+        for rec in self:
+            rec.requested_date = rec.stockout_id.request_date
 
     @api.onchange('product_id')
     @api.depends('product_id')
@@ -273,33 +302,61 @@ class InventoryProductStockAdjustment(models.Model):
     STATE_SELECTION = [
         ("draft", "Draft"),
         ("submit", "Submitted"),
+        ("line_manager", "Line Manager Reviewed"),
+        ("verify", "Procurement Verified"),
         ("approved", "Approved"),
         ("rejected", "Rejected")
     ]
 
     @api.multi
     def button_submit(self):
+        for line in self.stock_adjustment_line_ids:
+            if line.adjustment <= 0:
+                raise ValidationError(_("You should specify adjusted value amount"))
+            line.state = "submit"
         self.write({'state': 'submit'})
         return True
 
     @api.multi
-    def button_approve(self):
+    def button_line_manager(self):
+        for line in self.stock_adjustment_line_ids:
+            line.state = "line_manager"
+        self.write({'state': 'line_manager'})
+        return True
+
+    @api.multi
+    def button_verify(self):
         self.write({'state': 'approved'})
+        for line in self.stock_adjustment_line_ids:
+            line.state = "approved"
         for line in self.stock_adjustment_line_ids:
             line.product_id._amount_quantity()
         return True
 
     @api.multi
     def button_review(self):
+        for line in self.stock_adjustment_line_ids:
+            line.state = "draft"
         self.write({'state': 'draft'})
         return True
 
     @api.multi
+    def button_approve(self):
+        for line in self.stock_adjustment_line_ids:
+            line.state = "approved"
+        self.write({'state': 'approved'})
+        return True
+
+    @api.multi
     def button_reject(self):
+        for line in self.stock_adjustment_line_ids:
+            line.state = "rejected"
         self.write({'state': 'rejected'})
         return True
 
     name = fields.Char(string='Inventory Reference', required=True)
+    attachment = fields.Binary(string="Attachment", attachment=True, store=True, )
+    attachment_name = fields.Char('Attachment Name')
     date = fields.Date(string='Date')
     employee = fields.Many2one(comodel_name='hr.employee', string='Employee')
     state = fields.Selection(STATE_SELECTION, index=True, track_visibility='onchange',
@@ -313,9 +370,35 @@ class InventoryProductStockAdjustmentLines(models.Model):
     _description = "Stock Adjustment Lines"
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
+    STATE_SELECTION = [
+        ("draft", "Draft"),
+        ("submit", "Submitted"),
+        ("line_manager", "Line Manager Reviewed"),
+        ("verify", "Procurement Verified"),
+        ("approved", "Approved"),
+        ("rejected", "Rejected")
+    ]
+
+    state = fields.Selection(STATE_SELECTION, index=True, track_visibility='onchange',
+                             readonly=True, required=True, copy=False, default='draft', store=True)
     product_id = fields.Many2one(comodel_name="product.template", string="Product")
     Actual_value = fields.Float(string="Available", related='product_id.balance_stock')
     adjustment = fields.Float(string="Adjustment")
     reason = fields.Text(string="Adjustment Reason")
+    adjustment_date = fields.Date(string="Adjustment Date", compute="adjustment_data")
     product_line_id = fields.Many2one(comodel_name='inventory.stock.adjustment', string="Stock Adjustment",
                                       required=False)
+
+    @api.depends('product_line_id.date')
+    def adjustment_data(self):
+        for rec in self:
+            rec.adjustment_date = rec.product_line_id.date
+
+
+class ProjectConfiguration(models.Model):
+    _name = "project.configuration"
+    _description = "Projects Configurations"
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+
+    name = fields.Char(string="Project Name")
+    location = fields.Char(string="Project Location")

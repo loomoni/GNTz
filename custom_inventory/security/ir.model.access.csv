@@ -37,3 +37,5 @@ access_inventory_product_template_inventory_procurement,Product Template invento
 access_inventory_inventory_stock_adjustment,Product inventory stock adjustment Group,model_inventory_stock_adjustment,,1,1,1,1
 
 access_inventory_inventory_stock_adjustment_line,Product inventory stock adjustment line Group,model_inventory_stock_adjustment_line,,1,1,1,1
+
+access_inventory_project_configuration,Product inventory project configuration,model_project_configuration,,1,1,1,1

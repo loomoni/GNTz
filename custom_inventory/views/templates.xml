@@ -38,20 +38,22 @@
                 <header>
                     <button name="button_requested" states="draft" string="Request" type="object" class="btn-primary"
                             groups="custom_inventory.inventory_hod"/>
-                    <button name="button_checked" states="requested" string="Issue Goods" type="object"
+                    <button name="button_line_manager" states="requested" string="Line Manager Review" type="object"
+                            class="btn-primary"
+                            groups="custom_inventory.inventory_hod"/>
+                    <button name="button_checked" states="line_manager" string="Issue Goods" type="object"
                             class="btn-primary"
                             groups="custom_inventory.inventory_procurement"/>
                     <button name="button_issue" states="checked" string="Confirm Receipt" type="object"
                             class="btn-primary"
                             groups="custom_inventory.inventory_hod,custom_inventory.inventory_procurement"/>
-                    <button name="button_reject" states="requested,checked" string="Reject" type="object"
+                    <button name="button_reject" states="line_manager,requested,checked" string="Reject" type="object"
                             class="btn-primary"
                             groups="custom_inventory.inventory_procurement,custom_inventory.inventory_hod"/>
                     <button name="button_reset" states="requested" string="Review" type="object" class="btn-primary"
                             groups="custom_inventory.inventory_procurement"/>
-                    <!--                    <button name="button_checked" states="requested" string="Issue Goods" type="object" class="btn-primary"-->
-                    <!--                            groups="custom_inventory.inventory_procurement"/>-->
-                    <field name="state" widget="statusbar" statusbar_visible="draft,requested,checked,issued,rejected"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,requested,line_manager,checked,issued,rejected"/>
                 </header>
                 <sheet>
                     <group>
@@ -74,6 +76,8 @@
                                            options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
                                     <field name="balance_stock" attrs="{'readonly':[('state','in','issued')]}"/>
                                     <field name="requested_quantity" attrs="{'readonly':[('state','in','issued')]}"/>
+                                    <field name="request_reason" attrs="{'readonly':[('state','in','issued')]}"/>
+                                    <field name="project" attrs="{'readonly':[('state','in','issued')]}"/>
                                     <field name="state" invisible="1" attrs="{'readonly':[('state','in','issued')]}"/>
                                     <field name="issued_quantity"
                                            attrs="{'readonly':[('state','in',['draft','checked','issued'])]}"/>
@@ -133,8 +137,8 @@
         <field name="model">product.template</field>
         <field name="inherit_id" ref="product.product_template_only_form_view"/>
         <field name="arch" type="xml">
-             <xpath expr="//notebook/page[3]" position="after">
-             </xpath>
+            <xpath expr="//notebook/page[3]" position="after">
+            </xpath>
             <xpath expr="//notebook/page[3]" position="after">
                 <page string="Inventory">
                     <group>
@@ -148,6 +152,9 @@
                     <field name="stockin_ids" readonly="1">
                         <tree create="false">
                             <field name="quantity"/>
+                            <field name="project"/>
+                            <field name="cost"/>
+                            <field name="received_date"/>
                             <field name="uom_id"/>
                             <field name="state"/>
                         </tree>
@@ -155,6 +162,9 @@
                             <sheet>
                                 <group>
                                     <field name="quantity"/>
+                                    <field name="project"/>
+                                    <field name="cost"/>
+                                    <field name="received_date"/>
                                     <field name="uom_id"/>
                                     <field name="state"/>
                                 </group>
@@ -167,6 +177,9 @@
                         <tree create="false">
                             <field name="requested_quantity"/>
                             <field name="issued_quantity"/>
+                            <field name="requested_date"/>
+                            <field name="request_reason"/>
+                            <field name="project"/>
                             <field name="uom_id"/>
                             <field name="state"/>
                         </tree>
@@ -175,6 +188,9 @@
                                 <group>
                                     <field name="requested_quantity"/>
                                     <field name="issued_quantity"/>
+                                    <field name="requested_date"/>
+                                    <field name="request_reason"/>
+                                    <field name="project"/>
                                     <field name="uom_id"/>
                                     <field name="state"/>
                                 </group>
@@ -187,12 +203,16 @@
                         <tree create="false">
                             <field name="adjustment" string="Adjusted Quantity"/>
                             <field name="reason"/>
+                            <field name="adjustment_date"/>
+                            <field name="state"/>
                         </tree>
                         <form>
                             <sheet>
                                 <group>
                                     <field name="adjustment" string="Adjusted Quantity"/>
                                     <field name="reason"/>
+                                    <field name="adjustment_date"/>
+                                    <field name="state"/>
                                 </group>
                             </sheet>
                         </form>
