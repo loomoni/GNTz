@@ -23,9 +23,9 @@
         <field name="model">account.asset.asset</field>
         <field name="inherit_id" ref="om_account_asset.view_account_asset_asset_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='department_id']" position="after">
-                <field name="branch"/>
-            </xpath>
+<!--            <xpath expr="//field[@name='department_id']" position="after">-->
+<!--                <field name="branch"/>-->
+<!--            </xpath>-->
             <xpath expr="//field[@name='category_id']" position="after">
                 <field name="asset_id_no"/>
             </xpath>
