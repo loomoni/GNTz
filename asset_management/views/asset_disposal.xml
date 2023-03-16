@@ -8,9 +8,9 @@
                  <xpath expr="//form/header/button[@name='validate']" position="replace" >
                    <button name="validate" string="Confirm" type="object" states="draft" class="oe_highlight" groups="asset_management.asset_dm,asset_management.asset_cd"/>
                 </xpath>
-                <xpath expr="//form/header/button[@name='set_to_close']" position="replace" >
-                   <button name="set_to_close" string="Sell or Dispose" type="object" class="oe_highlight" attrs="{'invisible': True}"/>
-                </xpath>
+<!--                <xpath expr="//form/header/button[@name='set_to_close']" position="replace" >-->
+<!--                   <button name="set_to_close" string="Sell or Dispose" type="object" class="oe_highlight" attrs="{'invisible': True}"/>-->
+<!--                </xpath>-->
                 <xpath expr="//field[@name='date']" position="attributes">
                    <attribute name="string">Purchase Date</attribute>
                 </xpath>
