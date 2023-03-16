@@ -87,6 +87,7 @@ class InventoryStockInLines(models.Model):
 
     product_id = fields.Many2one('product.template', string="Product", required=True)
     quantity = fields.Float('Quantity', digits=(12, 2), required=True, default=1)
+    department = fields.Many2one(comodel_name='hr.department', string='Department')
     project = fields.Many2one(comodel_name='project.configuration', string='Project')
     cost = fields.Float('Total Cost', digits=(12, 2), required=True, default=1)
     received_date = fields.Date('Received Date', compute="compute_date")
@@ -206,12 +207,14 @@ class InventoryStockOutLines(models.Model):
     ]
 
     product_id = fields.Many2one('product.template', string="Product", required=True)
+    department = fields.Many2one(comodel_name='hr.department', string='Department')
     request_reason = fields.Text(string='Purpose', required=True)
     project = fields.Many2one(comodel_name='project.configuration', string='Project', required=True)
     requested_quantity = fields.Float('Requested Quantity', digits=(12, 2), required=True, default=1)
     issued_quantity = fields.Float('Issued Quantity', digits=(12, 2))
     requested_date = fields.Date(string='Requested Date', compute="requested_date_compute")
     balance_stock = fields.Float('Balance Stock', digits=(12, 2), required=True)
+    balance_stock_department = fields.Float('Balance Department', digits=(12, 2), required=True)
     uom_id = fields.Many2one('uom.uom', string='Unit of Measure',
                              default=lambda self: self.env['uom.uom'].search([], limit=1, order='id'))
     stockout_id = fields.Many2one('inventory.stockout', string="Stock Out")
@@ -228,6 +231,12 @@ class InventoryStockOutLines(models.Model):
     def onchange_product_id(self):
         if self.product_id:
             self.balance_stock = self.product_id.balance_stock
+
+    @api.onchange('department', 'product_id')
+    @api.depends('department', 'product_id')
+    def onchange_department(self):
+        if self.department:
+            self
 
     @api.onchange('requested_quantity')
     @api.depends('requested_quantity')

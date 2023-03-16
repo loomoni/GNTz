@@ -6,7 +6,6 @@
         <field name="arch" type="xml">
             <tree string="Stock Out">
                 <field name="name"/>
-                <!--              <field name="outlet_name"/>-->
                 <field name="request_date"/>
                 <field name="requester_id"/>
                 <field name="state"/>
@@ -63,7 +62,6 @@
                             <field name="department_id"/>
                         </group>
                         <group>
-                            <!--                            <field name="outlet_name" />-->
                             <field name="requester_id"/>
                             <field name="issuer_id"/>
                         </group>
@@ -73,6 +71,8 @@
                             <field name="line_ids">
                                 <tree editable="bottom">
                                     <field name="product_id" attrs="{'readonly':[('state','in','issued')]}"
+                                           options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
+                                    <field name="department" attrs="{'readonly':[('state','in','issued')]}"
                                            options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
                                     <field name="balance_stock" attrs="{'readonly':[('state','in','issued')]}"/>
                                     <field name="requested_quantity" attrs="{'readonly':[('state','in','issued')]}"/>
@@ -86,6 +86,7 @@
                                     <sheet>
                                         <group>
                                             <field name="product_id"/>
+                                            <field name="department"/>
                                             <field name="balance_stock"/>
                                             <field name="requested_quantity"/>
                                             <field name="issued_quantity"/>
@@ -152,6 +153,7 @@
                     <field name="stockin_ids" readonly="1">
                         <tree create="false">
                             <field name="quantity"/>
+                            <field name="department"/>
                             <field name="project"/>
                             <field name="cost"/>
                             <field name="received_date"/>
@@ -163,6 +165,7 @@
                                 <group>
                                     <field name="quantity"/>
                                     <field name="project"/>
+                                    <field name="department"/>
                                     <field name="cost"/>
                                     <field name="received_date"/>
                                     <field name="uom_id"/>
