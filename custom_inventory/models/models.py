@@ -34,7 +34,7 @@ class InventoryStockIn(models.Model):
     name = fields.Char('Serial No', required=True, default=_default_reference)
     delivery_attachment = fields.Binary(string="Delivery Attachment", attachment=True, store=True, )
     delivery_attachment_name = fields.Char('Delivery Attachment Name')
-    delivery_note_no = fields.Char('Delivery Note No', required=True)
+    delivery_note_no = fields.Char('Delivery Note No', required=False)
     goods_received_date = fields.Date(string="Goods Received Date", required=True, default=fields.Date.today())
     receiver_id = fields.Many2one('hr.employee', string="Received By", required=True, default=_default_receiver)
     department_id = fields.Many2one('hr.department', string='Department', required=False)
