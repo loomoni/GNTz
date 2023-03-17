@@ -37,8 +37,6 @@ class InventoryStockIn(models.Model):
     delivery_note_no = fields.Char('Delivery Note No', required=False)
     goods_received_date = fields.Date(string="Goods Received Date", required=True, default=fields.Date.today())
     receiver_id = fields.Many2one('hr.employee', string="Received By", required=True, default=_default_receiver)
-    department_id = fields.Char(string='Department', compute="department_compute")
-    project_id = fields.Char(string='Project', compute="project_compute")
     supplier_id = fields.Many2one('res.partner', string="Supplier", domain=[('supplier', '=', True)])
     purchaser_id = fields.Many2one('hr.employee', string="Purchased By")
     invoice_no = fields.Many2one('account.invoice', string="Invoice No")
@@ -46,18 +44,6 @@ class InventoryStockIn(models.Model):
                              readonly=True, required=True, copy=False, default='draft', store=True)
     line_ids = fields.One2many('inventory.stockin.lines', 'stockin_id', string="Stock In Lines", index=True,
                                track_visibility='onchange')
-
-    @api.onchange('line_ids.department_name')
-    @api.depends('line_ids.department_name')
-    def department_compute(self):
-        for rec in self:
-            rec.department_id = rec.line_ids.department_name
-
-    @api.onchange('line_ids.project_name')
-    @api.depends('line_ids.project_name')
-    def project_compute(self):
-        for rec in self:
-            rec.project_id = rec.line_ids.project_name
 
     @api.multi
     def button_approve(self):
@@ -101,9 +87,7 @@ class InventoryStockInLines(models.Model):
     product_id = fields.Many2one('product.template', string="Product", required=True)
     quantity = fields.Float('Quantity', digits=(12, 2), required=True, default=1)
     department = fields.Many2one(comodel_name='hr.department', string='Department')
-    department_name = fields.Char(string='Department', related='department.name')
     project = fields.Many2one(comodel_name='project.configuration', string='Project')
-    project_name = fields.Char(string='Project Name', related='project.name')
     cost = fields.Float('Total Cost', digits=(12, 2), required=True, default=1)
     received_date = fields.Date('Received Date', compute="compute_date")
     uom_id = fields.Many2one('uom.uom', string='Unit of Measure',
