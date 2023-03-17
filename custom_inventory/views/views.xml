@@ -66,9 +66,7 @@
                             <field name="supplier_id"/>
                             <field name="delivery_attachment" filename="delivery_attachment_name"/>
                             <field name="delivery_attachment_name" invisible="1"/>
-
                         </group>
-
                     </group>
                     <notebook>
                         <page string="Stock In Lines">
