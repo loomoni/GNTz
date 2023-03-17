@@ -37,7 +37,7 @@ class InventoryStockIn(models.Model):
     delivery_note_no = fields.Char('Delivery Note No', required=True)
     goods_received_date = fields.Date(string="Goods Received Date", required=True, default=fields.Date.today())
     receiver_id = fields.Many2one('hr.employee', string="Received By", required=True, default=_default_receiver)
-    department_id = fields.Many2one('hr.department', string='Department', required=True)
+    department_id = fields.Many2one('hr.department', string='Department', required=False)
     supplier_id = fields.Many2one('res.partner', string="Supplier", domain=[('supplier', '=', True)])
     purchaser_id = fields.Many2one('hr.employee', string="Purchased By")
     invoice_no = fields.Many2one('account.invoice', string="Invoice No")

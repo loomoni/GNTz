@@ -58,17 +58,17 @@
                     </group>
                     <group>
                         <group>
-                            <field name="department_id"/>
+                            <!--                            <field name="department_id"/>-->
                             <field name="purchaser_id"/>
-                        </group>
-                        <group>
-                            <field name="supplier_id"/>
                             <field name="invoice_no"/>
                         </group>
                         <group>
+                            <field name="supplier_id"/>
                             <field name="delivery_attachment" filename="delivery_attachment_name"/>
                             <field name="delivery_attachment_name" invisible="1"/>
+
                         </group>
+
                     </group>
                     <notebook>
                         <page string="Stock In Lines">
@@ -145,6 +145,9 @@
             <xpath expr="//field[@name='type']" position="before">
                 <field name="department_id"/>
             </xpath>
+            <!--            <xpath expr="//page[@name='general_information']" position="attributes">-->
+            <!--                <attribute name="invisible">1</attribute>-->
+            <!--            </xpath>-->
         </field>
     </record>
 
