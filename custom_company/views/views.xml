@@ -148,11 +148,11 @@
                 <xpath expr="//field[@name='parent_id']" position="attributes">
                     <attribute name="string">Department Supervisor</attribute>
                 </xpath>
-                <xpath expr="//field[@name='parent_id']" position="after">
-                    <field name="is_po"/>
-                    <field name="is_fm"/>
-                    <field name="is_md"/>
-                </xpath>
+<!--                <xpath expr="//field[@name='parent_id']" position="after">-->
+<!--                    <field name="is_po"/>-->
+<!--                    <field name="is_fm"/>-->
+<!--                    <field name="is_md"/>-->
+<!--                </xpath>-->
                 <xpath expr="//field[@name='work_phone']" position="after">
                     <field name="tin_no"/>
                 </xpath>
