@@ -31,11 +31,18 @@ class InventoryStockIn(models.Model):
         if employee:
             return employee.id
 
+    def _default_department(self):
+        employee = self.env['hr.employee'].sudo().search(
+            [('user_id', '=', self.env.uid)], limit=1)
+        if employee and employee.department_id:
+            return employee.department_id.id
+
     name = fields.Char('Serial No', required=True, default=_default_reference)
     delivery_attachment = fields.Binary(string="Delivery Attachment", attachment=True, store=True, )
     delivery_attachment_name = fields.Char('Delivery Attachment Name')
     delivery_note_no = fields.Char('Delivery Note No', required=False)
-    department_id = fields.Many2one('hr.department', required=False)
+    department_id = fields.Many2one('hr.department', required=True, default=_default_department,
+                                    readonly=True, store=True, states={'draft': [('readonly', False)]})
     goods_received_date = fields.Date(string="Goods Received Date", required=True, default=fields.Date.today())
     receiver_id = fields.Many2one('hr.employee', string="Received By", required=True, default=_default_receiver)
     supplier_id = fields.Many2one('res.partner', string="Supplier", domain=[('supplier', '=', True)])
@@ -85,9 +92,19 @@ class InventoryStockInLines(models.Model):
         ("rejected", "Rejected")
     ]
 
+    @api.onchange('department')
+    def _onchange_department_id(self):
+        return {'domain': {'product_id': [('department_id', '=', self.department)]}}
+
+    @api.onchange('stockin_id.department_id')
+    @api.depends('stockin_id.department_id')
+    def department_compute(self):
+        for rec in self:
+            rec.department = rec.stockin_id.department_id.id
+
     product_id = fields.Many2one('product.template', string="Product", required=True)
     quantity = fields.Float('Quantity', digits=(12, 2), required=True, default=1)
-    department = fields.Many2one(comodel_name='hr.department', string='Department')
+    department = fields.Integer(string='Department', compute="department_compute")
     project = fields.Many2one(comodel_name='project.configuration', string='Project')
     cost = fields.Float('Total Cost', digits=(12, 2), required=True, default=1)
     received_date = fields.Date('Received Date', compute="compute_date")
@@ -140,6 +157,8 @@ class InventoryStockOut(models.Model):
     requester_id = fields.Many2one('hr.employee', string="Requested By", required=True, default=_default_requester,
                                    readonly=True, store=True, states={'draft': [('readonly', False)]})
     issuer_id = fields.Many2one('hr.employee', string="Issued By", required=True)
+    parent_department = fields.Integer(string="Parent Department", required=False,
+                                       related='requester_id.department_parent_id.id')
     department_id = fields.Many2one('hr.department', string='Department', required=True, default=_default_department,
                                     readonly=True, store=True, states={'draft': [('readonly', False)]})
     state = fields.Selection(STATE_SELECTION, index=True, track_visibility='onchange',
@@ -199,25 +218,42 @@ class InventoryStockOutLines(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
     STATE_SELECTION = [
-        ("draft", "Requested"),
-        ("checked", "Checked By SS"),
-        ("approved", "Approved By Branch Manager"),
-        ("issued", "Issued By Store Keeper"),
+        ("draft", "Draft"),
+        ("requested", "Requested"),
+        ("line_manager", "Line Manager Reviewed"),
+        ("checked", "Procurement Checked"),
+        ("issued", "Issued Out"),
         ("rejected", "Rejected")
     ]
 
+    @api.onchange('department')
+    def _onchange_department_id(self):
+        return {'domain': {'product_id': [('department_id', '=', self.department)]}}
+
+    @api.onchange('stockout_id.department_id')
+    @api.depends('stockout_id.department_id')
+    def department_stockout_compute(self):
+        for rec in self:
+            rec.department = rec.stockout_id.department_id.id
+
+    @api.onchange('stockout_id.requester_id.department_parent_id')
+    @api.depends('stockout_id.requester_id.department_parent_id')
+    def parent_department_compute(self):
+        for rec in self:
+            rec.parent_department = rec.stockout_id.requester_id.department_parent_id.id
+
     product_id = fields.Many2one('product.template', string="Product", required=True)
-    department = fields.Many2one(comodel_name='hr.department', string='Department')
+    department = fields.Integer(string='Department', compute="department_stockout_compute")
+    parent_department = fields.Integer(string='Parent Department', compute="parent_department_compute")
     request_reason = fields.Text(string='Purpose', required=True)
     project = fields.Many2one(comodel_name='project.configuration', string='Project', required=True)
     requested_quantity = fields.Float('Requested Quantity', digits=(12, 2), required=True, default=1)
     issued_quantity = fields.Float('Issued Quantity', digits=(12, 2))
     requested_date = fields.Date(string='Requested Date', compute="requested_date_compute")
-    balance_stock = fields.Float('Balance Stock', digits=(12, 2), required=True)
-    balance_stock_department = fields.Float('Balance Department', digits=(12, 2), required=True)
+    balance_stock = fields.Float('Balance Stock', digits=(12, 2), readonly=True)
     uom_id = fields.Many2one('uom.uom', string='Unit of Measure',
                              default=lambda self: self.env['uom.uom'].search([], limit=1, order='id'))
-    stockout_id = fields.Many2one('inventory.stockout', string="Stock Out")
+    stockout_id = fields.Many2one(comodel_name='inventory.stockout', string="Stock Out")
     state = fields.Selection(STATE_SELECTION, index=True, track_visibility='onchange', related='stockout_id.state',
                              store=True)
 
@@ -231,12 +267,6 @@ class InventoryStockOutLines(models.Model):
     def onchange_product_id(self):
         if self.product_id:
             self.balance_stock = self.product_id.balance_stock
-
-    @api.onchange('department', 'product_id')
-    @api.depends('department', 'product_id')
-    def onchange_department(self):
-        if self.department:
-            self
 
     @api.onchange('requested_quantity')
     @api.depends('requested_quantity')

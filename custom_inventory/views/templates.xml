@@ -64,6 +64,7 @@
                         <group>
                             <field name="requester_id"/>
                             <field name="issuer_id"/>
+                            <field name="parent_department" invisible="1"/>
                         </group>
                     </group>
                     <notebook>
@@ -72,15 +73,16 @@
                                 <tree editable="bottom">
                                     <field name="product_id" attrs="{'readonly':[('state','in','issued')]}"
                                            options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
-                                    <field name="department" attrs="{'readonly':[('state','in','issued')]}"
-                                           options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
-                                    <field name="balance_stock" attrs="{'readonly':[('state','in','issued')]}"/>
+                                    <field name="department" invisible="1"/>
+                                    <field name="parent_department" invisible="1"/>
+                                    <field name="stockout_id" invisible="1"/>
+                                    <field name="balance_stock"/>
                                     <field name="requested_quantity" attrs="{'readonly':[('state','in','issued')]}"/>
                                     <field name="request_reason" attrs="{'readonly':[('state','in','issued')]}"/>
                                     <field name="project" attrs="{'readonly':[('state','in','issued')]}"/>
                                     <field name="state" invisible="1" attrs="{'readonly':[('state','in','issued')]}"/>
                                     <field name="issued_quantity"
-                                           attrs="{'readonly':[('state','in',['draft','checked','issued'])]}"/>
+                                           attrs="{'readonly':[('state','in',['draft','requested'])]}"/>
                                 </tree>
                                 <form>
                                     <sheet>

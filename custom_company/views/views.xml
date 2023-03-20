@@ -145,14 +145,17 @@
                 <xpath expr="//field[@name='coach_id']" position="attributes">
                     <attribute name="invisible">True</attribute>
                 </xpath>
+                <xpath expr="//field[@name='department_id']" position="after">
+                    <field name="department_parent_id"/>
+                </xpath>
                 <xpath expr="//field[@name='parent_id']" position="attributes">
                     <attribute name="string">Department Supervisor</attribute>
                 </xpath>
-<!--                <xpath expr="//field[@name='parent_id']" position="after">-->
-<!--                    <field name="is_po"/>-->
-<!--                    <field name="is_fm"/>-->
-<!--                    <field name="is_md"/>-->
-<!--                </xpath>-->
+                <!--                <xpath expr="//field[@name='parent_id']" position="after">-->
+                <!--                    <field name="is_po"/>-->
+                <!--                    <field name="is_fm"/>-->
+                <!--                    <field name="is_md"/>-->
+                <!--                </xpath>-->
                 <xpath expr="//field[@name='work_phone']" position="after">
                     <field name="tin_no"/>
                 </xpath>
