@@ -143,7 +143,7 @@
             <xpath expr="//button[@name='action_update_quantity_on_hand']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
-            <xpath expr="//button[@name='307']" position="attributes">
+            <xpath expr="//button[@name='160']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
             <xpath expr="//notebook/page[3]" position="attributes">
