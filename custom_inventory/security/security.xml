@@ -43,12 +43,12 @@
         </record>
 
 
-        <record model="ir.rule" id="inventory_store_access_stockin">
-            <field name="name">Inventory Store Access Stockin</field>
-            <field name="model_id" ref="model_inventory_stockin"/>
-            <field name="domain_force">[('receiver_id.user_id','=',user.id)]</field>
-            <field name="groups" eval="[(4,ref('inventory_store'))]"/>
-        </record>
+<!--        <record model="ir.rule" id="inventory_store_access_stockin">-->
+<!--            <field name="name">Inventory Store Access Stockin</field>-->
+<!--            <field name="model_id" ref="model_inventory_stockin"/>-->
+<!--            <field name="domain_force">[('receiver_id.user_id','=',user.id)]</field>-->
+<!--            <field name="groups" eval="[(4,ref('inventory_store'))]"/>-->
+<!--        </record>-->
 
         <!--        <record model="ir.rule" id="inventory_hod_access_stockin">-->
         <!--            <field name="name">Inventory HOD Access Stockin</field>-->
@@ -78,12 +78,12 @@
             <field name="groups" eval="[(4,ref('inventory_staff'))]"/>
         </record>
 
-        <record model="ir.rule" id="inventory_store_access_stockout">
-            <field name="name">Inventory Store Access Stockout</field>
-            <field name="model_id" ref="model_inventory_stockout"/>
-            <field name="domain_force">[('issuer_id.user_id','=',user.id)]</field>
-            <field name="groups" eval="[(4,ref('inventory_store'))]"/>
-        </record>
+<!--        <record model="ir.rule" id="inventory_store_access_stockout">-->
+<!--            <field name="name">Inventory Store Access Stockout</field>-->
+<!--            <field name="model_id" ref="model_inventory_stockout"/>-->
+<!--            <field name="domain_force">[('issuer_id.user_id','=',user.id)]</field>-->
+<!--            <field name="groups" eval="[(4,ref('inventory_store'))]"/>-->
+<!--        </record>-->
 
         <!--        <record model="ir.rule" id="inventory_hod_access_stockout">-->
         <!--            <field name="name">Inventory HOD Access Stockout</field>-->

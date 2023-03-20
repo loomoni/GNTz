@@ -387,6 +387,8 @@ class InventoryProductStockAdjustment(models.Model):
         for line in self.stock_adjustment_line_ids:
             line.product_id._amount_quantity()
         self.write({'state': 'approved'})
+        mail_template = self.env.ref('custom_inventory.stock_adjustment_email_to_hod')
+        mail_template.send_mail(self.id, force_send=True)
         return True
 
     @api.multi

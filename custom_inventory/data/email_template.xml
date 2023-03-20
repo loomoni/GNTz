@@ -1,0 +1,42 @@
+<odoo>
+    <data>
+        <!--Email template -->
+        <record id="stock_adjustment_email_to_hod" model="mail.template">
+            <field name="name">Approved Stock Adjustment: Send by email</field>
+            <field name="model_id" ref="custom_inventory.model_inventory_stock_adjustment"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="email_from">${object.employee.work_email |safe}</field>
+            <field name="email_to">${object.stock_adjustment_line_ids.product_id.department_id.manager_id.work_email}
+            </field>
+            <!--            <field name="subject">Stock Adjustment (Ref ${object.name})</field>-->
+            <field name="subject">${object.stock_adjustment_line_ids.product_id.department_id.name} Stock Adjustment</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        <strong>
+                            Dear ${object.stock_adjustment_line_ids.product_id.department_id.manager_id.name}
+                        </strong>
+                        <br/>
+                        <br/>
+                        ${object.stock_adjustment_line_ids.adjustment} ${object.stock_adjustment_line_ids.product_id.name} have been removed in your department stock on <strong>${object.date}</strong> due to
+                        following reason: ${object.stock_adjustment_line_ids.reason}
+                        <br/>
+                        <br/>
+                        Do not hesitate to contact me if you have any question.
+                        <br/>
+                        <br/>
+                        Regards,
+                        <br/>
+                        <strong>
+                            ${object.employee.name}
+                        </strong>
+                    </p>
+                </div>
+            </field>
+            <!--            <field name="report_template" ref="account_invoices"/>-->
+            <!--            <field name="report_name">-->
+            <!--                Invoice_${(object.number)}-->
+            <!--            </field>-->
+        </record>
+    </data>
+</odoo>
