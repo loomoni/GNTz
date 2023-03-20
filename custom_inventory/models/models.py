@@ -365,11 +365,12 @@ class InventoryProductStockAdjustment(models.Model):
 
     @api.multi
     def button_verify(self):
-        self.write({'state': 'approved'})
+        self.write({'state': 'verify'})
         for line in self.stock_adjustment_line_ids:
-            line.state = "approved"
-        for line in self.stock_adjustment_line_ids:
-            line.product_id._amount_quantity()
+            if line.adjustment <= 0:
+                raise ValidationError(_("You should specify adjusted value amount"))
+            line.state = "verify"
+
         return True
 
     @api.multi
@@ -383,6 +384,8 @@ class InventoryProductStockAdjustment(models.Model):
     def button_approve(self):
         for line in self.stock_adjustment_line_ids:
             line.state = "approved"
+        for line in self.stock_adjustment_line_ids:
+            line.product_id._amount_quantity()
         self.write({'state': 'approved'})
         return True
 
@@ -393,11 +396,18 @@ class InventoryProductStockAdjustment(models.Model):
         self.write({'state': 'rejected'})
         return True
 
+    def _default_employee(self):
+        employee = self.env['hr.employee'].sudo().search(
+            [('user_id', '=', self.env.uid)], limit=1)
+        if employee:
+            return employee.id
+
     name = fields.Char(string='Inventory Reference', required=True)
     attachment = fields.Binary(string="Attachment", attachment=True, store=True, )
     attachment_name = fields.Char('Attachment Name')
-    date = fields.Date(string='Date')
-    employee = fields.Many2one(comodel_name='hr.employee', string='Employee')
+    date = fields.Date(string='Date', required=True)
+    employee = fields.Many2one(comodel_name='hr.employee', string='Employee', required=True, default=_default_employee,
+                                   readonly=True, store=True)
     state = fields.Selection(STATE_SELECTION, index=True, track_visibility='onchange',
                              readonly=True, required=True, copy=False, default='draft', store=True)
     stock_adjustment_line_ids = fields.One2many('inventory.stock.adjustment.line', 'product_line_id',

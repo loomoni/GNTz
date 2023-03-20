@@ -204,7 +204,7 @@
 
 
     <menuitem name="Inventory Management" id="custom_inventory.menu_root"
-              groups="custom_inventory.inventory_staff,custom_inventory.inventory_procurement,custom_inventory.inventory_store,custom_inventory.inventory_hod,custom_inventory.inventory_bm,custom_inventory.inventory_admin"/>
+              groups="custom_inventory.inventory_staff,custom_inventory.inventory_procurement,custom_inventory.inventory_hod,custom_inventory.inventory_bm,custom_inventory.inventory_admin"/>
 
     <menuitem
             parent="custom_inventory.menu_root"
@@ -212,14 +212,14 @@
             id="menu_inventory_stockin"
             action="action_inventory_stockin"
             sequence="3"
-            groups="custom_inventory.inventory_procurement,custom_inventory.inventory_store,custom_inventory.inventory_hod,custom_inventory.inventory_bm,custom_inventory.inventory_admin"/>
+            groups="custom_inventory.inventory_procurement,custom_inventory.inventory_hod,custom_inventory.inventory_bm,custom_inventory.inventory_admin"/>
 
     <menuitem
             parent="custom_inventory.menu_root"
             name="Configuration"
             id="menu_inventory_configuration"
             sequence="9"
-            groups="custom_inventory.inventory_procurement,custom_inventory.inventory_store,custom_inventory.inventory_hod,custom_inventory.inventory_bm,custom_inventory.inventory_admin"/>
+            groups="custom_inventory.inventory_procurement,custom_inventory.inventory_hod,custom_inventory.inventory_bm,custom_inventory.inventory_admin"/>
 
     <menuitem
             parent="menu_inventory_configuration"

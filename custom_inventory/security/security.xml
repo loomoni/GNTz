@@ -12,11 +12,11 @@
             <field name="comment">The user can read and create own department records</field>
         </record>
 
-        <record id="inventory_store" model="res.groups">
-            <field name="name">Store Keeper</field>
-            <field name="category_id" ref="inventory_security_category"/>
-            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
-        </record>
+<!--        <record id="inventory_store" model="res.groups">-->
+<!--            <field name="name">Store Keeper</field>-->
+<!--            <field name="category_id" ref="inventory_security_category"/>-->
+<!--            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>-->
+<!--        </record>-->
 
         <record id="inventory_hod" model="res.groups">
             <field name="name">Line Manager</field>
