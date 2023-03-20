@@ -228,7 +228,7 @@ class InventoryStockOutLines(models.Model):
 
     @api.onchange('department')
     def _onchange_department_id(self):
-        return {'domain': {'product_id': [('department_id', '=', self.department)]}}
+        return {'domain': {'product_id': ['|', ('department_id', '=', self.department), ('department_id', '=', self.parent_department)]}}
 
     @api.onchange('stockout_id.department_id')
     @api.depends('stockout_id.department_id')
