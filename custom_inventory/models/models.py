@@ -151,16 +151,16 @@ class InventoryStockOut(models.Model):
         if employee and employee.department_id:
             return employee.department_id.id
 
-    name = fields.Char('Serial No', required=True, default=_default_reference)
+    name = fields.Char('Serial No', required=True, default=_default_reference, readonly=True)
 
-    request_date = fields.Date(string="Request Date", required=True, default=fields.Date.today())
+    request_date = fields.Date(string="Request Date", required=True, default=fields.Date.today(), readonly=True)
     requester_id = fields.Many2one('hr.employee', string="Requested By", required=True, default=_default_requester,
-                                   readonly=True, store=True, states={'draft': [('readonly', False)]})
+                                   readonly=True, store=True)
     issuer_id = fields.Many2one('hr.employee', string="Issued By", required=True)
     parent_department = fields.Integer(string="Parent Department", required=False,
                                        related='requester_id.department_parent_id.id')
     department_id = fields.Many2one('hr.department', string='Department', required=True, default=_default_department,
-                                    readonly=True, store=True, states={'draft': [('readonly', False)]})
+                                    readonly=True, store=True,)
     state = fields.Selection(STATE_SELECTION, index=True, track_visibility='onchange',
                              readonly=True, required=True, copy=False, default='draft', store=True)
     line_ids = fields.One2many('inventory.stockout.lines', 'stockout_id', string="Stock Out Lines", index=True,

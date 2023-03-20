@@ -155,7 +155,7 @@
                     <field name="stockin_ids" readonly="1">
                         <tree create="false">
                             <field name="quantity"/>
-                            <field name="department"/>
+                            <field name="department" invisible="1"/>
                             <field name="project"/>
                             <field name="cost"/>
                             <field name="received_date"/>
@@ -167,7 +167,7 @@
                                 <group>
                                     <field name="quantity"/>
                                     <field name="project"/>
-                                    <field name="department"/>
+                                    <field name="department" invisible="1"/>
                                     <field name="cost"/>
                                     <field name="received_date"/>
                                     <field name="uom_id"/>
