@@ -33,6 +33,8 @@
                 <header>
                     <button name="validate" states="draft" string="Confirm Asset" type="object" class="oe_highlight"
                             groups="asset_management.asset_dm"/>
+                    <button name="back_to_draft" states="open" string="Review Asset" type="object" class="oe_highlight"
+                            groups="asset_management.asset_dm"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,open,inuse,repair,replace,close"/>
                 </header>
             </xpath>

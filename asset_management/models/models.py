@@ -19,12 +19,19 @@ class AssetsInherit(models.Model):
 
     SELECTION = [
         ('draft', 'Draft'),
+        ('review', 'Review'),
         ('open', 'Unassigned'),
         ('inuse', 'Running'),
         ('repair', 'Repair'),
         ('replace', 'Replace'),
         ('close', 'Close')
     ]
+
+    @api.multi
+    def back_to_draft(self):
+        self.write({'state': 'draft'})
+        return True
+
     state = fields.Selection(SELECTION, 'Status', required=True, copy=False, default='draft',
                              help="When an asset is created, the status is 'Draft'.\n"
                                   "If the asset is confirmed, the status goes in 'Running' and the depreciation lines can be posted in the accounting.\n"
