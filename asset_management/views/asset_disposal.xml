@@ -1,55 +1,60 @@
 <odoo>
 
     <record id="view_asset_form_inherited" model="ir.ui.view">
-            <field name="name">view.asset.form.inherited</field>
-            <field name="model">account.asset.asset</field>
-            <field name="inherit_id" ref="om_account_asset.view_account_asset_asset_form"/>
-            <field name="arch" type="xml">
-                 <xpath expr="//form/header/button[@name='validate']" position="replace" >
-                   <button name="validate" string="Confirm" type="object" states="draft" class="oe_highlight" groups="asset_management.asset_dm,asset_management.asset_cd"/>
-                </xpath>
-                <xpath expr="//form/header/button[@name='set_to_close']" position="replace" >
-                   <button name="set_to_close" string="Sell or Dispose" type="object" class="oe_highlight" attrs="{'invisible': True}"/>
-                </xpath>
-                <xpath expr="//field[@name='date']" position="attributes">
-                   <attribute name="string">Purchase Date</attribute>
-                </xpath>
-                <xpath expr="//field[@name='value_residual']" position="attributes">
-                   <attribute name="string">Accumulated Depreciation</attribute>
-                </xpath>
-                <xpath expr="//field[@name='depreciation_line_ids']/tree/field[@name='remaining_value']" position="attributes">
-                   <attribute name="string">Net-Book Value</attribute>
-                </xpath>
-                <xpath expr="//field[@name='analytic_tag_ids']" position="attributes">
-                    <attribute name="invisible">True</attribute>
-                </xpath>
-                <xpath expr="//field[@name='account_analytic_id']" position="attributes">
-                   <attribute name="invisible">True</attribute>
-                </xpath>
-                <xpath expr="//field[@name='category_id']" position="after" >
-                   <field name="asset_origin" string="Asset Origin"/>
-                   <field name="account_id" attrs="{'invisible': True, 'required': [('asset_origin', 'in', ('donated'))]}"/>
-                   <field name="journal_id" attrs="{'invisible': [('asset_origin', 'in', ['procured','pre_existing'])], 'required': [('asset_origin', 'in', ('donated'))]}"/>
-                </xpath>
-                <xpath expr="//notebook" position="before" >
-                   <group>
-                       <field name="department_id"/>
-                   </group>
-                </xpath>
-            </field>
+        <field name="name">view.asset.form.inherited</field>
+        <field name="model">account.asset.asset</field>
+        <field name="inherit_id" ref="om_account_asset.view_account_asset_asset_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/header/button[@name='validate']" position="replace">
+                <button name="validate" string="Confirm" type="object" states="draft" class="oe_highlight"
+                        groups="asset_management.asset_dm,asset_management.asset_cd"/>
+            </xpath>
+            <xpath expr="//form/header/button[@name='set_to_close']" position="replace">
+                <button name="set_to_close" string="Sell or Dispose" type="object" class="oe_highlight"
+                        attrs="{'invisible': True}"/>
+            </xpath>
+            <xpath expr="//field[@name='date']" position="attributes">
+                <attribute name="string">Purchase Date</attribute>
+            </xpath>
+            <xpath expr="//field[@name='value_residual']" position="attributes">
+                <attribute name="string">Accumulated Depreciation</attribute>
+            </xpath>
+            <xpath expr="//field[@name='depreciation_line_ids']/tree/field[@name='remaining_value']"
+                   position="attributes">
+                <attribute name="string">Net-Book Value</attribute>
+            </xpath>
+            <xpath expr="//field[@name='analytic_tag_ids']" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
+            <xpath expr="//field[@name='account_analytic_id']" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
+            <xpath expr="//field[@name='category_id']" position="after">
+                <field name="asset_origin" string="Asset Origin"/>
+                <field name="account_id"
+                       attrs="{'invisible': True, 'required': [('asset_origin', 'in', ('donated'))]}"/>
+                <field name="journal_id"
+                       attrs="{'invisible': [('asset_origin', 'in', ['procured','pre_existing'])], 'required': [('asset_origin', 'in', ('donated'))]}"/>
+            </xpath>
+            <xpath expr="//notebook" position="before">
+                <group>
+                    <field name="department_id"/>
+                </group>
+            </xpath>
+        </field>
     </record>
 
     <record id="asset_disposal_tree_view" model="ir.ui.view">
-      <field name="name">asset.disposal.tree.view</field>
-      <field name="model">account.asset.disposal</field>
-      <field name="arch" type="xml">
-          <tree string="Asset Disposal">
-               <field name="date_created"/>
-               <field name="name"/>
-               <field name="state"/>
-              <field name="total_disposal_amount"/>
-          </tree>
-      </field>
+        <field name="name">asset.disposal.tree.view</field>
+        <field name="model">account.asset.disposal</field>
+        <field name="arch" type="xml">
+            <tree string="Asset Disposal">
+                <field name="date_created"/>
+                <field name="name"/>
+                <field name="state"/>
+                <field name="total_disposal_amount"/>
+            </tree>
+        </field>
     </record>
 
     <record id="asset_disposal_search_view" model="ir.ui.view">
@@ -63,19 +68,21 @@
         </field>
     </record>
 
-   <record id="asset_disposal_form_view" model="ir.ui.view">
+    <record id="asset_disposal_form_view" model="ir.ui.view">
         <field name="name">asset.disposal.form.view</field>
         <field name="model">account.asset.disposal</field>
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="button_procurement_evaluate" states="draft" string="Procurement Submit Evaluation" type="object" class="oe_highlight"
+                    <button name="button_procurement_evaluate" states="draft" string="Procurement Submit Evaluation"
+                            type="object" class="oe_highlight"
                             groups="asset_management.asset_procurement"/>
                     <button name="button_dispose" states="procurement_evaluate" string="Approve Disposal" type="object"
                             groups="asset_management.asset_dm,asset_management.asset_cd"/>
                     <button name="button_reject" states="procurement_evaluate" string="Reject" type="object"
                             groups="asset_management.asset_dm,asset_management.asset_cd"/>
-                    <field name="state" widget="statusbar" statusbar_visible="draft,procurement_evaluate,ad_manager_approve,rejected"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,procurement_evaluate,ad_manager_approve,rejected"/>
                 </header>
                 <sheet>
                     <group string="Reference No">
@@ -95,17 +102,18 @@
                     </group>
                     <notebook>
                         <page string="Assets To Dispose">
-                            <field name="line_ids" attrs="{'readonly': [('state', 'in', ('asset_disposed','md_approved'))]}">
+                            <field name="line_ids"
+                                   attrs="{'readonly': [('state', 'in', ('asset_disposed','md_approved'))]}">
                                 <tree editable="bottom">
-                                    <field name="check_evaluation" invisible="1" />
-                                    <field name="asset_id" />
-                                    <field name="disposal_type" />
-                                    <field name="account_id" />
-                                    <field name="journal_id" />
-                                    <field name="original_disposal_amount" />
-                                    <field name="reason_for_disposal" />
+                                    <field name="check_evaluation" invisible="1"/>
+                                    <field name="asset_id"/>
+                                    <field name="disposal_type"/>
+                                    <field name="account_id"/>
+                                    <field name="journal_id"/>
+                                    <field name="original_disposal_amount"/>
+                                    <field name="reason_for_disposal"/>
                                     <field name="evaluated_disposal_amount"/>
-<!--                                    <field name="partner_id" attrs="{'invisible': [('check_evaluation', '=', False)]}"/>-->
+                                    <!--                                    <field name="partner_id" attrs="{'invisible': [('check_evaluation', '=', False)]}"/>-->
                                 </tree>
                             </field>
                         </page>
@@ -125,18 +133,19 @@
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="help" type="html">
-          <p class="o_view_nocontent_smiling_face">
-              Ready to create asset disposal?
-          </p><p>
-              Let's create a asset disposal.
-          </p>
+            <p class="o_view_nocontent_smiling_face">
+                Ready to create asset disposal?
+            </p>
+            <p>
+                Let's create a asset disposal.
+            </p>
         </field>
     </record>
 
-      <menuitem
-        parent="asset_management.menu_root"
-        id="menu_asset_disposal"
-        action="action_asset_disposal"
-        sequence="8"
-        groups="asset_management.asset_lm,asset_management.asset_fm,asset_management.asset_dm"/>
+    <menuitem
+            parent="asset_management.menu_root"
+            id="menu_asset_disposal"
+            action="action_asset_disposal"
+            sequence="8"
+            groups="asset_management.asset_lm,asset_management.asset_fm,asset_management.asset_dm"/>
 </odoo>

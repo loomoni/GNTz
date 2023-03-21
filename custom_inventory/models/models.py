@@ -250,7 +250,8 @@ class InventoryStockOutLines(models.Model):
     requested_quantity = fields.Float('Requested Quantity', digits=(12, 2), required=True, default=1)
     issued_quantity = fields.Float('Issued Quantity', digits=(12, 2))
     requested_date = fields.Date(string='Requested Date', compute="requested_date_compute")
-    balance_stock = fields.Float('Balance Stock', digits=(12, 2), readonly=True)
+    # balance_stock = fields.Float('Balance Stock', digits=(12, 2), readonly=True)
+    balance_stock = fields.Float('Balance Stock', digits=(12, 2), related='product_id.balance_stock')
     uom_id = fields.Many2one('uom.uom', string='Unit of Measure',
                              default=lambda self: self.env['uom.uom'].search([], limit=1, order='id'))
     stockout_id = fields.Many2one(comodel_name='inventory.stockout', string="Stock Out")
@@ -278,9 +279,9 @@ class InventoryStockOutLines(models.Model):
     @api.constrains('balance_stock', 'requested_quantity', 'issued_quantity')
     def _issued_and_requested_quantities(self):
         for record in self:
-            if record.balance_stock < record.requested_quantity:
-                raise ValidationError(
-                    _("Please Enter a Value <= Balance Stock"))
+            # if record.balance_stock < record.requested_quantity:
+            #     raise ValidationError(
+            #         _("Please Enter a Value <= Balance Stock now"))
             if record.issued_quantity > record.requested_quantity:
                 raise ValidationError(
                     _("Please Enter a Value <= Requested Quantity"))
