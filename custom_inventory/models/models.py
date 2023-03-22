@@ -131,7 +131,7 @@ class InventoryStockOut(models.Model):
         ("requested", "Requested"),
         ("line_manager", "Line Manager Reviewed"),
         ("checked", "Procurement Checked"),
-        ("issued", "Issued Out"),
+        ("issued", "Receipt Confirmed"),
         ("rejected", "Rejected")
     ]
 
@@ -173,6 +173,15 @@ class InventoryStockOut(models.Model):
 
     @api.multi
     def button_line_manager(self):
+        self.write({'state': 'line_manager'})
+        return True
+
+    @api.multi
+    def button_review(self):
+        self.write({'state': 'draft'})
+        return True
+    @api.multi
+    def button_back_to_line(self):
         self.write({'state': 'line_manager'})
         return True
 
@@ -222,7 +231,7 @@ class InventoryStockOutLines(models.Model):
         ("requested", "Requested"),
         ("line_manager", "Line Manager Reviewed"),
         ("checked", "Procurement Checked"),
-        ("issued", "Issued Out"),
+        ("issued", "Receipt Confirmed"),
         ("rejected", "Rejected")
     ]
 
@@ -295,6 +304,7 @@ class InventoryStockAdjustment(models.Model):
 
 class InventoryProductStock(models.Model):
     _inherit = "product.template"
+
 
     purchased_quantity = fields.Float('Purchased Quantity', digits=(12, 2), store=True, compute='_amount_quantity')
     issued_quantity = fields.Float('Issued Quantity', digits=(12, 2), store=True, compute='_amount_quantity')

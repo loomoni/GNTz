@@ -36,21 +36,25 @@
             <form>
                 <header>
                     <button name="button_requested" states="draft" string="Request" type="object" class="btn-primary"
-                            groups="custom_inventory.inventory_hod"/>
+                            groups="custom_inventory.inventory_admin,custom_inventory.inventory_procurement_branch,custom_inventory.inventory_procurement_HO,custom_inventory.inventory_staff,custom_inventory.inventory_hod"/>
                     <button name="button_line_manager" states="requested" string="Line Manager Review" type="object"
                             class="btn-primary"
                             groups="custom_inventory.inventory_hod"/>
                     <button name="button_checked" states="line_manager" string="Issue Goods" type="object"
                             class="btn-primary"
-                            groups="custom_inventory.inventory_procurement"/>
+                            groups="custom_inventory.inventory_procurement_HO"/>
                     <button name="button_issue" states="checked" string="Confirm Receipt" type="object"
                             class="btn-primary"
-                            groups="custom_inventory.inventory_hod,custom_inventory.inventory_procurement"/>
+                            groups="custom_inventory.inventory_staff,custom_inventory.inventory_hod,custom_inventory.inventory_procurement_HO"/>
+                    <button name="button_review" states="requested" string="Review" type="object"
+                            groups="custom_inventory.inventory_hod"/>
+                    <button name="button_back_to_line" states="line_manager" string="Back To Line Manager" type="object"
+                            groups="custom_inventory.inventory_procurement_branch,custom_inventory.inventory_procurement_HO"/>
                     <button name="button_reject" states="line_manager,requested,checked" string="Reject" type="object"
                             class="btn-primary"
-                            groups="custom_inventory.inventory_procurement,custom_inventory.inventory_hod"/>
+                            groups="custom_inventory.inventory_procurement_HO,custom_inventory.inventory_hod"/>
                     <button name="button_reset" states="requested" string="Review" type="object" class="btn-primary"
-                            groups="custom_inventory.inventory_procurement"/>
+                            groups="custom_inventory.inventory_procurement_HO"/>
                     <field name="state" widget="statusbar"
                            statusbar_visible="draft,requested,line_manager,checked,issued,rejected"/>
                 </header>
@@ -63,7 +67,8 @@
                         </group>
                         <group>
                             <field name="requester_id"/>
-                            <field name="issuer_id"/>
+                            <field name="issuer_id"
+                                   attrs="{'readonly':[('state','in',['requested','issued', 'checked'])]}"/>
                             <field name="parent_department" invisible="1"/>
                         </group>
                     </group>
@@ -77,12 +82,15 @@
                                     <field name="parent_department" invisible="1"/>
                                     <field name="stockout_id" invisible="1"/>
                                     <field name="balance_stock"/>
-                                    <field name="requested_quantity" attrs="{'readonly':[('state','in','issued')]}"/>
-                                    <field name="request_reason" attrs="{'readonly':[('state','in','issued')]}"/>
-                                    <field name="project" attrs="{'readonly':[('state','in','issued')]}"/>
-                                    <field name="state" invisible="1" attrs="{'readonly':[('state','in','issued')]}"/>
+                                    <field name="requested_quantity"
+                                           attrs="{'readonly':[('state','in',['issued', 'checked'])]}"/>
+                                    <field name="request_reason"
+                                           attrs="{'readonly':[('state','in',['issued', 'checked'])]}"/>
+                                    <field name="project" attrs="{'readonly':[('state','in',['issued', 'checked'])]}"/>
+                                    <field name="state" invisible="1"
+                                           attrs="{'readonly':[('state','in',['issued', 'checked'])]}"/>
                                     <field name="issued_quantity"
-                                           attrs="{'readonly':[('state','in',['draft','requested'])]}"/>
+                                           attrs="{'readonly':[('state','in',['draft','requested','issued', 'checked'])]}"/>
                                 </tree>
                                 <form>
                                     <sheet>
@@ -278,7 +286,7 @@
             id="menu_inventory_stockout"
             action="action_inventory_stockout"
             sequence="4"
-            groups="custom_inventory.inventory_staff,custom_inventory.inventory_procurement,custom_inventory.inventory_hod,custom_inventory.inventory_bm,custom_inventory.inventory_admin"/>
+            groups="custom_inventory.inventory_staff,custom_inventory.inventory_procurement_HO,custom_inventory.inventory_hod,custom_inventory.inventory_procurement_branch,custom_inventory.inventory_admin"/>
 
     <menuitem
             parent="custom_inventory.menu_root"
@@ -286,5 +294,5 @@
             id="menu_inventory_products"
             action="stock_products_action"
             sequence="7"
-            groups="custom_inventory.inventory_procurement,custom_inventory.inventory_hod,custom_inventory.inventory_bm,custom_inventory.inventory_admin"/>
+            groups="custom_inventory.inventory_procurement_branch,custom_inventory.inventory_procurement_HO"/>
 </odoo>

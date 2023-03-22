@@ -91,7 +91,7 @@
                         </group>
                         <group>
                             <group>
-                                <field name="manager_id"/>
+                                <field name="manager_id" widget="many2many_tags"/>
                                 <!--                            <field name="hr_manager_id"/>-->
 
                             </group>

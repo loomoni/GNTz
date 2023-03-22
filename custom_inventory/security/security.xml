@@ -12,26 +12,20 @@
             <field name="comment">The user can read and create own department records</field>
         </record>
 
-<!--        <record id="inventory_store" model="res.groups">-->
-<!--            <field name="name">Store Keeper</field>-->
-<!--            <field name="category_id" ref="inventory_security_category"/>-->
-<!--            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>-->
-<!--        </record>-->
-
         <record id="inventory_hod" model="res.groups">
             <field name="name">Line Manager</field>
             <field name="category_id" ref="inventory_security_category"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
 
-        <record id="inventory_procurement" model="res.groups">
-            <field name="name">Procurement Manager</field>
+        <record id="inventory_procurement_HO" model="res.groups">
+            <field name="name">Procurement HO</field>
             <field name="category_id" ref="inventory_security_category"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
 
-        <record id="inventory_bm" model="res.groups">
-            <field name="name">Branch Manager</field>
+        <record id="inventory_procurement_branch" model="res.groups">
+            <field name="name">Procurement Branch</field>
             <field name="category_id" ref="inventory_security_category"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
@@ -42,26 +36,32 @@
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
 
+        <record model="ir.rule" id="product_template_ho_access">
+            <field name="name">List of Product HO Access</field>
+            <field name="model_id" ref="model_product_template"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4,ref('inventory_procurement_HO'))]"/>
+        </record>
 
-<!--        <record model="ir.rule" id="inventory_store_access_stockin">-->
-<!--            <field name="name">Inventory Store Access Stockin</field>-->
-<!--            <field name="model_id" ref="model_inventory_stockin"/>-->
-<!--            <field name="domain_force">[('receiver_id.user_id','=',user.id)]</field>-->
-<!--            <field name="groups" eval="[(4,ref('inventory_store'))]"/>-->
-<!--        </record>-->
+        <record model="ir.rule" id="product_template_branch_access">
+            <field name="name">Inventory list product Branch Access</field>
+            <field name="model_id" ref="model_product_template"/>
+            <field name="domain_force">[('department_id.branch_id.manager_id.user_id','=',user.id)]</field>
+            <field name="groups" eval="[(4,ref('inventory_procurement_branch'))]"/>
+        </record>
 
-        <!--        <record model="ir.rule" id="inventory_hod_access_stockin">-->
-        <!--            <field name="name">Inventory HOD Access Stockin</field>-->
-        <!--            <field name="model_id" ref="model_inventory_stockin"/>-->
-        <!--            <field name="domain_force">[('department_id.manager_id.user_id','=',user.id)]</field>-->
-        <!--            <field name="groups" eval="[(4,ref('inventory_hod'))]"/>-->
-        <!--        </record>-->
+        <record model="ir.rule" id="inventory_procurement_ho_access_stockin">
+            <field name="name">Inventory Procurement HO Access Stockin</field>
+            <field name="model_id" ref="model_inventory_stockin"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4,ref('inventory_procurement_HO'))]"/>
+        </record>
 
-        <record model="ir.rule" id="inventory_bm_access_stockin">
-            <field name="name">Inventory BM Access Stockin</field>
+        <record model="ir.rule" id="inventory_procurement_branch_access_stockin">
+            <field name="name">Inventory Procurement Branch Access Stockin</field>
             <field name="model_id" ref="model_inventory_stockin"/>
             <field name="domain_force">[('department_id.branch_id.manager_id.user_id','=',user.id)]</field>
-            <field name="groups" eval="[(4,ref('inventory_bm'))]"/>
+            <field name="groups" eval="[(4,ref('inventory_procurement_branch'))]"/>
         </record>
 
         <record model="ir.rule" id="inventory_admin_access_stockin">
@@ -78,25 +78,39 @@
             <field name="groups" eval="[(4,ref('inventory_staff'))]"/>
         </record>
 
-<!--        <record model="ir.rule" id="inventory_store_access_stockout">-->
-<!--            <field name="name">Inventory Store Access Stockout</field>-->
-<!--            <field name="model_id" ref="model_inventory_stockout"/>-->
-<!--            <field name="domain_force">[('issuer_id.user_id','=',user.id)]</field>-->
-<!--            <field name="groups" eval="[(4,ref('inventory_store'))]"/>-->
-<!--        </record>-->
+        <record model="ir.rule" id="inventory_hod_access_stockin">
+            <field name="name">Inventory HOD Access Stockin</field>
+            <field name="model_id" ref="model_inventory_stockin"/>
+            <field name="domain_force">[('department_id.manager_id.user_id','=',user.id)]</field>
+            <field name="groups" eval="[(4,ref('inventory_hod'))]"/>
+        </record>
 
-        <!--        <record model="ir.rule" id="inventory_hod_access_stockout">-->
-        <!--            <field name="name">Inventory HOD Access Stockout</field>-->
-        <!--            <field name="model_id" ref="model_inventory_stockout"/>-->
-        <!--            <field name="domain_force">[('department_id.manager_id.user_id','=',user.id)]</field>-->
-        <!--            <field name="groups" eval="[(4,ref('inventory_hod'))]"/>-->
-        <!--        </record>-->
-
-        <record model="ir.rule" id="inventory_bm_access_stockout">
-            <field name="name">Inventory BM Access Stockout</field>
+        <record model="ir.rule" id="inventory_hod_access_stockout">
+            <field name="name">Inventory HOD Access Stockout</field>
             <field name="model_id" ref="model_inventory_stockout"/>
-            <field name="domain_force">[('department_id.branch_id.manager_id.user_id','=',user.id)]</field>
-            <field name="groups" eval="[(4,ref('inventory_bm'))]"/>
+            <field name="domain_force">[('department_id.manager_id.user_id','=',user.id)]</field>
+            <field name="groups" eval="[(4,ref('inventory_hod'))]"/>
+        </record>
+
+        <record model="ir.rule" id="inventory_procurement_ho_access_stockout">
+            <field name="name">Inventory Procurement HO Access Stockout</field>
+            <field name="model_id" ref="model_inventory_stockout"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4,ref('inventory_procurement_HO'))]"/>
+        </record>
+
+        <record model="ir.rule" id="inventory_procurement_branch_access_stockout">
+            <field name="name">Inventory Procurement Branch Access Stockout</field>
+            <field name="model_id" ref="model_inventory_stockout"/>
+            <field name="domain_force">[('department_id.branch_id.manager_id','=',user.id)]</field>
+            <field name="groups" eval="[(4,ref('inventory_procurement_branch'))]"/>
+        </record>
+
+        <record model="ir.rule" id="inventory_adjustment_procurement_branch_access">
+            <field name="name">Inventory Adjustment Branch Access</field>
+            <field name="model_id" ref="model_inventory_stock_adjustment"/>
+            <field name="domain_force">[('employee.department_id.branch_id.manager_id','=',user.id)]</field>
+            <field name="groups" eval="[(4,ref('inventory_procurement_branch'))]"/>
         </record>
 
         <record model="ir.rule" id="inventory_admin_access_stockout">

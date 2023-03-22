@@ -24,7 +24,7 @@
 <!--                    <button name="button_line_manager" states="submit" string="Line manager Review" type="object" class="btn-primary"-->
 <!--                            groups="custom_inventory.inventory_hod"/>-->
                     <button name="button_verify" states="draft" string="Procurement Verify" type="object" class="btn-primary"
-                            groups="custom_inventory.inventory_procurement"/>
+                            groups="custom_inventory.inventory_procurement_HO"/>
                     <button name="button_approve" states="verify" string="Approve" type="object" class="btn-primary"
                             groups="custom_inventory.inventory_admin"/>
                     <button name="button_reject" states="verify" string="Reject" type="object"
@@ -85,5 +85,5 @@
             id="menu_inventory_adjustment"
             action="inventory_adjustment_action_view"
             sequence="6"
-            groups="custom_inventory.inventory_admin,custom_inventory.inventory_procurement"/>
+            groups="custom_inventory.inventory_admin,custom_inventory.inventory_procurement_HO,custom_inventory.inventory_procurement_branch"/>
 </odoo>
