@@ -76,7 +76,7 @@
                 <header>
                     <button name="button_procurement_evaluate" states="draft" string="Procurement Submit Evaluation"
                             type="object" class="oe_highlight"
-                            groups="asset_management.asset_procurement"/>
+                            groups="asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"/>
                     <button name="button_dispose" states="procurement_evaluate" string="Approve Disposal" type="object"
                             groups="asset_management.asset_dm,asset_management.asset_cd"/>
                     <button name="button_reject" states="procurement_evaluate" string="Reject" type="object"
@@ -147,5 +147,5 @@
             id="menu_asset_disposal"
             action="action_asset_disposal"
             sequence="8"
-            groups="asset_management.asset_lm,asset_management.asset_fm,asset_management.asset_dm"/>
+            groups="asset_management.asset_lm,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_dm"/>
 </odoo>

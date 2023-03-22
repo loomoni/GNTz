@@ -33,7 +33,6 @@
         'views/asset_reporting.xml',
         'views/asset_transfer.xml',
         'views/assets_checkout.xml',
-        'views/assets_custodian.xml',
         'views/asset_reevaluation.xml',
     ],
     # only loaded in demonstration mode

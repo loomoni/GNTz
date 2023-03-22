@@ -21,19 +21,19 @@
                 <header>
                     <button name="button_procurement_review" states="draft" string="Review" type="object"
                             class="oe_highlight"
-                            groups="asset_management.asset_procurement"/>
+                            groups="asset_management.asset_procurement_branch,asset_management.asset_procurement_ho"/>
                     <button name="button_am_manager_review" states="procurement" string="AD/Country Director Review"
                             type="object"
                             class="oe_highlight"
-                            groups="asset_management.asset_procurement"/>
+                            groups="asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"/>
                     <button name="button_am_manager_review" states="adm_cd" string="AD/Country Director Review"
                             type="object"
                             class="oe_highlight"
-                            groups="asset_management.asset_procurement"/>
+                            groups="asset_management.asset_procurement_branch,asset_management.asset_procurement_ho"/>
                     <button name="button_am_manager_review" states="country_director" string="AD/Country Director Review"
                             type="object"
                             class="oe_highlight"
-                            groups="asset_management.asset_procurement"/>
+                            groups="asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"/>
                     <field name="state" widget="statusbar"
                            statusbar_visible="draft,procurement,adm_cd,country_director,staff"/>
 
@@ -99,10 +99,10 @@
         </field>
     </record>
 
-    <menuitem name="Asset Transfer"
-              id="asset_transfer_menu_id"
-              parent="asset_management.menu_root"
-              action="asset_transfer_action"
-              sequence="8"
-              groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_dm,asset_management.asset_fm,asset_management.asset_procurement"/>
+<!--    <menuitem name="Asset Transfer"-->
+<!--              id="asset_transfer_menu_id"-->
+<!--              parent="asset_management.menu_root"-->
+<!--              action="asset_transfer_action"-->
+<!--              sequence="8"-->
+<!--              groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_dm,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"/>-->
 </odoo>

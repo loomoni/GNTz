@@ -12,14 +12,26 @@
             <field name="comment">The user can read and create own department records</field>
         </record>
 
-        <record id="asset_fm" model="res.groups">
-            <field name="name">Finance Manager</field>
+        <record id="asset_fm_ho" model="res.groups">
+            <field name="name">Finance HO</field>
             <field name="category_id" ref="asset_security_category"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
 
-        <record id="asset_procurement" model="res.groups">
-            <field name="name">Procurement</field>
+        <record id="asset_fm_branch" model="res.groups">
+            <field name="name">Finance Branch</field>
+            <field name="category_id" ref="asset_security_category"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="asset_procurement_ho" model="res.groups">
+            <field name="name">Procurement HO</field>
+            <field name="category_id" ref="asset_security_category"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="asset_procurement_branch" model="res.groups">
+            <field name="name">Procurement Branch</field>
             <field name="category_id" ref="asset_security_category"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
@@ -42,29 +54,157 @@
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
 
-        <record id="branch_manager" model="res.groups">
-            <field name="name">Branch Manager</field>
+        <record id="all_ict_officer" model="res.groups">
+            <field name="name">IT Officer</field>
             <field name="category_id" ref="asset_security_category"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
 
-        <record id="branch_staff" model="res.groups">
-            <field name="name">Branch Staff</field>
-            <field name="category_id" ref="asset_security_category"/>
-            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <!--  Asset list access rules -->
+        <record model="ir.rule" id="custom_asset_ho_procurement_access_rule">
+            <field name="name">HO Procurement Asset access rule</field>
+            <field name="model_id" ref="om_account_asset.model_account_asset_asset"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4,ref('asset_management.asset_procurement_ho'))]"/>
         </record>
 
-        <record id="ict_hq_officer" model="res.groups">
-            <field name="name">ICT HQ Officer</field>
-            <field name="category_id" ref="asset_security_category"/>
-            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
-        </record>
-
-        <record model="ir.rule" id="custom_asset_procurement_access_rule">
-            <field name="name">Asset access rule</field>
+        <record model="ir.rule" id="custom_asset_branch_procurement_access_rule">
+            <field name="name">Branch Procurement Asset access rule</field>
             <field name="model_id" ref="om_account_asset.model_account_asset_asset"/>
             <field name="domain_force">[('department_id.branch_id.manager_id.user_id','=',user.id)]</field>
-            <field name="groups" eval="[(4,ref('asset_management.branch_staff'))]"/>
+            <field name="groups" eval="[(4,ref('asset_management.asset_procurement_branch'))]"/>
+        </record>
+
+        <record model="ir.rule" id="custom_asset_fm_ho_access_rule">
+            <field name="name">Finance HO Asset access rule</field>
+            <field name="model_id" ref="om_account_asset.model_account_asset_asset"/>
+            <field name="domain_force">[('department_id.branch_id.accountant_id.id','=',user.id)]</field>
+            <field name="groups" eval="[(4,ref('asset_management.asset_fm_ho'))]"/>
+        </record>
+
+        <record model="ir.rule" id="custom_asset_fm_branch_access_rule">
+            <field name="name">Finance Branch Asset Assignment access rule</field>
+            <field name="model_id" ref="om_account_asset.model_account_asset_asset"/>
+            <field name="domain_force">[('department_id.branch_id.accountant_id.id','=',user.id)]</field>
+            <field name="groups" eval="[(4,ref('asset_management.asset_fm_branch'))]"/>
+        </record>
+
+        <record model="ir.rule" id="custom_asset_ict_officer_access_rule">
+            <field name="name">ICT Officer Asset Assignment access rule</field>
+            <field name="model_id" ref="om_account_asset.model_account_asset_asset"/>
+            <field name="domain_force">[('department_id.branch_id.ict_officer_id.user_id','=',user.id)]</field>
+            <field name="groups" eval="[(4,ref('asset_management.all_ict_officer'))]"/>
+        </record>
+
+        <!--  Asset assignment rules -->
+        <record model="ir.rule" id="custom_asset_all_staff_access_rule">
+            <field name="name">All Staff Asset Assignment access rule</field>
+            <field name="model_id" ref="asset_management.model_account_asset_assign"/>
+            <field name="domain_force">[('assigned_person.user_id','=',user.id)]</field>
+            <field name="groups" eval="[(4,ref('asset_management.all_staff'))]"/>
+        </record>
+
+        <record model="ir.rule" id="custom_asset_finance_ho_access_rule">
+            <field name="name">Finance HO Asset Assignment access rule</field>
+            <field name="model_id" ref="asset_management.model_account_asset_assign"/>
+            <field name="domain_force">[('assigned_person.department_id.branch_id.accountant_id.id','=',user.id)]
+            </field>
+            <field name="groups" eval="[(4,ref('asset_management.asset_fm_ho'))]"/>
+        </record>
+
+        <record model="ir.rule" id="custom_asset_finance_branch_access_rule">
+            <field name="name">Finance Branch Asset Assignment access rule</field>
+            <field name="model_id" ref="asset_management.model_account_asset_assign"/>
+            <field name="domain_force">[('assigned_person.department_id.branch_id.accountant_id.id','=',user.id)]
+            </field>
+            <field name="groups" eval="[(4,ref('asset_management.asset_fm_branch'))]"/>
+        </record>
+
+        <record model="ir.rule" id="custom_asset_procurement_branch_access_rule">
+            <field name="name">Procurement Branch Asset Assignment access rule</field>
+            <field name="model_id" ref="asset_management.model_account_asset_assign"/>
+            <field name="domain_force">[('assigned_person.department_id.branch_id.manager_id.user_id','=',user.id)]
+            </field>
+            <field name="groups" eval="[(4,ref('asset_management.asset_procurement_branch'))]"/>
+        </record>
+
+        <record model="ir.rule" id="custom_asset_procurement_ho_access_rule">
+            <field name="name">Procurement HO Asset Assignment access rule</field>
+            <field name="model_id" ref="asset_management.model_account_asset_assign"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4,ref('asset_management.asset_procurement_ho'))]"/>
+        </record>
+
+        <record model="ir.rule" id="custom_asset_line_manager_access_rule">
+            <field name="name">Line Manager Asset Assignment access rule</field>
+            <field name="model_id" ref="asset_management.model_account_asset_assign"/>
+            <field name="domain_force">[('assigned_person.department_id.manager_id.user_id','=',user.id)]</field>
+            <field name="groups" eval="[(4,ref('asset_management.asset_lm'))]"/>
+        </record>
+
+        <record model="ir.rule" id="custom_asse_assign_t_ict_officer_access_rule">
+            <field name="name">ICT Officer Asset Assignment access rule</field>
+            <field name="model_id" ref="asset_management.model_account_asset_assign"/>
+            <field name="domain_force">[('assigned_person.user_id','=',user.id)]</field>
+            <field name="groups" eval="[(4,ref('asset_management.all_ict_officer'))]"/>
+        </record>
+
+        <!--   Asset reporting damage access rules-->
+        <record model="ir.rule" id="custom_asset_report_damage_staff_access_rule">
+            <field name="name">All Staff Asset Reporting Damage access rule</field>
+            <field name="model_id" ref="asset_management.model_asset_reporting_damage"/>
+            <field name="domain_force">[('name.user_id','=',user.id)]</field>
+            <field name="groups" eval="[(4,ref('asset_management.all_staff'))]"/>
+        </record>
+
+        <record model="ir.rule" id="custom_asset_report_damage_ict_officer_access_rule">
+            <field name="name">IT Asset Reporting Damage access rule</field>
+            <field name="model_id" ref="asset_management.model_asset_reporting_damage"/>
+            <field name="domain_force">[('name.department_id.branch_id.ict_officer_id.user_id','=',user.id)]</field>
+            <field name="groups" eval="[(4,ref('asset_management.all_ict_officer'))]"/>
+        </record>
+
+        <record model="ir.rule" id="custom_asset_report_damage_line_manager_access_rule">
+            <field name="name">Line Manager Asset Reporting Damage access rule</field>
+            <field name="model_id" ref="asset_management.model_asset_reporting_damage"/>
+            <field name="domain_force">[('name.department_id.manager_id.user_id','=',user.id)]</field>
+            <field name="groups" eval="[(4,ref('asset_management.asset_lm'))]"/>
+        </record>
+
+        <record model="ir.rule" id="custom_asset_report_procurement_ho_access_rule">
+            <field name="name">Procurement HO Asset Reporting Damage access rule</field>
+            <field name="model_id" ref="asset_management.model_asset_reporting_damage"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4,ref('asset_management.asset_procurement_branch'))]"/>
+        </record>
+
+        <record model="ir.rule" id="custom_asset_report_damage_procurement_branch_access_rule">
+            <field name="name">Procurement Asset Reporting Damage access rule</field>
+            <field name="model_id" ref="asset_management.model_asset_reporting_damage"/>
+            <field name="domain_force">[('name.department_id.branch_id.manager_id.user_id','=',user.id)]</field>
+            <field name="groups" eval="[(4,ref('asset_management.asset_procurement_ho'))]"/>
+        </record>
+
+        <!-- asset reporting lost -->
+        <record model="ir.rule" id="custom_asset_report_lost_theft_staff_access_rule">
+            <field name="name">All Staff Asset Reporting Lost/Theft access rule</field>
+            <field name="model_id" ref="asset_management.model_asset_reporting_lost"/>
+            <field name="domain_force">[('name.user_id','=',user.id)]</field>
+            <field name="groups" eval="[(4,ref('asset_management.all_staff'))]"/>
+        </record>
+
+        <record model="ir.rule" id="custom_asset_report_lost_theft_line_manager_access_rule">
+            <field name="name">Line Manager Asset Reporting Lost/Theft access rule</field>
+            <field name="model_id" ref="asset_management.model_asset_reporting_lost"/>
+            <field name="domain_force">[('name.department_id.manager_id.user_id','=',user.id)]</field>
+            <field name="groups" eval="[(4,ref('asset_management.asset_lm'))]"/>
+        </record>
+
+        <record model="ir.rule" id="custom_asset_report_lost_theft_procurement_branch_access_rule">
+            <field name="name">Procurement Branch Asset Reporting Lost/Theft access rule</field>
+            <field name="model_id" ref="asset_management.model_asset_reporting_lost"/>
+            <field name="domain_force">[('name.department_id.branch_id.manager_id.user_id','=',user.id)]</field>
+            <field name="groups" eval="[(4,ref('asset_management.asset_procurement_branch'))]"/>
         </record>
 
     </data>

@@ -92,13 +92,14 @@
                         <group>
                             <group>
                                 <field name="manager_id" widget="many2many_tags"/>
-                                <!--                            <field name="hr_manager_id"/>-->
+                                <field name="ict_officer_id"/>
+
+                                <!--                             <field name="hr_manager_id"/>-->
 
                             </group>
                             <group>
-                                <!--                            <field name="accountant_id"/>-->
-                                <!--                            <field name="cashier_id"/>-->
-                                <field name="main_branch"/>
+                                <field name="accountant_id" widget="many2many_tags"/>
+                                <!--                                <field name="main_branch"/>-->
                             </group>
                         </group>
                     </sheet>

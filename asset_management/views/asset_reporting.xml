@@ -23,7 +23,7 @@
                 <header>
                     <button name="button_staff_submit_damage" states="draft" string="Submit report" type="object"
                             class="oe_highlight"
-                            groups="asset_management.all_staff,asset_management.asset_lm"
+                            groups="asset_management.all_staff,asset_management.all_ict_officer,asset_management.asset_lm"
                     />
                     <button name="button_line_manager_review" states="submit" string="Submit Recommendation"
                             type="object"
@@ -39,7 +39,7 @@
                     <button name="button_procurement_review" states="it_officer,line_manager" string="Procurement Review"
                             type="object"
                             class="oe_highlight"
-                            groups="asset_management.asset_procurement"
+                            groups="asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"
                     />
                     <button name="button_am_manager_review" states="procurement" string="AD/Country Director Review"
                             type="object"
@@ -193,7 +193,7 @@
                             groups="asset_management.asset_lm"/>
                     <button name="button_procurement_review" states="line_manager" string="Review" type="object"
                             class="oe_highlight"
-                            groups="asset_management.asset_procurement"/>
+                            groups="asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"/>
                     <button name="button_am_manager_review" states="procurement" string="AD/Country Director Review"
                             type="object"
                             class="oe_highlight"
@@ -280,17 +280,17 @@
               id="asset_reporting_menu"
               parent="asset_management.menu_root"
               sequence="4"
-              groups="asset_management.ict_hq_officer,asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_dm,asset_management.asset_fm,asset_management.asset_procurement"/>
+              groups="asset_management.all_staff,asset_management.all_ict_officer,asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_dm,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"/>
     <menuitem name="Damage"
               id="asset_reporting_damage"
               action="asset_reporting_damage_action"
               parent="asset_management.asset_reporting_menu"
               sequence="1"
-              groups="asset_management.ict_hq_officer,asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_dm,asset_management.asset_fm,asset_management.asset_procurement"/>
+              groups="asset_management.all_staff,asset_management.all_ict_officer,asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_dm,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"/>
     <menuitem name="Loss/Theft"
               id="asset_reporting_lost"
               action="asset_reporting_lost_action"
               parent="asset_management.asset_reporting_menu"
               sequence="2"
-              groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_dm,asset_management.asset_fm,asset_management.asset_procurement"/>
+              groups="asset_management.all_staff,asset_management.asset_lm,asset_management.all_ict_officer,asset_management.asset_cd,asset_management.asset_dm,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"/>
 </odoo>

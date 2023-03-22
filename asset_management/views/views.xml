@@ -26,16 +26,22 @@
             <xpath expr="//field[@name='department_id']" position="after">
                 <field name="branch"/>
             </xpath>
+             <xpath expr="//field[@name='category_id']" position="before">
+                <field name="image_small" widget="image" options="{'size': (100, 100)}"/>
+            </xpath>
             <xpath expr="//field[@name='category_id']" position="after">
                 <field name="asset_id_no"/>
             </xpath>
             <xpath expr="//form/header" position="replace">
                 <header>
-                    <button name="validate" states="draft" string="Confirm Asset" type="object" class="oe_highlight"
-                            groups="asset_management.asset_dm"/>
-                    <button name="back_to_draft" states="open" string="Review Asset" type="object" class="oe_highlight"
-                            groups="asset_management.asset_dm"/>
-                    <field name="state" widget="statusbar" statusbar_visible="draft,open,inuse,repair,replace,close"/>
+                    <button name="button_finance_review" states="draft" string="Finance Review" type="object" class="oe_highlight"
+                            groups="asset_management.asset_fm_ho,asset_management.asset_fm_branch"/>
+                    <button name="validate" states="review" string="Confirm Asset" type="object" class="oe_highlight"
+                            groups="asset_management.asset_cd,asset_management.asset_dm"/>
+                    <button name="back_to_draft" states="review" string="Review Asset" type="object"
+                            groups="asset_management.asset_cd,asset_management.asset_dm"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,review,open,inuse,repair,replace,close"/>
                 </header>
             </xpath>
         </field>
@@ -116,17 +122,17 @@
               id="menu_asset_types"
               action="om_account_asset.action_account_asset_asset_list_normal_purchase"
               sequence="2"
-              groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_fm,asset_management.asset_procurement"/>
+              groups="asset_management.asset_cd,asset_management.asset_dm,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_branch,asset_management.asset_procurement_ho"/>
     <menuitem name="Recording"
               id="menu_assets"
               action="om_account_asset.action_account_asset_asset_form"
               parent="asset_management.menu_root"
               sequence="3"
-              groups="asset_management.branch_staff,asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_dm,asset_management.asset_fm,asset_management.asset_procurement"/>
+              groups="asset_management.asset_cd,asset_management.asset_dm,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_branch,asset_management.asset_procurement_ho"/>
     <menuitem name="Fixed Assets Report"
               id="menu_fixed_assets_report"
               action="action_fixed_assets"
               parent="asset_management.menu_root"
               sequence="9"
-              groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_fm,asset_management.asset_dm"/>
+              groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_dm"/>
 </odoo>

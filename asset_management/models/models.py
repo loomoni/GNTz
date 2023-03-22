@@ -19,7 +19,7 @@ class AssetsInherit(models.Model):
 
     SELECTION = [
         ('draft', 'Draft'),
-        ('review', 'Review'),
+        ('review', 'Finance Reviewed'),
         ('open', 'Unassigned'),
         ('inuse', 'Running'),
         ('repair', 'Repair'),
@@ -30,6 +30,11 @@ class AssetsInherit(models.Model):
     @api.multi
     def back_to_draft(self):
         self.write({'state': 'draft'})
+        return True
+
+    @api.multi
+    def button_finance_review(self):
+        self.write({'state': 'review'})
         return True
 
     state = fields.Selection(SELECTION, 'Status', required=True, copy=False, default='draft',
@@ -72,6 +77,7 @@ class AssetsInherit(models.Model):
     asset_id_no = fields.Char(string='ASSET ID #')
     account_id = fields.Many2one('account.account', string='Credit Account')
     journal_id = fields.Many2one('account.journal', string='Credit Account Journal')
+    image_small = fields.Binary("Photo", attachment=True)
 
     _sql_constraints = [
         ('code_unique',
@@ -243,13 +249,19 @@ class AssetAssign(models.Model):
         ("unassigned", "Unassign"),
     ]
 
+    def _default_assignment(self):
+        employee = self.env['hr.employee'].sudo().search(
+            [('user_id', '=', self.env.uid)], limit=1)
+        if employee:
+            return employee.id
+
     date_created = fields.Date('Date / Time', readonly=True, required=True, index=True,
                                default=fields.date.today(), store=True)
     attachment = fields.Binary(string="Attachment", attachment=True, store=True, )
     attachment_name = fields.Char('Attachment Name')
     assignment_no = fields.Char('Assignment No', readonly=True, store=True)
     assigned_by = fields.Many2one('res.users', 'Assigned By', default=lambda self: self.env.uid, readonly=True)
-    assigned_person = fields.Many2one('hr.employee', 'Assigned Person', default=lambda self: self.env.uid, )
+    assigned_person = fields.Many2one('hr.employee', 'Assigned Person', default=_default_assignment)
     job_title = fields.Char(string="Job title", related='assigned_person.job_title')
     id_number = fields.Char(string="ID Number", related='assigned_person.work_phone')
     assigned_location = fields.Many2one('account.asset_location', 'Assigned Location')

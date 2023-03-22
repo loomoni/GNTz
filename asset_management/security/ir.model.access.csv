@@ -1,7 +1,12 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-asset_type_hod,Asset Type HOD Group,model_account_asset_category,,1,1,1,1
-asset_type_dfa,Asset Type DFA Group,model_account_asset_category,,1,1,1,1
-asset_type_es,Asset Type ES Group,model_account_asset_category,,1,1,1,1
+asset_type_procurement_ho,Asset Type procurement HO Group,model_account_asset_category,asset_procurement_ho,1,1,1,1
+asset_type_procurement_branch,Asset Type procurement Branch Group,om_account_asset.model_account_asset_category,asset_procurement_branch,1,1,1,0
+asset_type_fm_ho,Asset Type HO Group,model_account_asset_category,asset_fm_ho,1,1,1,0
+asset_type_fm_branch,Asset Type branch Group,model_account_asset_category,asset_fm_branch,1,1,1,0
+asset_type_cd,Asset Type CD Group,model_account_asset_category,asset_cd,1,1,1,1
+asset_type_dm,Asset Type DM Group,model_account_asset_category,asset_dm,1,1,1,1
+asset_type_all_staff,Asset Type all_staff Group,model_account_asset_category,all_staff,1,1,1,0
+asset_type_ict_officer,Asset Type ict officer Group,model_account_asset_category,all_ict_officer,1,1,1,0
 
 asset_management_hod,Asset HOD Group,model_account_asset_asset,,1,1,1,1
 asset_management_dfa,Asset DFA Group,model_account_asset_asset,,1,1,1,1

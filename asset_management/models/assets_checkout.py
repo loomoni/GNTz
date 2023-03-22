@@ -41,8 +41,14 @@ class AccountAssetCheckout(models.Model):
         self.write({'state': 'staff'})
         return True
 
+    def _default_employee(self):
+        employee = self.env['hr.employee'].sudo().search(
+            [('user_id', '=', self.env.uid)], limit=1)
+        if employee:
+            return employee.id
+
     name = fields.Many2one(comodel_name='hr.employee', string='Employee Name',
-                           required=True)
+                           required=True,  default=_default_employee)
     state = fields.Selection(SELECTION, index=True, track_visibility='onchange',
                              default='draft')
     employee_no = fields.Char(string='Employee Number', related='name.work_phone')

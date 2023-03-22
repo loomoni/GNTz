@@ -36,16 +36,18 @@
                     <button name="button_staff_or_line_manager_request" states="draft" string="Submit Request"
                             type="object"
                             class="oe_highlight"
-                            groups="asset_management.asset_lm,asset_management.all_staff"/>
+                            groups="asset_management.asset_lm,asset_management.all_ict_officer,asset_management.all_staff"/>
                     <button name="button_line_manager_review" states="send_request" string="Line Manager Review"
                             type="object" class="oe_highlight"
                             groups="asset_management.asset_lm"/>
                     <button name="button_procurement_assign" states="line_manager" string="Procurement Assign"
                             type="object" class="oe_highlight"
-                            groups="asset_management.asset_procurement"/>
+                            groups="asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"/>
                     <button name="button_assign" states="procurement" string="Approve to Assignment" type="object"
                             class="oe_highlight"
                             groups="asset_management.asset_dm,asset_management.asset_cd"/>
+<!--                     <button name="button_back_to_procurement" states="procurement" string="Back To Procurement" type="object"-->
+<!--                            groups="asset_management.asset_dm,asset_management.asset_cd"/>-->
                     <button name="button_unassign" states="assigned" string="Unassign" type="object"
                             groups="asset_management.asset_dm,asset_management.asset_cd"/>
                     <field name="state" widget="statusbar"
@@ -119,5 +121,5 @@
             name="Asset Assignment"
             action="action_asset_assign"
             sequence="4"
-            groups="asset_management.asset_procurement,asset_management.asset_lm,asset_management.asset_dm"/>
+            groups="asset_management.all_staff,asset_management.all_ict_officer,asset_management.asset_procurement_ho,asset_management.asset_procurement_branch,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_lm,asset_management.asset_dm"/>
 </odoo>
