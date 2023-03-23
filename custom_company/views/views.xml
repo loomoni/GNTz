@@ -46,11 +46,11 @@
                                         <field name="name"/>
                                     </strong>
                                     <div name="tags"/>
-                                    <ul>
-                                        <li>Branch Manager:
-                                            <field name="manager_id"/>
-                                        </li>
-                                    </ul>
+<!--                                    <ul>-->
+<!--                                        <li>:-->
+<!--                                            <field name="manager_id"/>-->
+<!--                                        </li>-->
+<!--                                    </ul>-->
                                     <div name="tags"/>
                                     <strong>
                                         <field name="code"/>
