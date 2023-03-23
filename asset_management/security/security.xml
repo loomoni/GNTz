@@ -207,6 +207,76 @@
             <field name="groups" eval="[(4,ref('asset_management.asset_procurement_branch'))]"/>
         </record>
 
+        <!--       Asset Check out  access rule-->
+        <record model="ir.rule" id="custom_asset_check_out_staff_access_rule">
+            <field name="name">All Staff Asset CheckOut access rule</field>
+            <field name="model_id" ref="asset_management.model_account_asset_checkout"/>
+            <field name="domain_force">[('name.user_id','=',user.id)]</field>
+            <field name="groups" eval="[(4,ref('asset_management.all_staff'))]"/>
+        </record>
+
+        <record model="ir.rule" id="custom_asset_checkout_line_manager_access_rule">
+            <field name="name">Line Manager Asset CheckOut access rule</field>
+            <field name="model_id" ref="asset_management.model_account_asset_checkout"/>
+            <field name="domain_force">[('name.department_id.manager_id.user_id','=',user.id)]</field>
+            <field name="groups" eval="[(4,ref('asset_management.asset_lm'))]"/>
+        </record>
+
+        <record model="ir.rule" id="custom_asset_checkout_procurement_branch_access_rule">
+            <field name="name">Procurement Branch Asset CheckOut access rule</field>
+            <field name="model_id" ref="asset_management.model_account_asset_checkout"/>
+            <field name="domain_force">[('name.department_id.branch_id.manager_id.user_id','=',user.id)]</field>
+            <field name="groups" eval="[(4,ref('asset_management.asset_procurement_branch'))]"/>
+        </record>
+
+        <!--        Asset Revaluation access rule-->
+        <record model="ir.rule" id="custom_asset_revaluation_procurement_branch_access_rule">
+            <field name="name">Procurement Branch Asset Reevaluation access rule</field>
+            <field name="model_id" ref="asset_management.model_account_asset_reevaluation"/>
+            <field name="domain_force">[('asset_id.department_id.branch_id.manager_id.user_id','=',user.id)]</field>
+            <field name="groups" eval="[(4,ref('asset_management.asset_procurement_branch'))]"/>
+        </record>
+
+        <record model="ir.rule" id="custom_asset_revaluation_finance_branch_access_rule">
+            <field name="name">Finance Branch Asset Reevaluation access rule</field>
+            <field name="model_id" ref="asset_management.model_account_asset_reevaluation"/>
+            <field name="domain_force">[('asset_id.department_id.branch_id.accountant_id.id','=',user.id)]
+            </field>
+            <field name="groups" eval="[(4,ref('asset_management.asset_fm_branch'))]"/>
+        </record>
+
+        <record model="ir.rule" id="custom_asset_revaluation_finance_ho_access_rule">
+            <field name="name">Finance HO Asset Reevaluation access rule</field>
+            <field name="model_id" ref="asset_management.model_account_asset_reevaluation"/>
+            <field name="domain_force">[('asset_id.department_id.branch_id.accountant_id.id','=',user.id)]
+            </field>
+            <field name="groups" eval="[(4,ref('asset_management.asset_fm_ho'))]"/>
+        </record>
+
+        <!--  Asset disposal rule access -->
+        <record model="ir.rule" id="custom_asset_disposal_procurement_branch_access_rule">
+            <field name="name">Procurement Branch Asset disposal access rule</field>
+            <field name="model_id" ref="asset_management.model_account_asset_disposal"/>
+            <field name="domain_force">[('employee_id.department_id.branch_id.manager_id.user_id','=',user.id)]</field>
+            <field name="groups" eval="[(4,ref('asset_management.asset_procurement_branch'))]"/>
+        </record>
+
+        <record model="ir.rule" id="custom_asset_disposal_finance_branch_access_rule">
+            <field name="name">Finance Branch Asset Reevaluation access rule</field>
+            <field name="model_id" ref="asset_management.model_account_asset_disposal"/>
+            <field name="domain_force">[('employee_id.department_id.branch_id.accountant_id.id','=',user.id)]
+            </field>
+            <field name="groups" eval="[(4,ref('asset_management.asset_fm_branch'))]"/>
+        </record>
+
+        <record model="ir.rule" id="custom_asset_disposal_finance_ho_access_rule">
+            <field name="name">Finance HO Asset Reevaluation access rule</field>
+            <field name="model_id" ref="asset_management.model_account_asset_disposal"/>
+            <field name="domain_force">[('employee_id.department_id.branch_id.accountant_id.id','=',user.id)]
+            </field>
+            <field name="groups" eval="[(4,ref('asset_management.asset_fm_ho'))]"/>
+        </record>
+
     </data>
 </odoo>
 

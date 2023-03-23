@@ -77,16 +77,26 @@
                     <button name="button_procurement_evaluate" states="draft" string="Procurement Submit Evaluation"
                             type="object" class="oe_highlight"
                             groups="asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"/>
-                    <button name="button_dispose" states="procurement_evaluate" string="Approve Disposal" type="object"
+                    <button name="button_fm_approve" states="procurement_evaluate" string="Finance Review" type="object"
+                            class="oe_highlight"
+                            groups="asset_management.asset_fm_ho,asset_management.asset_fm_branch"/>
+                    <button name="button_dispose" states="fm_review" string="Approve Disposal" type="object"
+                             class="oe_highlight"
                             groups="asset_management.asset_dm,asset_management.asset_cd"/>
-                    <button name="button_reject" states="procurement_evaluate" string="Reject" type="object"
+                    <button name="button_reject" states="fm_review" string="Reject" type="object"
                             groups="asset_management.asset_dm,asset_management.asset_cd"/>
                     <field name="state" widget="statusbar"
-                           statusbar_visible="draft,procurement_evaluate,ad_manager_approve,rejected"/>
+                           statusbar_visible="draft,procurement_evaluate,fm_review,ad_manager_approve,rejected"/>
                 </header>
                 <sheet>
-                    <group string="Reference No">
-                        <field name="name"/>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                        <group>
+                            <field name="employee_id"/>
+                        </group>
+
                     </group>
                     <group string="Disposal Details">
                         <group>
@@ -147,5 +157,5 @@
             id="menu_asset_disposal"
             action="action_asset_disposal"
             sequence="8"
-            groups="asset_management.asset_lm,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_dm"/>
+            groups="asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_ho,asset_management.asset_procurement_branch,asset_management.asset_cd,asset_management.asset_dm"/>
 </odoo>

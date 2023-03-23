@@ -22,6 +22,7 @@ class AssetDisposal(models.Model):
     STATE_SELECTION = [
         ("draft", "Draft"),
         ("procurement_evaluate", "Procurement Evaluate"),
+        ("fm_review", "FM Reviewed"),
         ("ad_manager_approve", "AD Manager/ Country Director Approve "),
         ("rejected", "Rejected"),
     ]
@@ -32,9 +33,16 @@ class AssetDisposal(models.Model):
         if lossgain is not None:
             return lossgain.id
 
+    def _default_employee(self):
+        employee = self.env['hr.employee'].sudo().search(
+            [('user_id', '=', self.env.uid)], limit=1)
+        if employee:
+            return employee.id
+
     date_created = fields.Date('Date / Time', readonly=True, required=True, index=True,
                                default=fields.date.today(), store=True)
     name = fields.Char(string='Reference', required=True)
+    employee_id = fields.Many2one('hr.employee', 'Employee Name', default=_default_employee, readonly=True)
     state = fields.Selection(STATE_SELECTION, index=True, track_visibility='onchange', required=True, copy=False,
                              default='draft')
     account_id = fields.Many2one('account.account', string='Gain/Loss on Sale of Asset Account', required=True,
@@ -57,7 +65,7 @@ class AssetDisposal(models.Model):
 
     @api.multi
     def button_fm_approve(self):
-        self.write({'state': 'fm_approved'})
+        self.write({'state': 'fm_review'})
         for lin in self.line_ids:
             lin.write({'check_evaluation': True})
         checkEvaluation = False
@@ -66,9 +74,9 @@ class AssetDisposal(models.Model):
                 checkEvaluation = True
                 break
         if checkEvaluation is True:
-            self.write({'state': 'asset_evaluation'})
+            self.write({'state': 'fm_review'})
         else:
-            self.write({'state': 'asset_evaluated'})
+            self.write({'state': 'fm_review'})
         return True
 
 
