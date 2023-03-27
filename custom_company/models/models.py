@@ -17,6 +17,7 @@ class CompanyBranches(models.Model):
     manager_id = fields.Many2many('hr.employee', string='Procurement Team', track_visibility='onchange')
     accountant_id = fields.Many2many('res.users', string='Finance Team', track_visibility='onchange')
     ict_officer_id = fields.Many2one('hr.employee', string='ICT Officer', track_visibility='onchange')
+    hr_manager_id = fields.Many2one('hr.employee', string='Branch HR', track_visibility='onchange')
     cashier_id = fields.Many2one('hr.employee', string='Branch Cashier', track_visibility='onchange')
 
 

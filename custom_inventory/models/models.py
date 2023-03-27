@@ -129,9 +129,9 @@ class InventoryStockOut(models.Model):
     STATE_SELECTION = [
         ("draft", "Draft"),
         ("requested", "Requested"),
-        ("line_manager", "Line Manager Reviewed"),
+        ("line_manager", "Line Manager Approve"),
         ("checked", "Procurement Checked"),
-        ("issued", "Receipt Confirmed"),
+        ("issued", "AD Approved"),
         ("rejected", "Rejected")
     ]
 
@@ -160,7 +160,7 @@ class InventoryStockOut(models.Model):
     parent_department = fields.Integer(string="Parent Department", required=False,
                                        related='requester_id.department_parent_id.id')
     department_id = fields.Many2one('hr.department', string='Department', required=True, default=_default_department,
-                                    readonly=True, store=True,)
+                                    readonly=True, store=True, )
     state = fields.Selection(STATE_SELECTION, index=True, track_visibility='onchange',
                              readonly=True, required=True, copy=False, default='draft', store=True)
     line_ids = fields.One2many('inventory.stockout.lines', 'stockout_id', string="Stock Out Lines", index=True,
@@ -180,6 +180,7 @@ class InventoryStockOut(models.Model):
     def button_review(self):
         self.write({'state': 'draft'})
         return True
+
     @api.multi
     def button_back_to_line(self):
         self.write({'state': 'line_manager'})
@@ -237,7 +238,8 @@ class InventoryStockOutLines(models.Model):
 
     @api.onchange('department')
     def _onchange_department_id(self):
-        return {'domain': {'product_id': ['|', ('department_id', '=', self.department), ('department_id', '=', self.parent_department)]}}
+        return {'domain': {'product_id': ['|', ('department_id', '=', self.department),
+                                          ('department_id', '=', self.parent_department)]}}
 
     @api.onchange('stockout_id.department_id')
     @api.depends('stockout_id.department_id')
@@ -259,6 +261,7 @@ class InventoryStockOutLines(models.Model):
     requested_quantity = fields.Float('Requested Quantity', digits=(12, 2), required=True, default=1)
     issued_quantity = fields.Float('Issued Quantity', digits=(12, 2))
     requested_date = fields.Date(string='Requested Date', compute="requested_date_compute")
+    requested_by = fields.Char(string='Requested By', compute="requested_by_compute")
     # balance_stock = fields.Float('Balance Stock', digits=(12, 2), readonly=True)
     balance_stock = fields.Float('Balance Stock', digits=(12, 2), related='product_id.balance_stock')
     uom_id = fields.Many2one('uom.uom', string='Unit of Measure',
@@ -271,6 +274,11 @@ class InventoryStockOutLines(models.Model):
     def requested_date_compute(self):
         for rec in self:
             rec.requested_date = rec.stockout_id.request_date
+
+    @api.depends('stockout_id.requester_id.name')
+    def requested_by_compute(self):
+        for rec in self:
+            rec.requested_by = rec.stockout_id.requester_id.name
 
     @api.onchange('product_id')
     @api.depends('product_id')
@@ -304,7 +312,6 @@ class InventoryStockAdjustment(models.Model):
 
 class InventoryProductStock(models.Model):
     _inherit = "product.template"
-
 
     purchased_quantity = fields.Float('Purchased Quantity', digits=(12, 2), store=True, compute='_amount_quantity')
     issued_quantity = fields.Float('Issued Quantity', digits=(12, 2), store=True, compute='_amount_quantity')
@@ -420,7 +427,7 @@ class InventoryProductStockAdjustment(models.Model):
     attachment_name = fields.Char('Attachment Name')
     date = fields.Date(string='Date', required=True)
     employee = fields.Many2one(comodel_name='hr.employee', string='Employee', required=True, default=_default_employee,
-                                   readonly=True, store=True)
+                               readonly=True, store=True)
     state = fields.Selection(STATE_SELECTION, index=True, track_visibility='onchange',
                              readonly=True, required=True, copy=False, default='draft', store=True)
     stock_adjustment_line_ids = fields.One2many('inventory.stock.adjustment.line', 'product_line_id',

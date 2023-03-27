@@ -46,11 +46,11 @@
                                         <field name="name"/>
                                     </strong>
                                     <div name="tags"/>
-<!--                                    <ul>-->
-<!--                                        <li>:-->
-<!--                                            <field name="manager_id"/>-->
-<!--                                        </li>-->
-<!--                                    </ul>-->
+                                    <!--                                    <ul>-->
+                                    <!--                                        <li>:-->
+                                    <!--                                            <field name="manager_id"/>-->
+                                    <!--                                        </li>-->
+                                    <!--                                    </ul>-->
                                     <div name="tags"/>
                                     <strong>
                                         <field name="code"/>
@@ -94,7 +94,7 @@
                                 <field name="manager_id" widget="many2many_tags"/>
                                 <field name="ict_officer_id"/>
 
-                                <!--                             <field name="hr_manager_id"/>-->
+                                <field name="hr_manager_id"/>
 
                             </group>
                             <group>

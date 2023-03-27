@@ -19,19 +19,19 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-<!--                    <button name="button_submit" states="draft" string="Submit" type="object" class="btn-primary"-->
-<!--                            groups="custom_inventory.inventory_procurement"/>-->
-<!--                    <button name="button_line_manager" states="submit" string="Line manager Review" type="object" class="btn-primary"-->
-<!--                            groups="custom_inventory.inventory_hod"/>-->
-                    <button name="button_verify" states="draft" string="Procurement Verify" type="object" class="btn-primary"
-                            groups="custom_inventory.inventory_procurement_HO"/>
+                    <button name="button_submit" states="draft" string="Submit" type="object" class="btn-primary"
+                            groups="custom_inventory.inventory_procurement_branch,custom_inventory.inventory_procurement_HO,custom_inventory.inventory_hod"/>
+                    <button name="button_line_manager" states="submit" string="Line manager Review" type="object" class="btn-primary"
+                            groups="custom_inventory.inventory_hod"/>
+                    <button name="button_verify" states="line_manager" string="Procurement Verify" type="object" class="btn-primary"
+                            groups="custom_inventory.inventory_procurement_HO,custom_inventory.inventory_procurement_branch"/>
                     <button name="button_approve" states="verify" string="Approve" type="object" class="btn-primary"
                             groups="custom_inventory.inventory_admin"/>
                     <button name="button_reject" states="verify" string="Reject" type="object"
                             groups="custom_inventory.inventory_admin"/>
                     <button name="button_review" states="verify" string="Back to Draft" type="object"
                             groups="custom_inventory.inventory_admin"/>
-                    <field name="state" widget="statusbar" statusbar_visible="draft,verify,approved,rejected"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,submit,line_manager,verify,approved,rejected"/>
                 </header>
                 <sheet>
                     <group>
@@ -85,5 +85,5 @@
             id="menu_inventory_adjustment"
             action="inventory_adjustment_action_view"
             sequence="6"
-            groups="custom_inventory.inventory_admin,custom_inventory.inventory_procurement_HO,custom_inventory.inventory_procurement_branch"/>
+            groups="custom_inventory.inventory_hod,custom_inventory.inventory_admin,custom_inventory.inventory_procurement_HO,custom_inventory.inventory_procurement_branch"/>
 </odoo>

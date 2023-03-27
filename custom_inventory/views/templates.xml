@@ -37,7 +37,7 @@
                 <header>
                     <button name="button_requested" states="draft" string="Request" type="object" class="btn-primary"
                             groups="custom_inventory.inventory_admin,custom_inventory.inventory_procurement_branch,custom_inventory.inventory_procurement_HO,custom_inventory.inventory_staff,custom_inventory.inventory_hod"/>
-                    <button name="button_line_manager" states="requested" string="Line Manager Review" type="object"
+                    <button name="button_line_manager" states="requested" string="Line Manager Approve" type="object"
                             class="btn-primary"
                             groups="custom_inventory.inventory_hod"/>
                     <button name="button_checked" states="line_manager" string="Issue Goods" type="object"
@@ -50,9 +50,18 @@
                             groups="custom_inventory.inventory_hod"/>
                     <button name="button_back_to_line" states="line_manager" string="Back To Line Manager" type="object"
                             groups="custom_inventory.inventory_procurement_branch,custom_inventory.inventory_procurement_HO"/>
-                    <button name="button_reject" states="line_manager,requested,checked" string="Reject" type="object"
+                    <button name="button_reject" states="requested" string="Reject" type="object"
                             class="btn-primary"
-                            groups="custom_inventory.inventory_procurement_HO,custom_inventory.inventory_hod"/>
+                            groups="custom_inventory.inventory_hod"/>
+                    <button name="button_reject" states="line_manager" string="Reject" type="object"
+                            class="btn-primary"
+                            groups="custom_inventory.inventory_procurement_HO"/>
+                    <button name="button_reject" states="line_manager" string="Reject" type="object"
+                            class="btn-primary"
+                            groups="custom_inventory.inventory_procurement_branch"/>
+                    <button name="button_reject" states="checked" string="Reject" type="object"
+                            class="btn-primary"
+                            groups="custom_inventory.inventory_admin"/>
                     <button name="button_reset" states="requested" string="Review" type="object" class="btn-primary"
                             groups="custom_inventory.inventory_procurement_HO"/>
                     <field name="state" widget="statusbar"
@@ -165,9 +174,9 @@
             <xpath expr="//button[@name='action_update_quantity_on_hand']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
-            <xpath expr="//button[@name='160']" position="attributes">
-                <attribute name="invisible">1</attribute>
-            </xpath>
+<!--            <xpath expr="//button[@name='160']" position="attributes">-->
+<!--                <attribute name="invisible">1</attribute>-->
+<!--            </xpath>-->
             <xpath expr="//field[@name='list_price']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
@@ -235,6 +244,7 @@
                             <field name="requested_quantity"/>
                             <field name="issued_quantity"/>
                             <field name="requested_date"/>
+                            <field name="requested_by"/>
                             <field name="request_reason"/>
                             <field name="project"/>
                             <field name="uom_id"/>
@@ -246,6 +256,7 @@
                                     <field name="requested_quantity"/>
                                     <field name="issued_quantity"/>
                                     <field name="requested_date"/>
+                                    <field name="requested_by"/>
                                     <field name="request_reason"/>
                                     <field name="project"/>
                                     <field name="uom_id"/>
