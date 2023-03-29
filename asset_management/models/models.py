@@ -78,6 +78,9 @@ class AssetsInherit(models.Model):
     account_id = fields.Many2one('account.account', string='Credit Account')
     journal_id = fields.Many2one('account.journal', string='Credit Account Journal')
     image_small = fields.Binary("Photo", attachment=True)
+    supportive_document_line_ids = fields.One2many(comodel_name='account.asset.support.document.line',
+                                                   string="Supportive Document",
+                                                   inverse_name="document_ids")
 
     _sql_constraints = [
         ('code_unique',
@@ -272,6 +275,7 @@ class AssetAssign(models.Model):
     asset_branch = fields.Char(string='Asset Branch', related='asset_ids.branch')
     asset_category_ids = fields.One2many(comodel_name='account.asset.assign.category.line', string="Assets Category",
                                          inverse_name="category_line_id")
+
     state = fields.Selection(STATE_SELECTION, index=True, track_visibility='onchange', required=True, copy=False,
                              default='draft')
 
@@ -317,6 +321,15 @@ class AssetAssign(models.Model):
             asset.write({'assigned': False})
         self.write({'state': 'unassigned'})
         return True
+
+
+class AssetSupportDocumentLines(models.Model):
+    _name = 'account.asset.support.document.line'
+
+    document_name = fields.Char(string="Document Name")
+    attachment = fields.Binary(string="Attachment", attachment=True, store=True, )
+    attachment_name = fields.Char('Attachment Name')
+    document_ids = fields.Many2one('account.asset.asset', string="Document ID")
 
 
 class AssetAssignmentCategory(models.Model):
