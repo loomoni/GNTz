@@ -55,6 +55,25 @@
                         </tree>
                     </field>
                 </page>
+                <page string="Insurance">
+                    <field name="insurance_model_line_ids">
+                        <tree editable="bottom">
+                            <field name="name"/>
+                            <field name="date"/>
+                            <field name="expire_date"/>
+                            <field name="insurance_ids" invisible="1"/>
+                        </tree>
+                    </field>
+                </page>
+                <page string="Services">
+                    <field name="service_model_line_ids">
+                        <tree editable="bottom">
+                            <field name="service_date"/>
+                            <field name="next_service"/>
+                            <field name="service_ids" invisible="1"/>
+                        </tree>
+                    </field>
+                </page>
             </xpath>
         </field>
     </record>

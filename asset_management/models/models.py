@@ -48,7 +48,8 @@ class AssetsInherit(models.Model):
         x = self.env['account.asset.asset'].sudo().search_count([]) + 1
         for rec in self:
             branch_code = str(rec.department_id.branch_id.code) if rec.department_id.branch_id.code else ""
-            department_code = str(rec.department_id.manager_id.department_id.code) if rec.department_id.manager_id.department_id.code else ""
+            department_code = str(
+                rec.department_id.manager_id.department_id.code) if rec.department_id.manager_id.department_id.code else ""
             category_code = str(rec.category_id.asset_category_code) if rec.category_id.asset_category_code else ""
             rec.code = 'GNTZ' + '-' + branch_code + '-' + department_code + '-' + category_code + '-' + str(x)
 
@@ -58,8 +59,8 @@ class AssetsInherit(models.Model):
     #     x = self.env['account.asset.asset'].sudo().search_count([]) + 1
     #     code = self.category_id.asset_category_code
     #     branch = self.department_id.branch_id.code
-        # return 'GNTZ' + '-' + str(self.department_id_code) + '-' + str(x)
-        # return self.department_id_code
+    # return 'GNTZ' + '-' + str(self.department_id_code) + '-' + str(x)
+    # return self.department_id_code
 
     # @api.depends('department_id')
     # def _default_serial_no(self):
@@ -80,7 +81,7 @@ class AssetsInherit(models.Model):
 
     # code = fields.Char(string='Asset Number', size=32, readonly=True, required=True,
     #                    states={'draft': [('readonly', False)]}, default=_default_serial_no)
-    code = fields.Char(string='Asset Number', compute='_default_serial_no', states={'draft': [('readonly', False)]},)
+    code = fields.Char(string='Asset Number', compute='_default_serial_no', states={'draft': [('readonly', False)]}, )
     cummulative_amount = fields.Float(string='Accumulated Depreciation', compute='_compute_accumulated_depreciation',
                                       method=True, digits=0)
     asset_origin = fields.Selection(ASSET_ORIGIN_SELECTION, index=True, track_visibility='onchange',
@@ -95,6 +96,12 @@ class AssetsInherit(models.Model):
     supportive_document_line_ids = fields.One2many(comodel_name='account.asset.support.document.line',
                                                    string="Supportive Document",
                                                    inverse_name="document_ids")
+    insurance_model_line_ids = fields.One2many(comodel_name='insurance.model.line',
+                                               string="Insurance IDS",
+                                               inverse_name="insurance_ids")
+    service_model_line_ids = fields.One2many(comodel_name='service.model.line',
+                                             string="Service IDS",
+                                             inverse_name="service_ids")
 
     _sql_constraints = [
         ('code_unique',
@@ -344,6 +351,23 @@ class AssetSupportDocumentLines(models.Model):
     attachment = fields.Binary(string="Attachment", attachment=True, store=True, )
     attachment_name = fields.Char('Attachment Name')
     document_ids = fields.Many2one('account.asset.asset', string="Document ID")
+
+
+class InsuranceModelsLines(models.Model):
+    _name = 'insurance.model.line'
+
+    name = fields.Char(string="Name")
+    date = fields.Date(string="Date")
+    expire_date = fields.Date(string="Expire Date")
+    insurance_ids = fields.Many2one('account.asset.asset', string="Insurance ID")
+
+
+class ServicesModelLines(models.Model):
+    _name = 'service.model.line'
+
+    service_date = fields.Date(string="Service Date")
+    next_service = fields.Date(string="Next Service")
+    service_ids = fields.Many2one('account.asset.asset', string="Service ID")
 
 
 class AssetAssignmentCategory(models.Model):

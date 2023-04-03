@@ -38,6 +38,12 @@ account_asset_transfer,Asset Reporting lost,model_account_asset_transfer,,1,1,1,
 
 account_asset_chechout,Asset Checkout,model_account_asset_checkout,,1,1,1,1
 
+account_asset_insurance_line,Asset insurance line,model_insurance_model_line,,1,1,1,1
+
+account_asset_service_model_line,Asset service line,model_service_model_line,,1,1,1,1
+
+account_asset_service_model_line,Asset service line,model_service_model_line,,1,1,1,1
+
 account_asset_support_document_line,account asset support Checkout,model_account_asset_support_document_line,,1,1,1,1
 
 account_asset_assign_category_line,account asset assign category line,model_account_asset_assign_category_line,,1,1,1,1
