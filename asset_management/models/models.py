@@ -47,9 +47,10 @@ class AssetsInherit(models.Model):
     def _default_serial_no(self):
         x = self.env['account.asset.asset'].sudo().search_count([]) + 1
         for rec in self:
-            department_code = str(rec.department_id.branch_id.code) if rec.department_id.branch_id.code else ""
+            branch_code = str(rec.department_id.branch_id.code) if rec.department_id.branch_id.code else ""
+            department_code = str(rec.department_id.manager_id.department_id.code) if rec.department_id.manager_id.department_id.code else ""
             category_code = str(rec.category_id.asset_category_code) if rec.category_id.asset_category_code else ""
-            rec.code = 'GNTZ' + '-' + department_code + '-' + category_code + '-' + str(x)
+            rec.code = 'GNTZ' + '-' + branch_code + '-' + department_code + '-' + category_code + '-' + str(x)
 
     # @api.onchange('department_id_code')
     # @api.depends('category_id.asset_category_code')
