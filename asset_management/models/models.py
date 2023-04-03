@@ -42,11 +42,23 @@ class AssetsInherit(models.Model):
                                   "If the asset is confirmed, the status goes in 'Running' and the depreciation lines can be posted in the accounting.\n"
                                   "You can manually close an asset when the depreciation is over. If the last line of depreciation is posted, the asset automatically goes in that status.")
 
-    @api.depends('category_id.asset_category_code')
+    @api.onchange('department_id.branch_id.code', 'category_id.asset_category_code')
+    @api.depends('department_id.branch_id.code', 'category_id.asset_category_code')
     def _default_serial_no(self):
         x = self.env['account.asset.asset'].sudo().search_count([]) + 1
-        code = self.category_id.asset_category_code
-        return 'GNTZ' + '-' + str(x)
+        for rec in self:
+            department_code = str(rec.department_id.branch_id.code) if rec.department_id.branch_id.code else ""
+            category_code = str(rec.category_id.asset_category_code) if rec.category_id.asset_category_code else ""
+            rec.code = 'GNTZ' + '-' + department_code + '-' + category_code + '-' + str(x)
+
+    # @api.onchange('department_id_code')
+    # @api.depends('category_id.asset_category_code')
+    # def _default_serial_no(self):
+    #     x = self.env['account.asset.asset'].sudo().search_count([]) + 1
+    #     code = self.category_id.asset_category_code
+    #     branch = self.department_id.branch_id.code
+        # return 'GNTZ' + '-' + str(self.department_id_code) + '-' + str(x)
+        # return self.department_id_code
 
     # @api.depends('department_id')
     # def _default_serial_no(self):
@@ -65,8 +77,9 @@ class AssetsInherit(models.Model):
         if employee and employee.department_id:
             return employee.department_id.id
 
-    code = fields.Char(string='Asset Number', size=32, readonly=True, required=True,
-                       states={'draft': [('readonly', False)]}, default=_default_serial_no)
+    # code = fields.Char(string='Asset Number', size=32, readonly=True, required=True,
+    #                    states={'draft': [('readonly', False)]}, default=_default_serial_no)
+    code = fields.Char(string='Asset Number', compute='_default_serial_no', states={'draft': [('readonly', False)]},)
     cummulative_amount = fields.Float(string='Accumulated Depreciation', compute='_compute_accumulated_depreciation',
                                       method=True, digits=0)
     asset_origin = fields.Selection(ASSET_ORIGIN_SELECTION, index=True, track_visibility='onchange',
