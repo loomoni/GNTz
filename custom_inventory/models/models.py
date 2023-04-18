@@ -171,6 +171,48 @@ class InventoryStockOut(models.Model):
         self.write({'state': 'requested'})
         return True
 
+        # message = "The request is made"
+        # return {
+        #     'type': 'ir.actions.client',
+        #     'notifications': 'notifications',
+        #     'params': {
+        #         'message': message,
+        #         'type': 'success',
+        #         'sticky': True,
+        #     }
+        # }
+
+
+        # body_template = self.env.ref('mail.message_activity_assigned')
+        # for activity in self:
+        #     model_description = self.env['ir.model']._get(activity.res_model).display_name
+        #     body = body_template.render(
+        #         dict(activity=activity, model_description=model_description),
+        #         engine='ir.qweb',
+        #         minimal_qcontext=True
+        #     )
+        #     self.env['mail.thread'].message_notify(
+        #         partner_ids=activity.user_id.partner_id.ids,
+        #         body=body,
+        #         subject=_('%s: %s assigned to you') % (activity.res_name, activity.summary or activity.activity_type_id.name),
+        #         record_name=activity.res_name,
+        #         model_description=model_description,
+        #         notif_layout='mail.mail_notification_light'
+        #     )
+
+
+
+        # message = "The request is made"
+        # return {
+        #     'type': 'ir.actions.client',
+        #     'title': _('Warning'),
+        #     'params': {
+        #         'message': message,
+        #         'type': 'success',
+        #         'sticky': True,
+        #     }
+        # }
+
     @api.multi
     def button_line_manager(self):
         self.write({'state': 'line_manager'})

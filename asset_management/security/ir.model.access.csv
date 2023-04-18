@@ -8,9 +8,12 @@ asset_type_dm,Asset Type DM Group,model_account_asset_category,asset_dm,1,1,1,1
 asset_type_all_staff,Asset Type all_staff Group,model_account_asset_category,all_staff,1,1,1,0
 asset_type_ict_officer,Asset Type ict officer Group,model_account_asset_category,all_ict_officer,1,1,1,0
 
-asset_management_hod,Asset HOD Group,model_account_asset_asset,,1,1,1,1
-asset_management_dfa,Asset DFA Group,model_account_asset_asset,,1,1,1,1
-asset_management_es,Asset ES Group,model_account_asset_asset,,1,1,1,1
+asset_management_ad,Asset ad Group,model_account_asset_asset,asset_management.asset_dm,1,1,1,1
+asset_management_cd,Asset cd Group,model_account_asset_asset,asset_management.asset_cd,1,1,1,1
+asset_management_dfa,Asset ho Group,model_account_asset_asset,asset_management.asset_procurement_ho,1,1,1,1
+asset_management_branch,Asset branch Group,model_account_asset_asset,asset_management.asset_procurement_branch,1,1,1,1
+asset_management_finance_ho,Asset ho fincance Group,model_account_asset_asset,asset_management.asset_fm_ho,1,1,0,0
+asset_management_finance_branch,Asset finance branch Group,model_account_asset_asset,asset_management.asset_fm_branch,1,1,0,0
 
 asset_assign_hod,Asset Assign HOD Group,model_account_asset_assign,,1,1,1,1
 asset_assign_dfa,Asset Assign DFA Group,model_account_asset_assign,,1,1,1,1
