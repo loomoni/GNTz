@@ -74,6 +74,7 @@
                                 <tree editable="bottom">
                                     <field name="name" string="Asset"
                                            options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
+                                    <field name="asset_name"/>
                                 </tree>
                             </field>
                         </page>

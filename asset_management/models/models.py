@@ -374,6 +374,7 @@ class AssetAssignmentCategory(models.Model):
     _name = 'account.asset.assign.category.line'
 
     name = fields.Many2one('account.asset.category', string='Asset')
+    asset_name = fields.Char(string='Specify Asset')
     category_line_id = fields.Many2one('account.asset.assign', string='assign category id')
 
 
