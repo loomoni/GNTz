@@ -19,6 +19,8 @@ class AssetsInherit(models.Model):
 
     SELECTION = [
         ('draft', 'Draft'),
+        ('fixed', 'Fixed Asset'),
+        ('non_fixed', 'Non-Fixed Asset'),
         ('review', 'Finance Reviewed'),
         ('open', 'Unassigned'),
         ('inuse', 'Running'),
@@ -30,6 +32,16 @@ class AssetsInherit(models.Model):
     @api.multi
     def back_to_draft(self):
         self.write({'state': 'draft'})
+        return True
+
+    @api.multi
+    def button_procurement_register_fixed_asset(self):
+        self.write({'state': 'fixed'})
+        return True
+
+    @api.multi
+    def button_procurement_register_non_fixed_asset(self):
+        self.write({'state': 'non_fixed'})
         return True
 
     @api.multi

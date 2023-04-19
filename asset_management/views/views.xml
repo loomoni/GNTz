@@ -34,12 +34,17 @@
             </xpath>
             <xpath expr="//form/header" position="replace">
                 <header>
-                    <button name="button_finance_review" states="draft" string="Finance Review" type="object"
+                    <button name="button_procurement_register_fixed_asset" states="draft" string="Fixed Asset" type="object"
+                            class="oe_highlight"
+                            groups="asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"/>
+                    <button name="button_procurement_register_non_fixed_asset" states="draft" string="Non Fixed Asset" type="object"
+                            groups="asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"/>
+                    <button name="button_finance_review" states="fixed" string="Finance Review" type="object"
                             class="oe_highlight"
                             groups="asset_management.asset_fm_ho,asset_management.asset_fm_branch"/>
-                    <button name="validate" states="review" string="Confirm Asset" type="object" class="oe_highlight"
+                    <button name="validate" states="review,non_fixed" string="Confirm Asset" type="object" class="oe_highlight"
                             groups="asset_management.asset_cd,asset_management.asset_dm"/>
-                    <button name="back_to_draft" states="review" string="Review Asset" type="object"
+                    <button name="back_to_draft" states="review,non_fixed" string="Review Asset" type="object"
                             groups="asset_management.asset_cd,asset_management.asset_dm"/>
                     <field name="state" widget="statusbar"
                            statusbar_visible="draft,review,open,inuse,repair,replace,close"/>
