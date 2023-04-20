@@ -47,6 +47,10 @@ account_asset_service_model_line,Asset service line,model_service_model_line,,1,
 
 account_asset_service_model_line,Asset service line,model_service_model_line,,1,1,1,1
 
+account_asset_asset_list_excel,Asset list excel,model_asset_list_excel,,1,1,1,1
+
+account_asset_list_wizard,Asset list wizard,model_asset_list_wizard,,1,1,1,1
+
 account_asset_support_document_line,account asset support Checkout,model_account_asset_support_document_line,,1,1,1,1
 
 account_asset_assign_category_line,account asset assign category line,model_account_asset_assign_category_line,,1,1,1,1

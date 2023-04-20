@@ -1,9 +1,15 @@
 # -*- coding: utf-8 -*-
+import base64
+from datetime import date
+from io import BytesIO
+
+import xlsxwriter
+from xlsxwriter.utility import xl_rowcol_to_cell
 
 from odoo import models, fields, api, _
 import random, string
 from odoo.exceptions import ValidationError, UserError
-from odoo.tools import float_compare, float_is_zero
+from odoo.tools import float_compare, float_is_zero, datetime
 from dateutil.relativedelta import relativedelta
 import calendar
 
@@ -114,6 +120,8 @@ class AssetsInherit(models.Model):
     service_model_line_ids = fields.One2many(comodel_name='service.model.line',
                                              string="Service IDS",
                                              inverse_name="service_ids")
+    # asset_assignment_ids = fields.Many2many(comodel_name='account.asset.assign', string="Assets Assignment",
+    #                                         inverse_name="asset_ids")
 
     _sql_constraints = [
         ('code_unique',
@@ -269,6 +277,221 @@ class AssetsInherit(models.Model):
                         'line_ids': [(0, 0, move_line_1), (0, 0, move_line_2)],
                     }
                     move = self.env['account.move'].create(move_vals)
+
+
+class AssetListWizard(models.TransientModel):
+    _name = 'asset.list.wizard'
+
+    department_id = fields.Many2one('hr.department', string='Department', required=False)
+    department_name = fields.Integer(string='Department', related='department_id.id')
+    date_from = fields.Date(string='Date From', required=True,
+                            default=lambda self: fields.Date.to_string(date.today().replace(day=1)))
+    date_to = fields.Date(string='Date To', required=True,
+                          default=lambda self: fields.Date.to_string(
+                              (datetime.now() + relativedelta(months=+1, day=1, days=-1)).date()))
+    company = fields.Many2one('res.company', default=lambda self: self.env['res.company']._company_default_get(),
+                              string="Company")
+
+    @api.multi
+    def get_report(self):
+        file_name = _('Asset report ' + str(self.date_from) + ' - ' + str(self.date_to) + ' report.xlsx')
+        fp = BytesIO()
+
+        workbook = xlsxwriter.Workbook(fp)
+        heading_format = workbook.add_format({'align': 'center',
+                                              'valign': 'vcenter',
+                                              'bold': True,
+                                              'size': 14,
+                                              'fg_color': '#89A130', })
+        heading_format.set_border()
+        sub2_heading_format = workbook.add_format({'align': 'center',
+                                                   'valign': 'vcenter',
+                                                   'bold': True, 'size': 14})
+        sub2_heading_format.set_border()
+        dr_cr_format = workbook.add_format({'align': 'center',
+                                            # 'valign': 'vcenter',
+                                            'bold': True, 'size': 14})
+        dr_cr_format.set_border()
+        sub_heading_format = workbook.add_format({'align': 'left',
+                                                  # 'valign': 'vcenter',
+                                                  'bold': True, 'size': 14})
+        sub_heading_format.set_border()
+        cell_text_format_n = workbook.add_format({'align': 'center',
+                                                  'bold': True, 'size': 9,
+                                                  })
+        cell_text_format_n.set_border()
+        cell_photo_format = workbook.add_format({'align': 'center',
+
+                                                 })
+        cell_photo_format.set_border()
+        cell_date_text_format = workbook.add_format({'align': 'left',
+                                                     'size': 9,
+                                                     })
+        cell_date_text_format.set_border()
+
+        approve_format = workbook.add_format({'align': 'left',
+                                              'bold': False, 'size': 14,
+                                              })
+
+        cell_text_format = workbook.add_format({'align': 'left',
+                                                'bold': True, 'size': 13,
+                                                'fg_color': '#695B55',
+                                                'font_color': 'white'
+                                                })
+
+        cell_text_format.set_border()
+        cell_text_format_new = workbook.add_format({'align': 'left',
+                                                    'size': 9,
+                                                    'num_format': '#,###0.00',
+                                                    })
+        cell_text_format_new.set_border()
+        cell_number_format = workbook.add_format({'align': 'right',
+                                                  'bold': False, 'size': 9,
+                                                  'num_format': '#,###0.00'})
+        cell_number_format.set_border()
+        worksheet = workbook.add_worksheet(
+            'Asset report ' + str(self.date_from) + ' - ' + str(self.date_to) + ' report.xlsx')
+        normal_num_bold = workbook.add_format({'bold': True, 'num_format': '#,###0.00', 'size': 9, })
+        normal_num_bold.set_border()
+        worksheet.set_column('A:J', 20)
+        worksheet.set_default_row(45)
+
+        worksheet.set_row(0, 20)
+        worksheet.set_row(1, 20)
+        worksheet.set_row(2, 15)
+        worksheet.set_row(3, 15)
+        worksheet.set_row(4, 15)
+        worksheet.set_row(5, 20)
+        row = 2
+        row_set = row
+
+        if self.date_from and self.date_to:
+            date_2 = datetime.strftime(self.date_to, '%d-%m-%Y')
+            date_1 = datetime.strftime(self.date_from, '%d-%m-%Y')
+            asset_report_month = self.date_from.strftime("%B")
+            worksheet.merge_range('A1:J2', 'Asset Report For %s %s' % (asset_report_month, self.date_from.year),
+                                  heading_format)
+            worksheet.write('A4:A4', 'Company', cell_text_format_n)
+            # worksheet.write('G4:G4', '', cell_text_format_n)
+            # worksheet.write('H4:H4', '', cell_text_format_n)
+            # worksheet.write('I4:I4', '', cell_text_format_n)
+            # worksheet.write('J4:J4', '', cell_text_format_n)
+            worksheet.merge_range('B4:D4', '%s' % (self.company.name), cell_text_format_n)
+            worksheet.write(row, 4, 'Date From', cell_text_format_n)
+            worksheet.write(row, 5, date_1 or '', cell_date_text_format)
+            row += 1
+            worksheet.write(row, 4, 'Date To', cell_text_format_n)
+            worksheet.write(row, 5, date_2 or '', cell_date_text_format)
+            row += 2
+
+            worksheet.write(row, 0, 'Asset Name', cell_text_format)
+            worksheet.write(row, 1, 'S/N/Asset ID', cell_text_format)
+            worksheet.write(row, 2, 'Asset No', cell_text_format)
+            worksheet.write(row, 3, 'Date of purchase', cell_text_format)
+            worksheet.write(row, 4, 'Amount', cell_text_format)
+            worksheet.write(row, 5, 'Assigned To', cell_text_format)
+            worksheet.write(row, 6, 'Department', cell_text_format)
+            worksheet.write(row, 7, 'Photo', cell_text_format)
+            worksheet.write(row, 8, 'Status', cell_text_format)
+            worksheet.write(row, 9, 'Remark', cell_text_format)
+
+            department_asset = self.env['account.asset.asset'].sudo().search(
+                [('department_id', '=', self.department_name)])
+            all_asset = self.env['account.asset.asset'].sudo().search([])
+
+            ro = row + 1
+            col = 0
+            if department_asset:
+                for departmental_asset in department_asset:
+                    asset_name = departmental_asset.name
+                    asset_id = departmental_asset.asset_id_no
+                    asset_number = departmental_asset.code
+                    purchase_date = datetime.strftime(departmental_asset.date, '%d-%m-%Y')
+                    amount = departmental_asset.value
+                    assigned_to = 'Null'
+                    department = departmental_asset.department_id.name
+                    image_small = departmental_asset.image_small
+                    status = departmental_asset.state
+                    remark = ""
+
+                    worksheet.write(ro, col, asset_name or '', cell_text_format_new)
+                    worksheet.write(ro, col + 1, asset_id or '', cell_text_format_new)
+                    worksheet.write(ro, col + 2, asset_number or '', cell_text_format_new)
+                    worksheet.write(ro, col + 3, purchase_date or '', cell_text_format_new)
+                    worksheet.write(ro, col + 4, amount or '', cell_text_format_new)
+                    worksheet.write(ro, col + 5, assigned_to or '', cell_text_format_new)
+                    worksheet.write(ro, col + 6, department or '', cell_text_format_new)
+                    if image_small:
+                        image_binary = base64.b64decode(image_small)
+                        image_stream = BytesIO(image_binary)
+                        worksheet.insert_image(ro, col + 7, 'image.png',
+                                               {'image_data': image_stream, 'object_position': 1, 'x_scale': 0.02,
+                                                'y_scale': 0.02})
+                    else:
+                        worksheet.write(ro, col + 7, '', cell_text_format_new)
+                    worksheet.write(ro, col + 8, status or '', cell_text_format_new)
+                    worksheet.write(ro, col + 9, remark or '', cell_text_format_new)
+                    ro = ro + 1
+
+            else:
+                for total_asset in all_asset:
+                    asset_name = total_asset.name
+                    asset_id = total_asset.asset_id_no
+                    asset_number = total_asset.code
+                    purchase_date = datetime.strftime(total_asset.date, '%d-%m-%Y')
+                    amount = total_asset.value
+                    assigned_to = "Null"
+                    department = total_asset.department_id.name
+                    image_small = total_asset.image_small
+                    status = total_asset.state
+                    remark = ""
+
+                    worksheet.write(ro, col, asset_name or '', cell_text_format_new)
+                    worksheet.write(ro, col + 1, asset_id or '', cell_text_format_new)
+                    worksheet.write(ro, col + 2, asset_number or '', cell_text_format_new)
+                    worksheet.write(ro, col + 3, purchase_date or '', cell_text_format_new)
+                    worksheet.write(ro, col + 4, amount or '', cell_text_format_new)
+                    worksheet.write(ro, col + 5, assigned_to or '', cell_text_format_new)
+                    worksheet.write(ro, col + 6, department or '', cell_text_format_new)
+                    # worksheet.insert_image(ro, col + 7, image_stream or '', cell_text_format_new)
+                    # Create a format for the image
+
+                    if image_small:
+                        image_binary = base64.b64decode(image_small)
+                        image_stream = BytesIO(image_binary)
+                        worksheet.insert_image(ro, col + 7, 'image.png',
+                                               {'image_data': image_stream, 'object_position': 1, 'x_scale': 0.02,
+                                                'y_scale': 0.02})
+                    else:
+                        worksheet.write(ro, col + 7, '', cell_text_format_new)
+
+                    worksheet.write(ro, col + 8, status or '', cell_text_format_new)
+                    worksheet.write(ro, col + 9, remark or '', cell_text_format_new)
+                    ro = ro + 1
+
+        workbook.close()
+        file_download = base64.b64encode(fp.getvalue())
+        fp.close()
+
+        self = self.with_context(default_name=file_name, default_file_download=file_download)
+
+        return {
+            'name': 'Asset Report Download',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'asset.list.excel',
+            'type': 'ir.actions.act_window',
+            'target': 'new',
+            'context': self._context,
+        }
+
+
+class AssetListReportExcel(models.TransientModel):
+    _name = 'asset.list.excel'
+    _description = "Asset List excel table"
+
+    name = fields.Char('File Name', size=256, readonly=True)
+    file_download = fields.Binary('Download Asset', readonly=True)
 
 
 class AssetAssign(models.Model):
