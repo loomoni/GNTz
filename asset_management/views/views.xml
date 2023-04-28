@@ -162,7 +162,7 @@
         <field name="arch" type="xml">
             <form string="Asset List">
                 <group>
-                    <field name="department_id"  options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
+                    <field name="department_id" options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
                 </group>
                 <group>
                     <group>
@@ -219,6 +219,12 @@
               groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_dm"/>
 
 
+    <menuitem action="action_asset_print_report"
+              id="assets_report_print"
+              sequence="30"
+              groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_dm"
+              parent="asset_management.assets_report_id"/>
+
     <act_window id="action_asset_print_report"
                 name="Assets Report Excel"
                 res_model="asset.list.wizard"
@@ -227,10 +233,5 @@
 
     />
 
-    <menuitem action="action_asset_print_report"
-              id="assets_report_print"
-              sequence="30"
-              groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_dm"
-              parent="asset_management.assets_report_id"/>
 
 </odoo>

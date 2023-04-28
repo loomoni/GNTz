@@ -75,7 +75,7 @@
                                     <field name="product_id"
                                            options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
                                     <field name="quantity"/>
-                                    <field name="department"  invisible="1"/>
+                                    <field name="department" invisible="1"/>
                                     <field name="stockin_id" invisible="1"/>
                                     <field name="project"/>
                                     <field name="cost"/>
@@ -202,6 +202,43 @@
         </field>
     </record>
 
+    <!--    Printing inventory report list -->
+    <record model="ir.ui.view" id="report_report_wizard">
+        <field name="name">Inventory Report</field>
+        <field name="model">inventory.stockin.report.wizard</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Inventory Report">
+                <group>
+                    <field name="department_id" options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
+                </group>
+                <group>
+                    <group>
+                        <field name="date_from"/>
+                    </group>
+                    <group>
+                        <field name="date_to"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="get_report" string="Get Report" type="object" class="oe_highlight"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="view_inventory_report_wizard_excel">
+        <field name="name">view.inventory.stockin.report.excel</field>
+        <field name="model">inventory.stockin.report.excel</field>
+        <field name="arch" type="xml">
+            <form string="Download Your Inventory Report Here">
+                <field name="name" invisible="1"/>
+                <field name="file_download" widget="download_link" filename="name"/>
+            </form>
+        </field>
+    </record>
+
 
     <menuitem name="Inventory Management" id="custom_inventory.menu_root"
               groups="custom_inventory.inventory_procurement_branch,custom_inventory.inventory_staff,custom_inventory.inventory_procurement_HO,custom_inventory.inventory_hod,custom_inventory.inventory_admin"/>
@@ -229,4 +266,32 @@
             sequence="1"
             groups="custom_inventory.inventory_procurement_HO,custom_inventory.inventory_admin"/>
 
+    <menuitem
+            parent="custom_inventory.menu_root"
+            name="Reports"
+            id="menu_inventory_reports"
+            sequence="10"
+            groups="custom_inventory.inventory_procurement_HO,custom_inventory.inventory_hod,custom_inventory.inventory_admin"/>
+
+    <menuitem action="action_inventory_print_report"
+              id="menu_inventory_stock_in_reports"
+              parent="custom_inventory.menu_inventory_reports"
+              sequence="1"/>
+
+    <act_window id="action_inventory_print_report"
+                name="Inventory StockIn Report"
+                res_model="inventory.stockin.report.wizard"
+                view_mode="form"
+                target="new"/>
+
+    <menuitem action="action_inventory_stockout_print_report"
+              id="menu_inventory_stock_out_reports"
+              parent="custom_inventory.menu_inventory_reports"
+              sequence="2"/>
+
+    <act_window id="action_inventory_stockout_print_report"
+                name="Inventory StockOut Report"
+                res_model="inventory.stockin.report.wizard"
+                view_mode="form"
+                target="new"/>
 </odoo>
