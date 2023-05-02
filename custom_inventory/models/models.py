@@ -540,7 +540,7 @@ class InventoryListWizard(models.TransientModel):
 
     @api.multi
     def get_report(self):
-        file_name = _('Asset report ' + str(self.date_from) + ' - ' + str(self.date_to) + ' report.xlsx')
+        file_name = _('Inventory report ' + str(self.date_from) + ' - ' + str(self.date_to) + ' report.xlsx')
         fp = BytesIO()
 
         workbook = xlsxwriter.Workbook(fp)
@@ -636,9 +636,38 @@ class InventoryListWizard(models.TransientModel):
             worksheet.write(row, 3, 'Total Used', cell_text_format)
             worksheet.write(row, 4, 'Balance', cell_text_format)
 
-            department_inventory = self.env['account.asset.asset'].sudo().search(
+            department_general_inventory = self.env['product.template'].sudo().search(
                 [('department_id', '=', self.department_name)])
-            all_inventory = self.env['account.asset.asset'].sudo().search([])
+            general_inventory_report = self.env['product.template'].sudo().search([])
+
+            ro = row + 1
+            col = 0
+            if department_general_inventory:
+                for department_inventory in department_general_inventory:
+                    item = department_inventory.name
+                    total_purchased = department_inventory.purchased_quantity
+                    total_used = department_inventory.issued_quantity
+                    balance = department_inventory.balance_stock
+
+                    worksheet.write(ro, col, item or '', cell_text_format_new)
+                    worksheet.write(ro, col + 1, '', cell_text_format_new)
+                    worksheet.write(ro, col + 2, total_purchased or '', cell_text_format_new)
+                    worksheet.write(ro, col + 3, total_used or '', cell_text_format_new)
+                    worksheet.write(ro, col + 4, balance or '', cell_text_format_new)
+                    ro = ro + 1
+            else:
+                for all_inventory_available in general_inventory_report:
+                    item = all_inventory_available.name
+                    total_purchased = all_inventory_available.purchased_quantity
+                    total_used = all_inventory_available.issued_quantity
+                    balance = all_inventory_available.balance_stock
+
+                    worksheet.write(ro, col, item or '', cell_text_format_new)
+                    worksheet.write(ro, col + 1, '', cell_text_format_new)
+                    worksheet.write(ro, col + 2, total_purchased or '', cell_text_format_new)
+                    worksheet.write(ro, col + 3, total_used or '', cell_text_format_new)
+                    worksheet.write(ro, col + 4, balance or '', cell_text_format_new)
+                    ro = ro + 1
 
         workbook.close()
         file_download = base64.b64encode(fp.getvalue())

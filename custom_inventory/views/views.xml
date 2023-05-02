@@ -273,6 +273,18 @@
         </field>
     </record>
 
+    <act_window id="action_inventory_print_report"
+                name="Inventory General Report"
+                res_model="inventory.stockin.report.wizard"
+                view_mode="form"
+                target="new"/>
+
+    <act_window id="action_inventory_stockout_print_report"
+                name="Inventory StockOut Report"
+                res_model="inventory.stockin.report.wizard"
+                view_mode="form"
+                target="new"/>
+
 
     <menuitem name="Inventory Management" id="custom_inventory.menu_root"
               groups="custom_inventory.inventory_procurement_branch,custom_inventory.inventory_staff,custom_inventory.inventory_procurement_HO,custom_inventory.inventory_hod,custom_inventory.inventory_admin"/>
@@ -315,32 +327,24 @@
             sequence="1"
             groups="custom_inventory.inventory_procurement_HO,custom_inventory.inventory_admin"/>
 
-    <!--    <menuitem-->
-    <!--            parent="custom_inventory.menu_root"-->
-    <!--            name="Reports"-->
-    <!--            id="menu_inventory_reports"-->
-    <!--            sequence="10"-->
-    <!--            groups="custom_inventory.inventory_procurement_HO,custom_inventory.inventory_hod,custom_inventory.inventory_admin"/>-->
+    <menuitem
+            parent="custom_inventory.menu_root"
+            name="Reports"
+            id="menu_inventory_reports"
+            sequence="10"
+            groups="custom_inventory.inventory_procurement_HO,custom_inventory.inventory_hod,custom_inventory.inventory_admin"/>
 
-    <!--    <menuitem action="action_inventory_print_report"-->
-    <!--              id="menu_inventory_stock_in_reports"-->
-    <!--              parent="custom_inventory.menu_inventory_reports"-->
-    <!--              sequence="1"/>-->
+    <menuitem action="action_inventory_print_report"
+              id="menu_inventory_stock_in_reports"
+              parent="custom_inventory.menu_inventory_reports"
+              groups="custom_inventory.inventory_procurement_HO,custom_inventory.inventory_hod,custom_inventory.inventory_admin"
+              sequence="1"/>
 
-    <!--    <act_window id="action_inventory_print_report"-->
-    <!--                name="Inventory StockIn Report"-->
-    <!--                res_model="inventory.stockin.report.wizard"-->
-    <!--                view_mode="form"-->
-    <!--                target="new"/>-->
 
-    <!--    <menuitem action="action_inventory_stockout_print_report"-->
-    <!--              id="menu_inventory_stock_out_reports"-->
-    <!--              parent="custom_inventory.menu_inventory_reports"-->
-    <!--              sequence="2"/>-->
+<!--    <menuitem action="action_inventory_stockout_print_report"-->
+<!--              id="menu_inventory_stock_out_reports"-->
+<!--              parent="custom_inventory.menu_inventory_reports"-->
+<!--              sequence="2"/>-->
 
-    <!--    <act_window id="action_inventory_stockout_print_report"-->
-    <!--                name="Inventory StockOut Report"-->
-    <!--                res_model="inventory.stockin.report.wizard"-->
-    <!--                view_mode="form"-->
-    <!--                target="new"/>-->
+
 </odoo>

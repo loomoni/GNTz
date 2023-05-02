@@ -210,19 +210,19 @@
               action="action_fixed_assets"
               parent="asset_management.menu_root"
               sequence="9"
-              groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_dm"/>
+              groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_dm,asset_management.asset_procurement_ho"/>
     <menuitem name="Fixed Assets Report"
               id="menu_fixed_assets_report"
               action="action_fixed_assets"
               parent="asset_management.assets_report_id"
               sequence="1"
-              groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_dm"/>
+              groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_dmasset_management.asset_procurement_ho"/>
 
 
     <menuitem action="action_asset_print_report"
               id="assets_report_print"
               sequence="30"
-              groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_dm"
+              groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_dmasset_management.asset_procurement_ho"
               parent="asset_management.assets_report_id"/>
 
     <act_window id="action_asset_print_report"
