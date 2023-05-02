@@ -191,6 +191,13 @@
         </field>
     </record>
 
+    <act_window id="action_asset_print_report"
+                name="Assets Report Excel"
+                res_model="asset.list.wizard"
+                view_mode="form"
+                target="new"
+    />
+
     <menuitem name="Asset Management"
               id="asset_management.menu_root"/>
     <menuitem parent="asset_management.menu_root"
@@ -225,11 +232,5 @@
               groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_dmasset_management.asset_procurement_ho"
               parent="asset_management.assets_report_id"/>
 
-    <act_window id="action_asset_print_report"
-                name="Assets Report Excel"
-                res_model="asset.list.wizard"
-                view_mode="form"
-                target="new"
-    />
 
 </odoo>
