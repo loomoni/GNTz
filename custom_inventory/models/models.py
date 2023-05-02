@@ -108,7 +108,7 @@ class InventoryStockInLines(models.Model):
         for rec in self:
             rec.department = rec.stockin_id.department_id.id
 
-    product_id = fields.Many2one('product.template', string="Product", required=True)
+    product_id = fields.Many2one('product.template', string="Item", required=True)
     quantity = fields.Float('Quantity', digits=(12, 2), required=True, default=1)
     department = fields.Integer(string='Department', compute="department_compute")
     project = fields.Many2one(comodel_name='project.configuration', string='Project')
@@ -117,6 +117,9 @@ class InventoryStockInLines(models.Model):
     uom_id = fields.Many2one('uom.uom', string='Unit of Measure',
                              default=lambda self: self.env['uom.uom'].search([], limit=1, order='id'))
     stockin_id = fields.Many2one('inventory.stockin', string="Stock In")
+    reference_no = fields.Char(string="Serial No", related="stockin_id.name")
+    department_id = fields.Char(string="Department", related="stockin_id.department_id.name")
+    receiver_id = fields.Char(string="Received by", related="stockin_id.receiver_id.name")
     state = fields.Selection(STATE_SELECTION, index=True, track_visibility='onchange', related='stockin_id.state',
                              store=True)
 
