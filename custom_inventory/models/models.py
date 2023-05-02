@@ -3,7 +3,6 @@ import base64
 from io import BytesIO
 import xlsxwriter
 
-
 from xlsxwriter import workbook
 
 from odoo import models, fields, api, _
@@ -618,10 +617,13 @@ class InventoryListWizard(models.TransientModel):
             worksheet.merge_range('A1:E2', 'Inventory Report For %s %s' % (asset_report_month, self.date_from.year),
                                   heading_format)
             worksheet.write('A3:A3', 'Company', cell_text_format_n)
-            worksheet.merge_range('B3:C3', '%s' % (self.company.name), cell_text_format_n)
+            worksheet.merge_range('B3:C3', '%s' % self.company.name, cell_text_format_n)
 
             worksheet.write('A4:A4', 'Department', cell_text_format_n)
-            worksheet.merge_range('B4:C4', '%s' % (self.company.name), cell_text_format_n)
+            if self.department_name:
+                worksheet.merge_range('B4:C4', '%s' % self.department_id.name, cell_text_format_n)
+            else:
+                worksheet.merge_range('B4:C4', "All", cell_text_format_n)
 
             worksheet.write(row, 3, 'Date From', cell_text_format_n)
             worksheet.write(row, 4, date_1 or '', cell_date_text_format)
