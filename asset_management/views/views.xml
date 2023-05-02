@@ -230,8 +230,6 @@
                 res_model="asset.list.wizard"
                 view_mode="form"
                 target="new"
-
     />
-
 
 </odoo>

@@ -58,3 +58,5 @@ account_asset_assign_category_line,account asset assign category line,model_acco
 account_asset_reevaluation_depreciation_lines_hod,Asset Reevaluation Deprec Lines HOD Group,model_account_asset_reevaluation_depreciation_lines,,1,1,1,1
 account_asset_asset_reevaluation_depreciation_lines_dfa,Asset Reevaluation Deprec Lines DFA Group,model_account_asset_reevaluation_depreciation_lines,,1,1,1,1
 account_asset_asset_reevaluation_depreciation_lines_es,Asset Reevaluation Deprec Lines ES Group,model_account_asset_reevaluation_depreciation_lines,,1,1,1,1
+
+account_asset_hand_over_lines,account asset hand over lines,model_account_asset_hand_over_lines,,1,1,1,1

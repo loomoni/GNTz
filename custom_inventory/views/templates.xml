@@ -6,6 +6,7 @@
         <field name="arch" type="xml">
             <tree string="Stock Out">
                 <field name="name"/>
+                <field name="department_id"/>
                 <field name="request_date"/>
                 <field name="requester_id"/>
                 <field name="state"/>

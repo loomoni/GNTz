@@ -467,7 +467,11 @@ class InventoryProductStockAdjustment(models.Model):
         if employee:
             return employee.id
 
-    name = fields.Char(string='Inventory Reference', required=True)
+    def _default_reference(self):
+        inventoryList = self.env['inventory.stock.adjustment'].sudo().search_count([])
+        return 'INVENTORY/ADJUSTMENT/00' + str(inventoryList + 1)
+
+    name = fields.Char(string='Inventory Reference', default=_default_reference, required=True)
     attachment = fields.Binary(string="Attachment", attachment=True, store=True, )
     attachment_name = fields.Char('Attachment Name')
     date = fields.Date(string='Date', required=True)

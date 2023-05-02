@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
-    <!--    Asset transfer starts -->
-    <!--    Asset transfer tree view-->
+    <!--    Asset HandOver starts -->
+    <!--    Asset HandOver tree view-->
     <record id="asset_transfer_tree_view" model="ir.ui.view">
         <field name="name">asset.transfer.tree.view</field>
         <field name="model">account.asset.transfer</field>
         <field name="arch" type="xml">
-            <tree string="Asset Transfer">
+            <tree string="Asset HandOver">
                 <field name="name"/>
             </tree>
         </field>
     </record>
 
-    <!--    asset transfer form view -->
+    <!--    asset HandOver form view -->
     <record id="asset_transfer_form_view" model="ir.ui.view">
         <field name="name">asset.transfer.form.view</field>
         <field name="model">account.asset.transfer</field>
@@ -30,7 +30,8 @@
                             type="object"
                             class="oe_highlight"
                             groups="asset_management.asset_procurement_branch,asset_management.asset_procurement_ho"/>
-                    <button name="button_am_manager_review" states="country_director" string="AD/Country Director Review"
+                    <button name="button_am_manager_review" states="country_director"
+                            string="AD/Country Director Review"
                             type="object"
                             class="oe_highlight"
                             groups="asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"/>
@@ -52,16 +53,16 @@
                             <field name="email"/>
                         </group>
                     </group>
-                    <group string="Asset information">
-                        <group>
-                            <field name="asset_name"/>
-                            <field name="identification_number"/>
-                        </group>
-                        <group>
-                            <field name="asset_condition"/>
-                            <field name="handover_reason"/>
-                        </group>
-                    </group>
+<!--                    <group string="Asset information">-->
+<!--                        <group>-->
+<!--                            <field name="asset_name"/>-->
+<!--                            <field name="identification_number"/>-->
+<!--                        </group>-->
+<!--                        <group>-->
+<!--                            <field name="asset_condition"/>-->
+<!--                            <field name="handover_reason"/>-->
+<!--                        </group>-->
+<!--                    </group>-->
                     <group string="Custodian Information" attrs="{'invisible':[('state','in','draft')]}">
                         <group>
                             <p>I here by acknowledging the return of the above-mentioned Asset/Assets.</p>
@@ -76,6 +77,20 @@
                             <field name="id_no"/>
                         </group>
                     </group>
+
+                    <notebook>
+                        <page string="Asset information">
+                            <field name="asset_hand_over_line_ids">
+                                <tree editable="bottom">
+                                    <field name="asset_name"/>
+                                    <field name="identification_number"/>
+                                    <field name="asset_condition"/>
+                                    <field name="handover_reason"/>
+                                    <field name="asset_hand_over_ids" invisible="1"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
                 </sheet>
                 <div class="oe_chatter">
                     <field name="message_follower_ids" widget="mail_followers"/>
@@ -88,13 +103,13 @@
 
 
     <record id="asset_transfer_action" model="ir.actions.act_window">
-        <field name="name">Asset Transfer</field>
+        <field name="name">Asset HandOver</field>
         <field name="res_model">account.asset.transfer</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                There is no asset transfer yet.!
+                There is no asset HandOver yet.!
             </p>
         </field>
     </record>
