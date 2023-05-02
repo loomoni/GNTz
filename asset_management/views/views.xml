@@ -223,7 +223,7 @@
               action="action_fixed_assets"
               parent="asset_management.assets_report_id"
               sequence="1"
-              groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_dmasset_management.asset_procurement_ho"/>
+              groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_ho"/>
 
 
     <menuitem action="action_asset_print_report"
