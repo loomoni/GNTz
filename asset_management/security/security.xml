@@ -68,6 +68,17 @@
             <field name="groups" eval="[(4,ref('asset_management.asset_procurement_ho'))]"/>
         </record>
 
+        <!--        <record model="ir.rule" id="custom_asset_finance_access">-->
+        <!--            <field name="name">Finance Access Fixed asset only</field>-->
+        <!--            <field name="model_id" ref="asset_management.model_account_asset_asset"/>-->
+        <!--            <field name="domain_force">[('state', '=', 'fixed')]</field>-->
+        <!--            <field name="groups" eval="[(4, ref('asset_management.asset_fm_ho'))]"/>-->
+        <!--            <field name="perm_read" eval="True"/>-->
+        <!--            <field name="perm_write" eval="False"/>-->
+        <!--            <field name="perm_create" eval="False"/>-->
+        <!--            <field name="perm_unlink" eval="False"/>-->
+        <!--        </record>-->
+
         <record model="ir.rule" id="custom_asset_branch_procurement_access_rule">
             <field name="name">Branch Procurement Asset access rule</field>
             <field name="model_id" ref="om_account_asset.model_account_asset_asset"/>
@@ -78,8 +89,14 @@
         <record model="ir.rule" id="custom_asset_fm_ho_access_rule">
             <field name="name">Finance HO Asset access rule</field>
             <field name="model_id" ref="om_account_asset.model_account_asset_asset"/>
-            <field name="domain_force">[('department_id.branch_id.accountant_id.id','=',user.id)]</field>
+            <field name="domain_force">[('department_id.branch_id.accountant_id.id','=',user.id), ('state', 'in',
+                ('fixed', 'review'))]
+            </field>
             <field name="groups" eval="[(4,ref('asset_management.asset_fm_ho'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
         </record>
 
         <record model="ir.rule" id="custom_asset_fm_branch_access_rule">
