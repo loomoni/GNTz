@@ -16,7 +16,7 @@ class InventoryStockIn(models.Model):
     _name = "inventory.stockin"
     _description = "Stock In"
     _inherit = ['mail.thread', 'mail.activity.mixin']
-    _order = 'id'
+    _order = 'id desc'
 
     STATE_SELECTION = [
         ("draft", "Draft"),
@@ -90,7 +90,7 @@ class InventoryStockInLines(models.Model):
     _name = "inventory.stockin.lines"
     _description = "Stock In Lines"
     _inherit = ['mail.thread', 'mail.activity.mixin']
-    # _id = 'DEC'
+    # _order = 'id desc'
 
     STATE_SELECTION = [
         ("draft", "Draft"),
@@ -124,7 +124,8 @@ class InventoryStockInLines(models.Model):
                              default=lambda self: self.env['uom.uom'].search([], limit=1, order='id'))
     stockin_id = fields.Many2one('inventory.stockin', string="Stock In")
     reference_no = fields.Char(string="Serial No", related="stockin_id.name")
-    department_id = fields.Char(string="Department", related="stockin_id.department_id.name")
+    department_name = fields.Char(string="Department", related="stockin_id.department_id.name")
+    department_id = fields.Integer(string="Department", related="stockin_id.department_id.id")
     receiver_id = fields.Char(string="Received by", related="stockin_id.receiver_id.name")
     state = fields.Selection(STATE_SELECTION, index=True, track_visibility='onchange', related='stockin_id.state',
                              store=True)
@@ -139,7 +140,7 @@ class InventoryStockOut(models.Model):
     _name = "inventory.stockout"
     _description = "Stock Out"
     _inherit = ['mail.thread', 'mail.activity.mixin']
-    _order = 'id'
+    _order = 'id desc'
 
     STATE_SELECTION = [
         ("draft", "Draft"),
@@ -280,6 +281,7 @@ class InventoryStockOutLines(models.Model):
     _name = "inventory.stockout.lines"
     _description = "Stock Out Lines"
     _inherit = ['mail.thread', 'mail.activity.mixin']
+    # _order = 'id desc'
 
     STATE_SELECTION = [
         ("draft", "Draft"),
@@ -409,6 +411,7 @@ class InventoryProductStockAdjustment(models.Model):
     _name = "inventory.stock.adjustment"
     _description = "Stock Inventory Adjustment"
     _inherit = ['mail.thread', 'mail.activity.mixin']
+    _order = 'id desc'
 
     STATE_SELECTION = [
         ("draft", "Draft"),
@@ -496,6 +499,7 @@ class InventoryProductStockAdjustmentLines(models.Model):
     _name = "inventory.stock.adjustment.line"
     _description = "Stock Adjustment Lines"
     _inherit = ['mail.thread', 'mail.activity.mixin']
+    # _order = 'id desc'
 
     STATE_SELECTION = [
         ("draft", "Draft"),
@@ -777,7 +781,7 @@ class StockInInventoryListWizard(models.TransientModel):
             'Inventory report ' + str(self.date_from) + ' - ' + str(self.date_to) + ' report.xlsx')
         normal_num_bold = workbook.add_format({'bold': True, 'num_format': '#,###0.00', 'size': 9, })
         normal_num_bold.set_border()
-        worksheet.set_column('A:J', 20)
+        worksheet.set_column('A:G', 20)
         # worksheet.set_default_row(45)
 
         worksheet.set_row(0, 20)
@@ -786,6 +790,7 @@ class StockInInventoryListWizard(models.TransientModel):
         worksheet.set_row(3, 15)
         worksheet.set_row(4, 15)
         worksheet.set_row(5, 20)
+        worksheet.set_row(6, 20)
         row = 2
         row_set = row
 
@@ -793,61 +798,75 @@ class StockInInventoryListWizard(models.TransientModel):
             date_2 = datetime.strftime(self.date_to, '%d-%m-%Y')
             date_1 = datetime.strftime(self.date_from, '%d-%m-%Y')
             asset_report_month = self.date_from.strftime("%B")
-            worksheet.merge_range('A1:E2', 'Inventory Report For %s %s' % (asset_report_month, self.date_from.year),
+            worksheet.merge_range('A1:G2', 'Inventory Report For %s %s' % (asset_report_month, self.date_from.year),
                                   heading_format)
-            worksheet.write('A3:A3', 'Company', cell_text_format_n)
-            worksheet.merge_range('B3:C3', '%s' % self.company.name, cell_text_format_n)
+            worksheet.write('A3:A3', '', cell_text_format_n)
+            worksheet.write('A4:A4', '', cell_text_format_n)
+            worksheet.write('B3:B3', 'Company', cell_text_format_n)
+            worksheet.merge_range('C3:E3', '%s' % self.company.name, cell_text_format_n)
 
-            worksheet.write('A4:A4', 'Department', cell_text_format_n)
+            worksheet.write('B4:B4', 'Department', cell_text_format_n)
             if self.department_name:
-                worksheet.merge_range('B4:C4', '%s' % self.department_id.name, cell_text_format_n)
+                worksheet.merge_range('C4:E4', '%s' % self.department_id.name, cell_text_format_n)
             else:
-                worksheet.merge_range('B4:C4', "All", cell_text_format_n)
+                worksheet.merge_range('C4:E4', "All", cell_text_format_n)
 
-            worksheet.write(row, 3, 'Date From', cell_text_format_n)
-            worksheet.write(row, 4, date_1 or '', cell_date_text_format)
+            worksheet.write(row, 5, 'Date From', cell_text_format_n)
+            worksheet.write(row, 6, date_1 or '', cell_date_text_format)
             row += 1
-            worksheet.write(row, 3, 'Date To', cell_text_format_n)
-            worksheet.write(row, 4, date_2 or '', cell_date_text_format)
+            worksheet.write(row, 5, 'Date To', cell_text_format_n)
+            worksheet.write(row, 6, date_2 or '', cell_date_text_format)
             row += 2
 
             worksheet.write(row, 0, 'Item', cell_text_format)
-            worksheet.write(row, 1, 'Remark', cell_text_format)
-            worksheet.write(row, 2, 'Total Purchased', cell_text_format)
-            worksheet.write(row, 3, 'Total Used', cell_text_format)
-            worksheet.write(row, 4, 'Balance', cell_text_format)
+            worksheet.write(row, 1, 'Department', cell_text_format)
+            worksheet.write(row, 2, 'Received Date', cell_text_format)
+            worksheet.write(row, 3, 'Quantity', cell_text_format)
+            worksheet.write(row, 4, 'Unit Price', cell_text_format)
+            worksheet.write(row, 5, 'Total Cost', cell_text_format)
+            worksheet.write(row, 6, 'Received by', cell_text_format)
 
-            department_general_inventory = self.env['product.template'].sudo().search(
-                [('department_id', '=', self.department_name)])
-            general_inventory_report = self.env['product.template'].sudo().search([])
+            department_stockin_inventory = self.env['inventory.stockin.lines'].sudo().search(
+                [('department_id', '=', self.department_name), ('received_date', '<=', self.date_to), ('received_date', '>=', self.date_from)])
+            stockin_inventory_report = self.env['inventory.stockin.lines'].sudo().search([('received_date', '<=', self.date_to), ('received_date', '>=', self.date_from)])
 
             ro = row + 1
             col = 0
-            if department_general_inventory:
-                for department_inventory in department_general_inventory:
-                    item = department_inventory.name
-                    total_purchased = department_inventory.purchased_quantity
-                    total_used = department_inventory.issued_quantity
-                    balance = department_inventory.balance_stock
+            if department_stockin_inventory:
+                for department_inventory in department_stockin_inventory:
+                    item = department_inventory.product_id.name
+                    department = department_inventory.department_name
+                    received_date = department_inventory.received_date
+                    quantity = department_inventory.quantity
+                    unit_cost = department_inventory.unit_cost
+                    total_cost = department_inventory.cost
+                    received_by = department_inventory.receiver_id
 
                     worksheet.write(ro, col, item or '', cell_text_format_new)
-                    worksheet.write(ro, col + 1, '', cell_text_format_new)
-                    worksheet.write(ro, col + 2, total_purchased or '', cell_text_format_new)
-                    worksheet.write(ro, col + 3, total_used or '', cell_text_format_new)
-                    worksheet.write(ro, col + 4, balance or '', cell_text_format_new)
+                    worksheet.write(ro, col + 1, department or '', cell_text_format_new)
+                    worksheet.write(ro, col + 2, received_date or '', cell_text_format_new)
+                    worksheet.write(ro, col + 3, quantity or '', cell_text_format_new)
+                    worksheet.write(ro, col + 4, unit_cost or '', cell_text_format_new)
+                    worksheet.write(ro, col + 5, total_cost or '', cell_text_format_new)
+                    worksheet.write(ro, col + 6, received_by or '', cell_text_format_new)
                     ro = ro + 1
             else:
-                for all_inventory_available in general_inventory_report:
-                    item = all_inventory_available.name
-                    total_purchased = all_inventory_available.purchased_quantity
-                    total_used = all_inventory_available.issued_quantity
-                    balance = all_inventory_available.balance_stock
+                for all_inventory_available in stockin_inventory_report:
+                    item = all_inventory_available.product_id.name
+                    department = all_inventory_available.department_name
+                    received_date = all_inventory_available.received_date
+                    quantity = all_inventory_available.quantity
+                    unit_cost = all_inventory_available.unit_cost
+                    total_cost = all_inventory_available.cost
+                    received_by = all_inventory_available.receiver_id
 
                     worksheet.write(ro, col, item or '', cell_text_format_new)
-                    worksheet.write(ro, col + 1, '', cell_text_format_new)
-                    worksheet.write(ro, col + 2, total_purchased or '', cell_text_format_new)
-                    worksheet.write(ro, col + 3, total_used or '', cell_text_format_new)
-                    worksheet.write(ro, col + 4, balance or '', cell_text_format_new)
+                    worksheet.write(ro, col + 1, department or '', cell_text_format_new)
+                    worksheet.write(ro, col + 2, received_date or '', cell_text_format_new)
+                    worksheet.write(ro, col + 3, quantity or '', cell_text_format_new)
+                    worksheet.write(ro, col + 4, unit_cost or '', cell_text_format_new)
+                    worksheet.write(ro, col + 5, total_cost or '', cell_text_format_new)
+                    worksheet.write(ro, col + 6, received_by or '', cell_text_format_new)
                     ro = ro + 1
 
         workbook.close()
