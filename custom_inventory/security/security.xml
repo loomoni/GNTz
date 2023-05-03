@@ -88,21 +88,21 @@
         <record model="ir.rule" id="inventory_hod_access_stockout">
             <field name="name">Inventory HOD Access Stockout</field>
             <field name="model_id" ref="model_inventory_stockout"/>
-            <field name="domain_force">[('department_id.manager_id.user_id','=',user.id)]</field>
+            <field name="domain_force">[('department_id.manager_id.user_id','=',user.id), ('state', 'in', ('requested', 'line_manager', 'checked', 'issued', 'rejected'))]</field>
             <field name="groups" eval="[(4,ref('inventory_hod'))]"/>
         </record>
 
         <record model="ir.rule" id="inventory_procurement_ho_access_stockout">
             <field name="name">Inventory Procurement HO Access Stockout</field>
             <field name="model_id" ref="model_inventory_stockout"/>
-            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="domain_force">[(1,'=',1), ('state', 'in', ('line_manager', 'checked', 'issued', 'rejected'))]</field>
             <field name="groups" eval="[(4,ref('inventory_procurement_HO'))]"/>
         </record>
 
         <record model="ir.rule" id="inventory_procurement_branch_access_stockout">
             <field name="name">Inventory Procurement Branch Access Stockout</field>
             <field name="model_id" ref="model_inventory_stockout"/>
-            <field name="domain_force">[('department_id.branch_id.manager_id','=',user.id)]</field>
+            <field name="domain_force">[('department_id.branch_id.manager_id','=',user.id), ('state', 'in', ('line_manager', 'checked', 'issued', 'rejected'))]</field>
             <field name="groups" eval="[(4,ref('inventory_procurement_branch'))]"/>
         </record>
 
@@ -116,7 +116,7 @@
         <record model="ir.rule" id="inventory_admin_access_stockout">
             <field name="name">Inventory Admin Access Stockout</field>
             <field name="model_id" ref="model_inventory_stockout"/>
-            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="domain_force">[(1,'=',1), ('state', 'in', ('checked', 'issued', 'rejected'))]</field>
             <field name="groups" eval="[(4,ref('inventory_admin'))]"/>
         </record>
 
