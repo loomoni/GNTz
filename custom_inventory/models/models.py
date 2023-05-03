@@ -836,7 +836,7 @@ class StockInInventoryListWizard(models.TransientModel):
                 for department_inventory in department_stockin_inventory:
                     item = department_inventory.product_id.name
                     department = department_inventory.department_name
-                    received_date = department_inventory.received_date
+                    received_date_format = datetime.strftime(department_inventory.received_date, '%d-%m-%Y')
                     quantity = department_inventory.quantity
                     unit_cost = department_inventory.unit_cost
                     total_cost = department_inventory.cost
@@ -844,7 +844,7 @@ class StockInInventoryListWizard(models.TransientModel):
 
                     worksheet.write(ro, col, item or '', cell_text_format_new)
                     worksheet.write(ro, col + 1, department or '', cell_text_format_new)
-                    worksheet.write(ro, col + 2, received_date or '', cell_text_format_new)
+                    worksheet.write(ro, col + 2, received_date_format or '', cell_text_format_new)
                     worksheet.write(ro, col + 3, quantity or '', cell_text_format_new)
                     worksheet.write(ro, col + 4, unit_cost or '', cell_text_format_new)
                     worksheet.write(ro, col + 5, total_cost or '', cell_text_format_new)
@@ -854,7 +854,7 @@ class StockInInventoryListWizard(models.TransientModel):
                 for all_inventory_available in stockin_inventory_report:
                     item = all_inventory_available.product_id.name
                     department = all_inventory_available.department_name
-                    received_date = all_inventory_available.received_date
+                    received_date_format = datetime.strftime(all_inventory_available.received_date, '%d-%m-%Y')
                     quantity = all_inventory_available.quantity
                     unit_cost = all_inventory_available.unit_cost
                     total_cost = all_inventory_available.cost
@@ -862,7 +862,7 @@ class StockInInventoryListWizard(models.TransientModel):
 
                     worksheet.write(ro, col, item or '', cell_text_format_new)
                     worksheet.write(ro, col + 1, department or '', cell_text_format_new)
-                    worksheet.write(ro, col + 2, received_date or '', cell_text_format_new)
+                    worksheet.write(ro, col + 2, received_date_format or '', cell_text_format_new)
                     worksheet.write(ro, col + 3, quantity or '', cell_text_format_new)
                     worksheet.write(ro, col + 4, unit_cost or '', cell_text_format_new)
                     worksheet.write(ro, col + 5, total_cost or '', cell_text_format_new)
