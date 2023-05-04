@@ -279,6 +279,44 @@
         </field>
     </record>
 
+
+    <!--    Printing stockOut inventory report list -->
+    <record model="ir.ui.view" id="stockout_inventory_report_wizard">
+        <field name="name">StockOut Inventory Report</field>
+        <field name="model">stockout.inventory.report.wizard</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="StockOut Inventory Report">
+                <group>
+                    <field name="department_id" options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
+                </group>
+                <group>
+                    <group>
+                        <field name="date_from"/>
+                    </group>
+                    <group>
+                        <field name="date_to"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="get_report" string="Get Report" type="object" class="oe_highlight"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="view_stock_out_inventory_report_wizard_excel">
+        <field name="name">view.stockout.inventory.report.excel</field>
+        <field name="model">stockout.inventory.report.excel</field>
+        <field name="arch" type="xml">
+            <form string="Download Your Inventory Report Here">
+                <field name="name" invisible="1"/>
+                <field name="file_download" widget="download_link" filename="name"/>
+            </form>
+        </field>
+    </record>
+
     <!--    all product list view -->
     <record id="stockin_tree_view_list_view" model="ir.ui.view">
         <field name="name">product.stockin.tree.view</field>
@@ -325,7 +363,7 @@
 
     <act_window id="action_inventory_stockout_print_report"
                 name="Inventory StockOut Report"
-                res_model="general.inventory.report.wizard"
+                res_model="stockout.inventory.report.wizard"
                 view_mode="form"
                 target="new"/>
 

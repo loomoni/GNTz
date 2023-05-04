@@ -310,7 +310,7 @@ class InventoryStockOutLines(models.Model):
             rec.parent_department = rec.stockout_id.requester_id.department_parent_id.id
 
     product_id = fields.Many2one('product.template', string="Product", required=True)
-    department = fields.Integer(string='Department', compute="department_stockout_compute")
+    department = fields.Integer(string='Department', required=True, compute="department_stockout_compute")
     parent_department = fields.Integer(string='Parent Department', compute="parent_department_compute")
     request_reason = fields.Text(string='Purpose', required=True)
     project = fields.Many2one(comodel_name='project.configuration', string='Project', required=True)
@@ -889,6 +889,209 @@ class StockInInventoryListWizard(models.TransientModel):
 class StockInInventoryReportExcel(models.TransientModel):
     _name = 'stockin.inventory.report.excel'
     _description = "StockIn Inventory report excel table"
+
+    name = fields.Char('File Name', size=256, readonly=True)
+    file_download = fields.Binary('Download Asset', readonly=True)
+
+
+class StockOutInventoryListWizard(models.TransientModel):
+    _name = 'stockout.inventory.report.wizard'
+
+    department_id = fields.Many2one('hr.department', string='Department', required=False)
+    department_name = fields.Integer(string='Department', related='department_id.id')
+    date_from = fields.Date(string='Date From', required=True,
+                            default=lambda self: fields.Date.to_string(date.today().replace(day=1)))
+    date_to = fields.Date(string='Date To', required=True,
+                          default=lambda self: fields.Date.to_string(
+                              (datetime.now() + relativedelta(months=+1, day=1, days=-1)).date()))
+    company = fields.Many2one('res.company', default=lambda self: self.env['res.company']._company_default_get(),
+                              string="Company")
+
+    @api.multi
+    def get_report(self):
+        file_name = _('Inventory report ' + str(self.date_from) + ' - ' + str(self.date_to) + ' report.xlsx')
+        fp = BytesIO()
+
+        workbook = xlsxwriter.Workbook(fp)
+        heading_format = workbook.add_format({'align': 'center',
+                                              'valign': 'vcenter',
+                                              'bold': True,
+                                              'size': 14,
+                                              'fg_color': '#89A130', })
+        heading_format.set_border()
+        sub2_heading_format = workbook.add_format({'align': 'center',
+                                                   'valign': 'vcenter',
+                                                   'bold': True, 'size': 14})
+        sub2_heading_format.set_border()
+        dr_cr_format = workbook.add_format({'align': 'center',
+                                            # 'valign': 'vcenter',
+                                            'bold': True, 'size': 14})
+        dr_cr_format.set_border()
+        sub_heading_format = workbook.add_format({'align': 'left',
+                                                  # 'valign': 'vcenter',
+                                                  'bold': True, 'size': 14})
+        sub_heading_format.set_border()
+        cell_text_format_n = workbook.add_format({'align': 'center',
+                                                  'bold': True, 'size': 9,
+                                                  })
+        cell_text_format_n.set_border()
+        cell_photo_format = workbook.add_format({'align': 'center',
+
+                                                 })
+        cell_photo_format.set_border()
+        cell_date_text_format = workbook.add_format({'align': 'left',
+                                                     'size': 9,
+                                                     })
+        cell_date_text_format.set_border()
+
+        approve_format = workbook.add_format({'align': 'left',
+                                              'bold': False, 'size': 14,
+                                              })
+
+        cell_text_format = workbook.add_format({'align': 'left',
+                                                'bold': True, 'size': 13,
+                                                'fg_color': '#695B55',
+                                                'font_color': 'white'
+                                                })
+
+        cell_text_format.set_border()
+        cell_text_format_new = workbook.add_format({'align': 'left',
+                                                    'size': 9,
+                                                    'num_format': '#,###0.00',
+                                                    })
+        cell_text_format_new.set_border()
+        cell_number_format = workbook.add_format({'align': 'right',
+                                                  'bold': False, 'size': 9,
+                                                  'num_format': '#,###0.00'})
+        cell_number_format.set_border()
+        worksheet = workbook.add_worksheet(
+            'Inventory report ' + str(self.date_from) + ' - ' + str(self.date_to) + ' report.xlsx')
+        normal_num_bold = workbook.add_format({'bold': True, 'num_format': '#,###0.00', 'size': 9, })
+        normal_num_bold.set_border()
+        worksheet.set_column('A:J', 20)
+        # worksheet.set_default_row(45)
+
+        worksheet.set_row(0, 20)
+        worksheet.set_row(1, 20)
+        worksheet.set_row(2, 15)
+        worksheet.set_row(3, 15)
+        worksheet.set_row(4, 15)
+        worksheet.set_row(5, 20)
+        worksheet.set_row(6, 20)
+        row = 2
+        row_set = row
+
+        if self.date_from and self.date_to:
+            date_2 = datetime.strftime(self.date_to, '%d-%m-%Y')
+            date_1 = datetime.strftime(self.date_from, '%d-%m-%Y')
+            asset_report_month = self.date_from.strftime("%B")
+            worksheet.merge_range('A1:J2', 'Inventory Report For %s %s' % (asset_report_month, self.date_from.year),
+                                  heading_format)
+            worksheet.write('A3:A3', '', cell_text_format_n)
+            worksheet.write('A4:A4', '', cell_text_format_n)
+            worksheet.write('B3:B3', 'Company', cell_text_format_n)
+            worksheet.merge_range('C3:E3', '%s' % self.company.name, cell_text_format_n)
+
+            worksheet.write('B4:B4', 'Department', cell_text_format_n)
+            if self.department_name:
+                worksheet.merge_range('C4:E4', '%s' % self.department_id.name, cell_text_format_n)
+            else:
+                worksheet.merge_range('C4:E4', "All", cell_text_format_n)
+
+            worksheet.write(row, 5, 'Date From', cell_text_format_n)
+            worksheet.write(row, 6, date_1 or '', cell_date_text_format)
+            row += 1
+            worksheet.write(row, 5, 'Date To', cell_text_format_n)
+            worksheet.write(row, 6, date_2 or '', cell_date_text_format)
+            row += 2
+
+            worksheet.write(row, 0, 'Item', cell_text_format)
+            worksheet.write(row, 1, 'Department', cell_text_format)
+            worksheet.write(row, 2, 'Requested Quantity', cell_text_format)
+            worksheet.write(row, 3, 'Issued Quantity', cell_text_format)
+            worksheet.write(row, 4, 'Requested Purpose', cell_text_format)
+            worksheet.write(row, 5, 'Project', cell_text_format)
+            worksheet.write(row, 6, 'Requested by', cell_text_format)
+            worksheet.write(row, 7, 'Issued by', cell_text_format)
+            worksheet.write(row, 8, 'Date', cell_text_format)
+            worksheet.write(row, 9, 'Status', cell_text_format)
+
+            department_stockin_inventory = self.env['inventory.stockout.lines'].sudo().search([('department', '=', self.department_id)])
+            stockin_inventory_report = self.env['inventory.stockout.lines'].sudo().search([])
+
+            ro = row + 1
+            col = 0
+            if department_stockin_inventory:
+                for department_inventory in department_stockin_inventory:
+                    item = department_inventory.product_id.name
+                    department = department_inventory.stockout_id.department_id.name
+                    requested_quantity = department_inventory.requested_quantity
+                    issued_quantity = department_inventory.issued_quantity
+                    purpose = department_inventory.request_reason
+                    project = department_inventory.project.name
+                    requester = department_inventory.stockout_id.requester_id.name
+                    issuer = department_inventory.stockout_id.issuer_id.name
+                    # request_date_format = datetime.strftime(department_inventory.requested_date, '%d-%m-%Y')
+                    request_date_format = department_inventory.requested_date
+                    status = department_inventory.stockout_id.state
+
+                    worksheet.write(ro, col, item or '', cell_text_format_new)
+                    worksheet.write(ro, col + 1, department or '', cell_text_format_new)
+                    worksheet.write(ro, col + 2, requested_quantity or '', cell_text_format_new)
+                    worksheet.write(ro, col + 3, issued_quantity or '', cell_text_format_new)
+                    worksheet.write(ro, col + 4, purpose or '', cell_text_format_new)
+                    worksheet.write(ro, col + 5, project or '', cell_text_format_new)
+                    worksheet.write(ro, col + 6, requester or '', cell_text_format_new)
+                    worksheet.write(ro, col + 7, issuer or '', cell_text_format_new)
+                    worksheet.write(ro, col + 8, request_date_format or '', cell_text_format_new)
+                    worksheet.write(ro, col + 9, status or '', cell_text_format_new)
+                    ro = ro + 1
+            else:
+                for all_inventory_available in stockin_inventory_report:
+                    item = all_inventory_available.product_id.name
+                    department = all_inventory_available.stockout_id.department_id.name
+                    requested_quantity = all_inventory_available.requested_quantity
+                    issued_quantity = all_inventory_available.issued_quantity
+                    purpose = all_inventory_available.request_reason
+                    project = all_inventory_available.project.name
+                    requester = all_inventory_available.stockout_id.requester_id.name
+                    issuer = all_inventory_available.stockout_id.issuer_id.name
+                    # request_date_format = datetime.strftime(department_inventory.requested_date, '%d-%m-%Y')
+                    request_date_format = all_inventory_available.requested_date
+                    status = all_inventory_available.stockout_id.state
+
+                    worksheet.write(ro, col, item or '', cell_text_format_new)
+                    worksheet.write(ro, col + 1, department or '', cell_text_format_new)
+                    worksheet.write(ro, col + 2, requested_quantity or '', cell_text_format_new)
+                    worksheet.write(ro, col + 3, issued_quantity or '', cell_text_format_new)
+                    worksheet.write(ro, col + 4, purpose or '', cell_text_format_new)
+                    worksheet.write(ro, col + 5, project or '', cell_text_format_new)
+                    worksheet.write(ro, col + 6, requester or '', cell_text_format_new)
+                    worksheet.write(ro, col + 7, issuer or '', cell_text_format_new)
+                    worksheet.write(ro, col + 8, request_date_format or '', cell_text_format_new)
+                    worksheet.write(ro, col + 9, status or '', cell_text_format_new)
+                    ro = ro + 1
+
+        workbook.close()
+        file_download = base64.b64encode(fp.getvalue())
+        fp.close()
+
+        self = self.with_context(default_name=file_name, default_file_download=file_download)
+
+        return {
+            'name': 'Inventory Report Download',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'stockout.inventory.report.excel',
+            'type': 'ir.actions.act_window',
+            'target': 'new',
+            'context': self._context,
+        }
+
+
+class StockOutInventoryReportExcel(models.TransientModel):
+    _name = 'stockout.inventory.report.excel'
+    _description = "StockOut Inventory report excel table"
 
     name = fields.Char('File Name', size=256, readonly=True)
     file_download = fields.Binary('Download Asset', readonly=True)
