@@ -9,7 +9,7 @@
             <field name="name">Staff</field>
             <field name="category_id" ref="inventory_security_category"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
-            <field name="comment">The user can read and create own department records</field>
+            <field name="comment">The user can read and create own inventory records</field>
         </record>
 
         <record id="inventory_hod" model="res.groups">
@@ -74,7 +74,14 @@
         <record model="ir.rule" id="inventory_staff_access_stockout">
             <field name="name">Inventory Staff Access Stockout</field>
             <field name="model_id" ref="model_inventory_stockout"/>
-            <field name="domain_force">[('requester_id.user_id','=',user.id)]</field>
+            <field name="domain_force">[('requester_id.user_id.id','=',user.id)]</field>
+            <field name="groups" eval="[(4,ref('inventory_staff'))]"/>
+        </record>
+
+        <record model="ir.rule" id="inventory_staff_access_stockout_lines">
+            <field name="name">Inventory Staff Access Stockout</field>
+            <field name="model_id" ref="model_inventory_stockout_lines"/>
+            <field name="domain_force">[('stockout_id.requester_id.user_id.id','=',user.id)]</field>
             <field name="groups" eval="[(4,ref('inventory_staff'))]"/>
         </record>
 
