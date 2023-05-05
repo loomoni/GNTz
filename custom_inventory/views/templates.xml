@@ -46,7 +46,7 @@
                             groups="custom_inventory.inventory_procurement_HO"/>
                     <button name="button_issue" states="checked" string="Confirm Receipt" type="object"
                             class="btn-primary"
-                            groups="custom_inventory.inventory_staff,custom_inventory.inventory_hod,custom_inventory.inventory_procurement_HO"/>
+                            groups="custom_inventory.inventory_admin"/>
                     <button name="button_review" states="requested" string="Review" type="object"
                             groups="custom_inventory.inventory_hod"/>
                     <button name="button_back_to_line" states="line_manager" string="Back To Line Manager" type="object"
