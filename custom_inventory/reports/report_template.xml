@@ -5,6 +5,9 @@
             <t t-foreach="docs" t-as="o">
                 <t t-call="web.external_layout">
                     <div class="page">
+                        <br/>
+                        <br/>
+                        <br/>
                         <h2>Stock Out Report</h2>
                         <p>Stock out report of
                             <span t-field="o.requester_id.name"/>
@@ -113,6 +116,9 @@
                         </table>
                         <p class="text-right">
                             <strong>Authorized signature</strong>
+                            <br/>
+                            <br/>
+                            <span t-field="o.state"/>
                         </p>
                     </div>
                 </t>
