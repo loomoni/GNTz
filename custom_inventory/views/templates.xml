@@ -78,7 +78,7 @@
                         <group>
                             <field name="requester_id"/>
                             <field name="issuer_id"
-                                   attrs="{'readonly':[('state','in',['requested','issued', 'checked'])]}"/>
+                                   attrs="{'invisible':[('state','in',['draft', 'requested'])]}"/>
                             <field name="parent_department" invisible="1"/>
                         </group>
                     </group>
