@@ -87,8 +87,8 @@
                             <thead>
                                 <tr>
                                     <th>Item</th>
-                                    <th>Amount Requested</th>
-                                    <th>Amount Issued</th>
+                                    <th>Requested</th>
+                                    <th>Issued</th>
                                     <th>Purpose</th>
                                     <th>Project</th>
                                 </tr>
