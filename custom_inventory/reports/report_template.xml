@@ -86,6 +86,7 @@
                             <thead>
                                 <tr>
                                     <th>Item</th>
+                                    <th>Balance</th>
                                     <th>Requested</th>
                                     <th>Issued</th>
                                     <th>Purpose</th>
@@ -96,6 +97,9 @@
                                 <tr t-foreach="o.line_ids" t-as="line">
                                     <td>
                                         <span t-field="line.product_id.name"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="line.balance_stock"/>
                                     </td>
                                     <td>
                                         <span t-field="line.requested_quantity"/>

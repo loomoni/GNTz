@@ -172,7 +172,7 @@ class InventoryStockOut(models.Model):
     request_date = fields.Date(string="Request Date", required=True, default=fields.Date.today(), readonly=True)
     requester_id = fields.Many2one('hr.employee', string="Requested By", required=True, default=_default_requester,
                                    readonly=True, store=True)
-    issuer_id = fields.Many2one('hr.employee', string="Issued By", required=True)
+    issuer_id = fields.Many2one('hr.employee', string="Issued By", required=False)
     parent_department = fields.Integer(string="Parent Department", required=False,
                                        related='requester_id.department_parent_id.id')
     department_id = fields.Many2one('hr.department', string='Department', required=True, default=_default_department,
