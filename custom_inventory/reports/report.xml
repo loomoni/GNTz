@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
-<!--    <report-->
-<!--            id="stock_out_report_print"-->
-<!--            model="inventory.stockout"-->
-<!--            string="Asset Barcode"-->
-<!--            menu="True"-->
-<!--            report_type="qweb-pdf"-->
-<!--            name="asset_management.asset_management_qr_code_template"-->
-<!--            file="asset_management.asset_management_qr_code_template"-->
-<!--    />-->
+    <report
+            id="stock_out_report_print"
+            model="inventory.stockout"
+            string="Print Report"
+            menu="True"
+            report_type="qweb-pdf"
+            name="custom_inventory.stock_out_report_template"
+            file="custom_inventory.stock_out_report_template"
+    />
 </odoo>

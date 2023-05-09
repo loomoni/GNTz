@@ -26,6 +26,7 @@
         'security/security.xml',
         'security/ir.model.access.csv',
         'reports/report.xml',
+        'reports/report_template.xml',
         'data/email_template.xml',
         'views/views.xml',
         'views/stock_adjustment.xml',
