@@ -55,6 +55,11 @@ class AssetsInherit(models.Model):
         self.write({'state': 'review'})
         return True
 
+    @api.multi
+    def button_finance_back_to_draft(self):
+        self.write({'state': 'draft'})
+        return True
+
     state = fields.Selection(SELECTION, 'Status', required=True, copy=False, default='draft',
                              help="When an asset is created, the status is 'Draft'.\n"
                                   "If the asset is confirmed, the status goes in 'Running' and the depreciation lines can be posted in the accounting.\n"

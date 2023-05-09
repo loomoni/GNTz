@@ -44,6 +44,8 @@
                     <button name="button_finance_review" states="fixed" string="Finance Review" type="object"
                             class="oe_highlight"
                             groups="asset_management.asset_fm_ho,asset_management.asset_fm_branch"/>
+                    <button name="button_finance_back_to_draft" states="fixed" string="Back to Draft" type="object"
+                            groups="asset_management.asset_fm_ho,asset_management.asset_fm_branch"/>
                     <button name="validate" states="review,non_fixed" string="Confirm Asset" type="object"
                             class="oe_highlight"
                             groups="asset_management.asset_cd,asset_management.asset_dm"/>
@@ -231,6 +233,5 @@
               sequence="30"
               groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_ho"
               parent="asset_management.assets_report_id"/>
-
 
 </odoo>

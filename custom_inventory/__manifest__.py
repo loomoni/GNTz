@@ -25,6 +25,7 @@
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',
+        'reports/report.xml',
         'data/email_template.xml',
         'views/views.xml',
         'views/stock_adjustment.xml',
