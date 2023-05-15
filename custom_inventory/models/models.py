@@ -185,6 +185,8 @@ class InventoryStockOut(models.Model):
     @api.multi
     def button_requested(self):
         self.write({'state': 'requested'})
+        mail_template = self.env.ref('custom_inventory.stock_out_staff_request_line_manager_notification_email')
+        mail_template.send_mail(self.id, force_send=True)
         return True
 
         # message = "The request is made"
@@ -229,6 +231,8 @@ class InventoryStockOut(models.Model):
     @api.multi
     def button_line_manager(self):
         self.write({'state': 'line_manager'})
+        mail_template = self.env.ref('custom_inventory.stock_out_line_manager_to_procurement_notification_email')
+        mail_template.send_mail(self.id, force_send=True)
         return True
 
     @api.multi
@@ -249,11 +253,14 @@ class InventoryStockOut(models.Model):
         self.write({'state': 'checked'})
         for line in self.line_ids:
             line.product_id._amount_quantity()
+        mail_template = self.env.ref('custom_inventory.stock_out_procurement_to_ad_notification_email')
+        mail_template.send_mail(self.id, force_send=True)
         return True
 
     @api.multi
     def button_approve(self):
         self.write({'state': 'approved'})
+
         return True
 
     @api.multi
@@ -264,6 +271,8 @@ class InventoryStockOut(models.Model):
         self.write({'state': 'issued'})
         for line in self.line_ids:
             line.product_id._amount_quantity()
+        mail_template = self.env.ref('custom_inventory.stock_out_AD_to_requester_notification_email')
+        mail_template.send_mail(self.id, force_send=True)
         return True
 
     @api.multi
@@ -827,8 +836,10 @@ class StockInInventoryListWizard(models.TransientModel):
             worksheet.write(row, 6, 'Received by', cell_text_format)
 
             department_stockin_inventory = self.env['inventory.stockin.lines'].sudo().search(
-                [('department_id', '=', self.department_name), ('received_date', '<=', self.date_to), ('received_date', '>=', self.date_from)])
-            stockin_inventory_report = self.env['inventory.stockin.lines'].sudo().search([('received_date', '<=', self.date_to), ('received_date', '>=', self.date_from)])
+                [('department_id', '=', self.department_name), ('received_date', '<=', self.date_to),
+                 ('received_date', '>=', self.date_from)])
+            stockin_inventory_report = self.env['inventory.stockin.lines'].sudo().search(
+                [('received_date', '<=', self.date_to), ('received_date', '>=', self.date_from)])
 
             ro = row + 1
             col = 0
@@ -1016,7 +1027,8 @@ class StockOutInventoryListWizard(models.TransientModel):
             worksheet.write(row, 8, 'Date', cell_text_format)
             worksheet.write(row, 9, 'Status', cell_text_format)
 
-            department_stockin_inventory = self.env['inventory.stockout.lines'].sudo().search([('department', '=', self.department_id)])
+            department_stockin_inventory = self.env['inventory.stockout.lines'].sudo().search(
+                [('department', '=', self.department_id)])
             stockin_inventory_report = self.env['inventory.stockout.lines'].sudo().search([])
 
             ro = row + 1

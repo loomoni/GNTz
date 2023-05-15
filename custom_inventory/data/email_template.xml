@@ -6,23 +6,50 @@
             <field name="model_id" ref="custom_inventory.model_inventory_stock_adjustment"/>
             <field name="auto_delete" eval="True"/>
             <field name="email_from">${object.employee.work_email |safe}</field>
-            <field name="email_to">${object.stock_adjustment_line_ids.product_id.department_id.manager_id.work_email}
+            <field name="email_to">
+                ${','.join([line.product_id.department_id.manager_id.work_email for line in object.stock_adjustment_line_ids])}
             </field>
-            <!--            <field name="subject">Stock Adjustment (Ref ${object.name})</field>-->
-            <field name="subject">${object.stock_adjustment_line_ids.product_id.department_id.name} Stock Adjustment</field>
+            <field name="subject">${object.stock_adjustment_line_ids[0].product_id.department_id.name} Stock
+                Adjustment
+            </field>
             <field name="body_html" type="html">
                 <div style="margin: 0px; padding: 0px;">
                     <p style="margin: 0px; padding: 0px; font-size: 13px;">
                         <strong>
-                            Dear ${object.stock_adjustment_line_ids.product_id.department_id.manager_id.name}
+                            Dear ${object.stock_adjustment_line_ids[0].product_id.department_id.manager_id.name},
                         </strong>
                         <br/>
                         <br/>
-                        ${object.stock_adjustment_line_ids.adjustment} ${object.stock_adjustment_line_ids.product_id.name} have been removed in your department stock on <strong>${object.date}</strong> due to
-                        following reason: ${object.stock_adjustment_line_ids.reason}
+                        The following items have been removed from your department's stock on <strong>${object.date}
+                    </strong> due to the following reasons:
                         <br/>
                         <br/>
-                        Do not hesitate to contact me if you have any question.
+                        <table style="border-collapse: collapse;">
+                            <thead>
+                                <tr>
+                                    <th style="border: 1px solid black; padding: 5px;">Product</th>
+                                    <th style="border: 1px solid black; padding: 5px;">Adjustment</th>
+                                    <th style="border: 1px solid black; padding: 5px;">Reason</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="object.stock_adjustment_line_ids" t-as="line">
+                                    <tr>
+                                        <td style="border: 1px solid black; padding: 5px;">
+                                            <span t-field="line.product_id.name"/>
+                                        </td>
+                                        <td style="border: 1px solid black; padding: 5px;">
+                                            <span t-field="line.product_id.adjustment"/>
+                                        </td>
+                                        <td style="border: 1px solid black; padding: 5px;">
+                                            <span t-field="line.product_id.reason"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                        <br/>
+                        Do not hesitate to contact me if you have any questions.
                         <br/>
                         <br/>
                         Regards,
@@ -33,10 +60,134 @@
                     </p>
                 </div>
             </field>
-            <!--            <field name="report_template" ref="account_invoices"/>-->
-            <!--            <field name="report_name">-->
-            <!--                Invoice_${(object.number)}-->
-            <!--            </field>-->
+        </record>
+
+        <!--         Stock out line manager notification email -->
+        <record id="stock_out_staff_request_line_manager_notification_email" model="mail.template">
+            <field name="name">Line Manager Stock Out Request Notification: Send by email</field>
+            <field name="model_id" ref="custom_inventory.model_inventory_stockout"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="email_from">${object.requester_id.work_email |safe}</field>
+            <field name="email_to">${object.department_id.manager_id.work_email}
+            </field>
+            <field name="subject">${object.requester_id.name} Stock Out Request</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        <strong>
+                            Dear ${object.department_id.manager_id.name},
+                        </strong>
+                        <br/>
+                        <br/>
+                        You have a stock-out request from <strong>${object.requester_id.name}</strong> that needs your
+                        attention. Please log in to the
+                        <br/>
+                        Inventory Management System to assess it.
+                        <br/>
+                        <br/>
+                        Best regards,
+                        <br/>
+                        <strong>
+                            ${object.requester_id.name}
+                        </strong>
+                    </p>
+                </div>
+            </field>
+        </record>
+
+        <!--Stock out Procurement notification email -->
+        <record id="stock_out_line_manager_to_procurement_notification_email" model="mail.template">
+            <field name="name">Procurement Stock Out Request Notification: Send by email</field>
+            <field name="model_id" ref="custom_inventory.model_inventory_stockout"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="email_from">${object.department_id.manager_id.work_email |safe}</field>
+            <field name="email_to">${object.department_id.branch_id.manager_id.work_email}
+            </field>
+            <field name="subject">${object.requester_id.name} Stock Out Request</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        <strong>
+                            Dear ${object.department_id.branch_id.manager_id.name},
+                        </strong>
+                        <br/>
+                        <br/>
+                        You have a stock-out request from <strong>${object.requester_id.name}</strong> that has been
+                        approved by <strong>${object.department_id.manager_id.name}</strong> (Line Manager).
+                        <br/>
+                        Please log in to the Inventory Management System to take action.
+                        <br/>
+                        <br/>
+                        Best regards,
+                        <br/>
+                        <strong>
+                            ${object.department_id.manager_id.name}
+                        </strong>
+                    </p>
+                </div>
+            </field>
+        </record>
+
+        <!--Stock out AD notification email -->
+        <record id="stock_out_procurement_to_ad_notification_email" model="mail.template">
+            <field name="name">AD Stock Out Request Notification: Send by email</field>
+            <field name="model_id" ref="custom_inventory.model_inventory_stockout"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="email_from">${object.department_id.branch_id.manager_id.work_email |safe}</field>
+            <field name="email_to">hmilando@goodneighbors.or.tz</field>
+            <field name="subject">${object.requester_id.name} Stock Out Request</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        <strong>
+                            Dear Helena Milando,
+                        </strong>
+                        <br/>
+                        <br/>
+                        You have a stock-out request from <strong>${object.requester_id.name}</strong> that has been
+                        verified by <strong>${object.department_id.manager_id.name}</strong> as Line Manager,
+                        <br/>
+                        and reviewed by ${object.department_id.branch_id.manager_id.name} as Procurement needs your
+                        attention.
+                        <br/>
+                        <br/>
+                        Please log in to the Inventory Management System to take action.
+                        <br/>
+                        <br/>
+                        Best regards,
+                        <br/>
+                        <strong>
+                            ${object.department_id.branch_id.manager_id.name}
+                        </strong>
+                    </p>
+                </div>
+            </field>
+        </record>
+
+        <!--Stock out AD to requester notification email -->
+        <record id="stock_out_AD_to_requester_notification_email" model="mail.template">
+            <field name="name">Requester Stock Out Request Notification: Send by email</field>
+            <field name="model_id" ref="custom_inventory.model_inventory_stockout"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="email_from">hmilando@goodneighbors.or.tz</field>
+            <field name="email_to">${object.requester_id.work_email}</field>
+            <field name="subject">${object.requester_id.name} Stock Out Request</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        <strong>
+                            Dear ${object.requester_id.name},
+                        </strong>
+                        <br/>
+                        <br/>
+                        The Item that you have requested are approved by AD, kindly take action.
+                        <br/>
+                        <br/>
+                        <strong>Best regards,</strong>
+                        <br/>
+                    </p>
+                </div>
+            </field>
         </record>
     </data>
 </odoo>
