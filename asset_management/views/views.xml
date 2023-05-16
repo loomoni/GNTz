@@ -68,6 +68,15 @@
                         </tree>
                     </field>
                 </page>
+                <page string="Description">
+                    <field name="description_line_ids">
+                        <tree editable="bottom">
+                            <field name="title"/>
+                            <field name="description"/>
+                            <field name="description_ids" invisible="1"/>
+                        </tree>
+                    </field>
+                </page>
                 <page string="Insurance">
                     <field name="insurance_model_line_ids">
                         <tree editable="bottom">

@@ -60,3 +60,5 @@ account_asset_asset_reevaluation_depreciation_lines_dfa,Asset Reevaluation Depre
 account_asset_asset_reevaluation_depreciation_lines_es,Asset Reevaluation Deprec Lines ES Group,model_account_asset_reevaluation_depreciation_lines,,1,1,1,1
 
 account_asset_hand_over_lines,account asset hand over lines,model_account_asset_hand_over_lines,,1,1,1,1
+
+account_asset_description_line,account asset description.lines,model_description_line,,1,1,1,1

@@ -130,6 +130,9 @@ class AssetsInherit(models.Model):
     service_model_line_ids = fields.One2many(comodel_name='service.model.line',
                                              string="Service IDS",
                                              inverse_name="service_ids")
+    description_line_ids = fields.One2many(comodel_name='description.line',
+                                           string="description IDS",
+                                           inverse_name="description_ids")
     # asset_assignment_ids = fields.Many2many(comodel_name='account.asset.assign', string="Assets Assignment",
     #                                         inverse_name="asset_ids")
 
@@ -613,6 +616,14 @@ class ServicesModelLines(models.Model):
     service_date = fields.Date(string="Service Date")
     next_service = fields.Date(string="Next Service")
     service_ids = fields.Many2one('account.asset.asset', string="Service ID")
+
+
+class DescriptionsLines(models.Model):
+    _name = 'description.line'
+
+    title = fields.Char(string="Title")
+    description = fields.Char(string="Description")
+    description_ids = fields.Many2one('account.asset.asset', string="Description ID")
 
 
 class AssetAssignmentCategory(models.Model):
