@@ -229,11 +229,13 @@ class InventoryStockOut(models.Model):
         # }
 
     @api.multi
-    def button_line_manager(self):
+    def button_line_manager(self, object_id):
         self.write({'state': 'line_manager'})
         mail_template = self.env.ref('custom_inventory.stock_out_line_manager_to_procurement_notification_email')
         mail_template.send_mail(self.id, force_send=True)
         return True
+
+
 
     @api.multi
     def button_review(self):
@@ -653,10 +655,10 @@ class GeneralInventoryListWizard(models.TransientModel):
             row += 2
 
             worksheet.write(row, 0, 'Item', cell_text_format)
-            worksheet.write(row, 1, 'Remark', cell_text_format)
-            worksheet.write(row, 2, 'Total Purchased', cell_text_format)
-            worksheet.write(row, 3, 'Total Used', cell_text_format)
-            worksheet.write(row, 4, 'Balance', cell_text_format)
+            # worksheet.write(row, 1, 'Remark', cell_text_format)
+            worksheet.write(row, 1, 'Total Purchased', cell_text_format)
+            worksheet.write(row, 2, 'Total Used', cell_text_format)
+            worksheet.write(row, 3, 'Balance', cell_text_format)
 
             department_general_inventory = self.env['product.template'].sudo().search(
                 [('department_id', '=', self.department_name)])
@@ -672,10 +674,10 @@ class GeneralInventoryListWizard(models.TransientModel):
                     balance = department_inventory.balance_stock
 
                     worksheet.write(ro, col, item or '', cell_text_format_new)
-                    worksheet.write(ro, col + 1, '', cell_text_format_new)
-                    worksheet.write(ro, col + 2, total_purchased or '', cell_text_format_new)
-                    worksheet.write(ro, col + 3, total_used or '', cell_text_format_new)
-                    worksheet.write(ro, col + 4, balance or '', cell_text_format_new)
+                    # worksheet.write(ro, col + 1, '', cell_text_format_new)
+                    worksheet.write(ro, col + 1, total_purchased or '', cell_text_format_new)
+                    worksheet.write(ro, col + 2, total_used or '', cell_text_format_new)
+                    worksheet.write(ro, col + 3, balance or '', cell_text_format_new)
                     ro = ro + 1
             else:
                 for all_inventory_available in general_inventory_report:
@@ -685,10 +687,10 @@ class GeneralInventoryListWizard(models.TransientModel):
                     balance = all_inventory_available.balance_stock
 
                     worksheet.write(ro, col, item or '', cell_text_format_new)
-                    worksheet.write(ro, col + 1, '', cell_text_format_new)
-                    worksheet.write(ro, col + 2, total_purchased or '', cell_text_format_new)
-                    worksheet.write(ro, col + 3, total_used or '', cell_text_format_new)
-                    worksheet.write(ro, col + 4, balance or '', cell_text_format_new)
+                    # worksheet.write(ro, col + 1, '', cell_text_format_new)
+                    worksheet.write(ro, col + 1, total_purchased or '', cell_text_format_new)
+                    worksheet.write(ro, col + 2, total_used or '', cell_text_format_new)
+                    worksheet.write(ro, col + 3, balance or '', cell_text_format_new)
                     ro = ro + 1
 
         workbook.close()

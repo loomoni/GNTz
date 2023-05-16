@@ -44,13 +44,16 @@
                     <button name="button_finance_review" states="fixed" string="Finance Review" type="object"
                             class="oe_highlight"
                             groups="asset_management.asset_fm_ho,asset_management.asset_fm_branch"/>
-                    <button name="button_finance_back_to_draft" states="fixed" string="Back to Procurement" type="object"
+                    <button name="button_finance_back_to_draft" states="fixed" string="Back to Procurement"
+                            type="object"
                             groups="asset_management.asset_fm_ho,asset_management.asset_fm_branch"/>
                     <button name="validate" states="review,non_fixed" string="Confirm Asset" type="object"
                             class="oe_highlight"
                             groups="asset_management.asset_cd,asset_management.asset_dm"/>
                     <button name="back_to_draft" states="review,non_fixed" string="Review Asset" type="object"
                             groups="asset_management.asset_cd,asset_management.asset_dm"/>
+                    <button name="button_reject" states="review,non_fixed" string="Reject" type="object"
+                            groups="asset_management.asset_cd,asset_management.asset_dm"  class="oe_highlight"/>
                     <field name="state" widget="statusbar"
                            statusbar_visible="draft,review,open,inuse,repair,replace,close"/>
                 </header>
