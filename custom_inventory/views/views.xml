@@ -82,7 +82,12 @@
                                     <field name="project"/>
                                     <field name="unit_cost"/>
                                     <field name="cost"/>
-                                    <field name="uom_id"/>
+                                    <field name="lpo_number"/>
+                                    <field name="lpo_attachment"/>
+                                    <field name="gin_number"/>
+                                    <field name="gin_attachment"/>
+                                    <field name="grn_number"/>
+                                    <field name="grn_attachment"/>
                                 </tree>
                                 <form>
                                     <sheet>
@@ -93,6 +98,12 @@
                                             <field name="project"/>
                                             <field name="cost"/>
                                             <field name="uom_id"/>
+                                            <field name="lpo_number"/>
+                                            <field name="lpo_attachment"/>
+                                            <field name="gin_number"/>
+                                            <field name="gin_attachment"/>
+                                            <field name="grn_number"/>
+                                            <field name="grn_attachment"/>
                                         </group>
                                     </sheet>
                                 </form>
