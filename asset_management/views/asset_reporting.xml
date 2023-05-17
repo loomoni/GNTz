@@ -30,13 +30,24 @@
                             class="oe_highlight"
                             groups="asset_management.asset_lm"
                     />
-                    <button name="button_ict_officer_recommend" states="line_manager" string="ICT Officer Recommendation"
+                    <button name="button_line_manager_back_draft" states="submit" string="Review"
+                            type="object"
+                            groups="asset_management.asset_lm"
+                    />
+                    <button name="button_reject" states="submit" string="Reject"
+                            type="object"
+                            class="oe_highlight"
+                            groups="asset_management.asset_lm"
+                    />
+                    <button name="button_ict_officer_recommend" states="line_manager"
+                            string="ICT Officer Recommendation"
                             type="object"
                             class="oe_highlight"
                             groups="asset_management.all_ict_officer"
                             attrs="{'invisible':[('electronic_asset','=','no')]}"
                     />
-                    <button name="button_procurement_review" states="it_officer,line_manager" string="Procurement Review"
+                    <button name="button_procurement_review" states="it_officer,line_manager"
+                            string="Procurement Review"
                             type="object"
                             class="oe_highlight"
                             groups="asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"
@@ -130,12 +141,14 @@
                                 <field name="line_manager_comment"/>
                             </group>
                         </page>
-                        <page string="ICT Officer Recommendation" attrs="{'invisible': ['&amp;', ('electronic_asset', '=', 'no'), ('state', 'in', ('draft', 'submit'))]}">
+                        <page string="ICT Officer Recommendation"
+                              attrs="{'invisible': ['&amp;', ('electronic_asset', '=', 'no'), ('state', 'in', ('draft', 'submit'))]}">
                             <group>
                                 <field name="ict_officer_comment"/>
                             </group>
                         </page>
-                        <page string="Procurement Comment" attrs="{'invisible': [('state', 'in', ('draft', 'submit'))]}">
+                        <page string="Procurement Comment"
+                              attrs="{'invisible': [('state', 'in', ('draft', 'submit'))]}">
                             <group>
                                 <field name="procurement_comment"/>
                             </group>

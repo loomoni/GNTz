@@ -3,6 +3,7 @@ from odoo import models, fields, api, _
 
 class AssetReportingDamage(models.Model):
     _name = 'asset.reporting.damage'
+    _order = 'id desc'
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
     electronic_asset = fields.Selection(string="is the damage for electronic asset?",
@@ -15,10 +16,12 @@ class AssetReportingDamage(models.Model):
     SELECTION = [
         ('draft', 'Draft'),
         ('submit', 'Submitted'),
+        ('staff_review', 'Review'),
         ('line_manager', 'Line Manager'),
         ('it_officer', 'IT Officer'),
         ('procurement', 'Procurement'),
-        ('adm_cd', 'AD Manager/Country Director')
+        ('adm_cd', 'AD Manager/Country Director'),
+        ('reject', 'Reject'),
     ]
 
     IT_SELECTION = [
@@ -49,6 +52,16 @@ class AssetReportingDamage(models.Model):
         for asset in self.asset_reporting_damage_line_ids:
             asset.write({'state': 'line_manager'})
         self.write({'state': 'line_manager'})
+        return True
+
+    @api.multi
+    def button_line_manager_back_draft(self):
+        self.write({'state': 'draft'})
+        return True
+
+    @api.multi
+    def button_reject(self):
+        self.write({'state': 'reject'})
         return True
 
     @api.multi
@@ -153,6 +166,7 @@ class AssetReportingDamage(models.Model):
 
 class AssetReportingDamageLine(models.Model):
     _name = 'asset.reporting.damage.line'
+    _order = 'id desc'
 
     SELECTION = [
         ("draft", "Draft"),
