@@ -271,10 +271,16 @@ class InventoryStockOut(models.Model):
         return True
 
     @api.multi
+    def button_procurement_review(self):
+        self.write({'state': 'line_manager'})
+        return True
+
+
+    @api.multi
     def button_approve(self):
         self.write({'state': 'approved'})
-
         return True
+
 
     @api.multi
     def button_issue(self):

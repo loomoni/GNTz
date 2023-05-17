@@ -44,8 +44,10 @@
                     <button name="button_checked" states="line_manager" string="Issue Goods" type="object"
                             class="btn-primary"
                             groups="custom_inventory.inventory_procurement_HO"/>
-                    <button name="button_issue" states="checked" string="Confirm Receipt" type="object"
+                    <button name="button_issue" states="checked" string="Approve" type="object"
                             class="btn-primary"
+                            groups="custom_inventory.inventory_admin"/>
+                    <button name="button_procurement_review" states="checked" string="Review" type="object"
                             groups="custom_inventory.inventory_admin"/>
                     <button name="button_review" states="requested" string="Review" type="object"
                             groups="custom_inventory.inventory_hod"/>
