@@ -33,7 +33,7 @@
                     <button name="button_ict_officer_recommend" states="line_manager" string="ICT Officer Recommendation"
                             type="object"
                             class="oe_highlight"
-                            groups="asset_management.ict_hq_officer"
+                            groups="asset_management.all_ict_officer"
                             attrs="{'invisible':[('electronic_asset','=','no')]}"
                     />
                     <button name="button_procurement_review" states="it_officer,line_manager" string="Procurement Review"
