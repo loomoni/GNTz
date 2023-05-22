@@ -58,6 +58,18 @@ class InventoryStockIn(models.Model):
     line_ids = fields.One2many('inventory.stockin.lines', 'stockin_id', string="Stock In Lines", index=True,
                                track_visibility='onchange')
 
+    lpo_number = fields.Char(String="LPO NO.")
+    lpo_attachment = fields.Binary(string="LPO Attachment", attachment=True, store=True, )
+    lpo_attachment_name = fields.Char('Attachment Name')
+
+    gin_number = fields.Char(String="GIN  NO.")
+    gin_attachment = fields.Binary(string="GIN Attachment", attachment=True, store=True, )
+    gin_attachment_name = fields.Char('Attachment Name')
+
+    grn_number = fields.Char(String="GRN NO.")
+    grn_attachment = fields.Binary(string="GRN Attachment", attachment=True, store=True, )
+    grn_attachment_name = fields.Char('Attachment Name')
+
     @api.multi
     def button_approve(self):
         self.write({'state': 'approved'})
@@ -129,17 +141,7 @@ class InventoryStockInLines(models.Model):
     receiver_id = fields.Char(string="Received by", related="stockin_id.receiver_id.name")
     state = fields.Selection(STATE_SELECTION, index=True, track_visibility='onchange', related='stockin_id.state',
                              store=True)
-    lpo_number = fields.Char(String="LPO NO.")
-    lpo_attachment = fields.Binary(string="LPO Attachment", attachment=True, store=True, )
-    lpo_attachment_name = fields.Char('Attachment Name')
 
-    gin_number = fields.Char(String="GIN  NO.")
-    gin_attachment = fields.Binary(string="GIN Attachment", attachment=True, store=True, )
-    gin_attachment_name = fields.Char('Attachment Name')
-
-    grn_number = fields.Char(String="GRN NO.")
-    grn_attachment = fields.Binary(string="GRN Attachment", attachment=True, store=True, )
-    grn_attachment_name = fields.Char('Attachment Name')
 
     @api.depends('stockin_id.goods_received_date')
     def compute_date(self):

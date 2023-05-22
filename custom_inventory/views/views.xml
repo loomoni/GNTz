@@ -70,6 +70,21 @@
                             <field name="delivery_attachment_name" invisible="1"/>
                         </group>
                     </group>
+                     <group>
+                        <group>
+                            <field name="lpo_number"/>
+                            <field name="gin_number"/>
+                            <field name="grn_number"/>
+                        </group>
+                        <group>
+                            <field name="lpo_attachment" filename="lpo_attachment_name"/>
+                            <field name="lpo_attachment_name" invisible="1"/>
+                            <field name="gin_attachment" filename="gin_attachment_name"/>
+                            <field name="gin_attachment_name" invisible="1"/>
+                            <field name="grn_attachment" filename="grn_attachment_name"/>
+                            <field name="grn_attachment_name" invisible="1"/>
+                        </group>
+                    </group>
                     <notebook>
                         <page string="Stock In Lines">
                             <field name="line_ids">
@@ -82,12 +97,13 @@
                                     <field name="project"/>
                                     <field name="unit_cost"/>
                                     <field name="cost"/>
-                                    <field name="lpo_number"/>
-                                    <field name="lpo_attachment"/>
-                                    <field name="gin_number"/>
-                                    <field name="gin_attachment"/>
-                                    <field name="grn_number"/>
-                                    <field name="grn_attachment"/>
+                                     <field name="uom_id"/>
+<!--                                    <field name="lpo_number"/>-->
+<!--                                    <field name="lpo_attachment"/>-->
+<!--                                    <field name="gin_number"/>-->
+<!--                                    <field name="gin_attachment"/>-->
+<!--                                    <field name="grn_number"/>-->
+<!--                                    <field name="grn_attachment"/>-->
                                 </tree>
                                 <form>
                                     <sheet>
@@ -98,12 +114,12 @@
                                             <field name="project"/>
                                             <field name="cost"/>
                                             <field name="uom_id"/>
-                                            <field name="lpo_number"/>
-                                            <field name="lpo_attachment"/>
-                                            <field name="gin_number"/>
-                                            <field name="gin_attachment"/>
-                                            <field name="grn_number"/>
-                                            <field name="grn_attachment"/>
+<!--                                            <field name="lpo_number"/>-->
+<!--                                            <field name="lpo_attachment"/>-->
+<!--                                            <field name="gin_number"/>-->
+<!--                                            <field name="gin_attachment"/>-->
+<!--                                            <field name="grn_number"/>-->
+<!--                                            <field name="grn_attachment"/>-->
                                         </group>
                                     </sheet>
                                 </form>
