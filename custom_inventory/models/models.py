@@ -261,10 +261,13 @@ class InventoryStockOut(models.Model):
         return True
 
     @api.multi
+    @api.onchange('line.balance_stock', 'line.issued_quantity')
     def button_checked(self):
         for line in self.line_ids:
             if line.issued_quantity <= 0:
                 raise ValidationError(_("You can't issue 0 goods"))
+            elif line.balance_stock - line.issued_quantity < 0:
+                raise ValidationError(_("There is no enough Item to issue please check stock balance"))
         self.write({'state': 'checked'})
         for line in self.line_ids:
             line.product_id._amount_quantity()

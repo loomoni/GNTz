@@ -1,6 +1,7 @@
+
 <odoo>
     <data>
-        <!--Email template -->
+        <!--Email template Adjustment -->
         <record id="stock_adjustment_email_to_hod" model="mail.template">
             <field name="name">Approved Stock Adjustment: Send by email</field>
             <field name="model_id" ref="custom_inventory.model_inventory_stock_adjustment"/>
