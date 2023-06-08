@@ -4,7 +4,7 @@
         <field name="name">asset.assign.tree.view</field>
         <field name="model">account.asset.assign</field>
         <field name="arch" type="xml">
-            <tree string="Asset Assignment">
+            <tree string="Asset Custodian">
                 <field name="asset_name"/>
                 <field name="asset_category"/>
                 <field name="asset_number"/>
@@ -102,16 +102,16 @@
     </record>
 
     <record id="action_asset_assign" model="ir.actions.act_window">
-        <field name="name">Asset Assignment</field>
+        <field name="name">Asset Custodian</field>
         <field name="res_model">account.asset.assign</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                Ready to create asset assignment?
+                Ready to create asset Custodian?
             </p>
             <p>
-                Let's create a asset assignment.
+                Let's create a asset Custodian.
             </p>
         </field>
     </record>
@@ -119,7 +119,7 @@
     <menuitem
             parent="asset_management.menu_root"
             id="menu_asset_assign"
-            name="Asset Assignment"
+            name="Asset Custodian"
             action="action_asset_assign"
             sequence="4"
             groups="asset_management.all_staff,asset_management.all_ict_officer,asset_management.asset_procurement_ho,asset_management.asset_procurement_branch,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_lm,asset_management.asset_dm"/>

@@ -119,5 +119,5 @@
               parent="asset_management.menu_root"
               action="asset_transfer_action"
               sequence="8"
-              groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_dm,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"/>
+             />
 </odoo>
