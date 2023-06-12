@@ -71,7 +71,7 @@
                             <field name="asset_hand_over_line_ids">
                                 <tree editable="bottom">
                                     <field name="asset_name"/>
-                                    <field name="identification_number"/>
+<!--                                    <field name="identification_number"/>-->
                                     <field name="asset_condition"/>
                                     <field name="handover_reason"/>
                                     <field name="asset_hand_over_ids" invisible="1"/>
