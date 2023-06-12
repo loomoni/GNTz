@@ -36,7 +36,7 @@
                     <button name="button_staff_or_line_manager_request" states="draft" string="Submit Request"
                             type="object"
                             class="oe_highlight"
-                            groups="asset_management.asset_lm,asset_management.all_ict_officer,asset_management.all_staff"/>
+                           />
                     <button name="button_line_manager_review" states="send_request" string="Line Manager Review"
                             type="object" class="oe_highlight"
                             groups="asset_management.asset_lm"/>
