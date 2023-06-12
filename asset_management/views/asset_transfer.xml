@@ -37,8 +37,6 @@
                             groups="asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"/>
                     <field name="state" widget="statusbar"
                            statusbar_visible="draft,procurement,adm_cd,country_director,staff"/>
-
-
                 </header>
                 <sheet>
                     <group string="Employee details">
@@ -53,16 +51,6 @@
                             <field name="email"/>
                         </group>
                     </group>
-<!--                    <group string="Asset information">-->
-<!--                        <group>-->
-<!--                            <field name="asset_name"/>-->
-<!--                            <field name="identification_number"/>-->
-<!--                        </group>-->
-<!--                        <group>-->
-<!--                            <field name="asset_condition"/>-->
-<!--                            <field name="handover_reason"/>-->
-<!--                        </group>-->
-<!--                    </group>-->
                     <group string="Custodian Information" attrs="{'invisible':[('state','in','draft')]}">
                         <group>
                             <p>I here by acknowledging the return of the above-mentioned Asset/Assets.</p>
@@ -119,5 +107,6 @@
               parent="asset_management.menu_root"
               action="asset_transfer_action"
               sequence="8"
+               groups="asset_management.all_staff,asset_management.asset_cd,asset_management.asset_dm,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_branch,asset_management.asset_procurement_ho"/>
              />
 </odoo>

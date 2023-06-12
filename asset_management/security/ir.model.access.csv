@@ -37,7 +37,7 @@ account_asset_reporting_damage_line,Asset Reporting Damage Line,model_asset_repo
 
 account_asset_reporting_lost,Asset Reporting lost,model_asset_reporting_lost,,1,1,1,1
 
-account_asset_transfer,Asset Reporting lost,model_account_asset_transfer,,1,1,1,1
+account_asset_transfer_access,Asset Reporting lost,model_account_asset_transfer,,1,1,1,1
 
 account_asset_chechout,Asset Checkout,model_account_asset_checkout,,1,1,1,1
 

@@ -59,9 +59,9 @@ class AccountAssetTransfer(models.Model):
 class AccountAssetHandOverLines(models.Model):
     _name = 'account.asset.hand.over.lines'
 
-    # Asset information
-    asset_name = fields.Many2one(comodel_name="account.asset.asset", string="Asset")
-    identification_number = fields.Char(string="Code", related="asset_name.code")
+    # Asset information account.asset.assign related="asset_name.code"
+    asset_name = fields.Many2one(comodel_name="account.asset.assign", string="Asset")
+    identification_number = fields.Char(string="Code")
     asset_condition = fields.Char(string="Asset condition")
     handover_reason = fields.Text(string="Reason for Asset Handover")
     asset_hand_over_ids = fields.Many2one('account.asset.transfer', string="Asset HandOver ID")
