@@ -194,6 +194,8 @@ class AssetReportingDamageLine(models.Model):
     location = fields.Char(string="Location")
     damage_description = fields.Text(string="Description")
     cost = fields.Char(string="Estimated Cost ")
+    report_attachment = fields.Binary(string="Reporting Attachment", attachment=True, store=True, )
+    report_attachment_name = fields.Char('Reporting Attachment Name')
     person_responsible = fields.Many2one(comodel_name="res.users", string="Person responsible")
     asset_reporting_damage_id = fields.Many2one(comodel_name="asset.reporting.damage", string="Reporting damage ID",
                                                 required=False)
