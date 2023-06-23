@@ -353,7 +353,7 @@ class InventoryStockOutLines(models.Model):
     requested_date = fields.Date(string='Requested Date', compute="requested_date_compute")
     requested_by = fields.Char(string='Requested By', compute="requested_by_compute")
     # balance_stock = fields.Float('Balance Stock', digits=(12, 2), readonly=True)
-    balance_stock = fields.Float('Balance Stock', digits=(12, 2), related='product_id.balance_stock')
+    balance_stock = fields.Float('Balance Stock', related='product_id.balance_stock')
     uom_id = fields.Many2one('uom.uom', string='Unit of Measure',
                              default=lambda self: self.env['uom.uom'].search([], limit=1, order='id'))
     stockout_id = fields.Many2one(comodel_name='inventory.stockout', string="Stock Out")
