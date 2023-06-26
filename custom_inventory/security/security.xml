@@ -71,19 +71,19 @@
             <field name="groups" eval="[(4,ref('inventory_admin'))]"/>
         </record>
 
-        <record model="ir.rule" id="inventory_staff_access_stockout">
-            <field name="name">Inventory Staff Access Stockout</field>
-            <field name="model_id" ref="model_inventory_stockout"/>
-            <field name="domain_force">[('requester_id.user_id.id','=',user.id)]</field>
-            <field name="groups" eval="[(4,ref('inventory_staff'))]"/>
-        </record>
+<!--        <record model="ir.rule" id="inventory_staff_access_stockout">-->
+<!--            <field name="name">Inventory Staff Access Stockout</field>-->
+<!--            <field name="model_id" ref="model_inventory_stockout"/>-->
+<!--            <field name="domain_force">[('requester_id.user_id.id','=',user.id)]</field>-->
+<!--            <field name="groups" eval="[(4,ref('inventory_staff'))]"/>-->
+<!--        </record>-->
 
-        <record model="ir.rule" id="inventory_staff_access_stockout_lines">
-            <field name="name">Inventory Staff Access Stockout</field>
-            <field name="model_id" ref="model_inventory_stockout_lines"/>
-            <field name="domain_force">[('stockout_id.requester_id.user_id.id','=',user.id)]</field>
-            <field name="groups" eval="[(4,ref('inventory_staff'))]"/>
-        </record>
+<!--        <record model="ir.rule" id="inventory_staff_access_stockout_lines">-->
+<!--            <field name="name">Inventory Staff Access Stockout</field>-->
+<!--            <field name="model_id" ref="model_inventory_stockout_lines"/>-->
+<!--            <field name="domain_force">[('stockout_id.requester_id.user_id.id','=',user.id)]</field>-->
+<!--            <field name="groups" eval="[(4,ref('inventory_staff'))]"/>-->
+<!--        </record>-->
 
         <record model="ir.rule" id="inventory_hod_access_stockin">
             <field name="name">Inventory HOD Access Stockin</field>

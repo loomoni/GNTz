@@ -357,6 +357,8 @@ class InventoryStockOutLines(models.Model):
     uom_id = fields.Many2one('uom.uom', string='Unit of Measure',
                              default=lambda self: self.env['uom.uom'].search([], limit=1, order='id'))
     stockout_id = fields.Many2one(comodel_name='inventory.stockout', string="Stock Out")
+    department_name = fields.Char(string="Department", related="stockout_id.department_id.name")
+    department_id = fields.Integer(string="Department", related="stockout_id.department_id.id")
     state = fields.Selection(STATE_SELECTION, index=True, track_visibility='onchange', related='stockout_id.state',
                              store=True)
 
@@ -1052,14 +1054,17 @@ class StockOutInventoryListWizard(models.TransientModel):
             worksheet.write(row, 8, 'Date', cell_text_format)
             worksheet.write(row, 9, 'Status', cell_text_format)
 
-            department_stockin_inventory = self.env['inventory.stockout.lines'].sudo().search(
-                [('department', '=', self.department_id)])
+            # department_stockout_inventory = self.env['inventory.stockout.lines'].sudo().search(
+            #     [('department', '=', self.department_id)])
+            department_stockout_inventory = self.env['inventory.stockout.lines'].sudo().search(
+                [('department_id', '=', self.department_name), ('requested_date', '<=', self.date_to),
+                 ('requested_date', '>=', self.date_from)])
             stockin_inventory_report = self.env['inventory.stockout.lines'].sudo().search([])
 
             ro = row + 1
             col = 0
-            if department_stockin_inventory:
-                for department_inventory in department_stockin_inventory:
+            if department_stockout_inventory:
+                for department_inventory in department_stockout_inventory:
                     item = department_inventory.product_id.name
                     department = department_inventory.stockout_id.department_id.name
                     requested_quantity = department_inventory.requested_quantity
@@ -1068,8 +1073,7 @@ class StockOutInventoryListWizard(models.TransientModel):
                     project = department_inventory.project.name
                     requester = department_inventory.stockout_id.requester_id.name
                     issuer = department_inventory.stockout_id.issuer_id.name
-                    # request_date_format = datetime.strftime(department_inventory.requested_date, '%d-%m-%Y')
-                    request_date_format = department_inventory.requested_date
+                    request_date_format = datetime.strftime(department_inventory.requested_date, '%d-%m-%Y')
                     status = department_inventory.stockout_id.state
 
                     worksheet.write(ro, col, item or '', cell_text_format_new)
