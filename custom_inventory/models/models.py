@@ -189,7 +189,7 @@ class InventoryStockOut(models.Model):
     parent_department = fields.Integer(string="Parent Department", required=False,
                                        related='requester_id.department_parent_id.id')
     # readonly=True,
-    department_id = fields.Many2one('hr.department', string='Department', required=True, default=_default_department,
+    department_id = fields.Many2one('hr.department', string='Department', readonly=True, required=True, default=_default_department,
                                 store=True, )
     state = fields.Selection(STATE_SELECTION, index=True, track_visibility='onchange',
                              readonly=True, required=True, copy=False, default='draft', store=True)
