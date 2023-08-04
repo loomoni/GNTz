@@ -117,6 +117,7 @@ class AssetsInherit(models.Model):
     department_id = fields.Many2one('hr.department', string='Asset Location/Department', required=True,
                                     default=_default_department, store=True)
     branch = fields.Char(string='Branch', related='department_id.branch_id.name')
+    name = fields.Char(readonly=False)
     asset_id_no = fields.Char(string='ASSET ID #')
     account_id = fields.Many2one('account.account', string='Credit Account')
     journal_id = fields.Many2one('account.journal', string='Credit Account Journal')
