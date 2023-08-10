@@ -58,16 +58,16 @@ class InventoryStockIn(models.Model):
     line_ids = fields.One2many('inventory.stockin.lines', 'stockin_id', string="Stock In Lines", index=True,
                                track_visibility='onchange')
 
-    lpo_number = fields.Char(String="LPO NO.")
-    lpo_attachment = fields.Binary(string="LPO Attachment", attachment=True, store=True, )
+    lpo_number = fields.Char(String="LPO NO.", required=True)
+    lpo_attachment = fields.Binary(string="LPO Attachment", attachment=True, store=True, required=True)
     lpo_attachment_name = fields.Char('Attachment Name')
 
-    gin_number = fields.Char(String="GIN  NO.")
-    gin_attachment = fields.Binary(string="GIN Attachment", attachment=True, store=True, )
+    gin_number = fields.Char(String="GIN  NO.", required=True)
+    gin_attachment = fields.Binary(string="GIN Attachment", attachment=True, store=True, required=True)
     gin_attachment_name = fields.Char('Attachment Name')
 
-    grn_number = fields.Char(String="GRN NO.")
-    grn_attachment = fields.Binary(string="GRN Attachment", attachment=True, store=True, )
+    grn_number = fields.Char(String="GRN NO.", required=True)
+    grn_attachment = fields.Binary(string="GRN Attachment", attachment=True, store=True, required=True)
     grn_attachment_name = fields.Char('Attachment Name')
 
     @api.multi

@@ -9,4 +9,14 @@
             name="custom_inventory.stock_out_report_template"
             file="custom_inventory.stock_out_report_template"
     />
+
+    <report
+            id="stock_in_report_print"
+            model="inventory.stockin"
+            string="Print Report"
+            menu="True"
+            report_type="qweb-pdf"
+            name="custom_inventory.stock_in_report_template"
+            file="custom_inventory.stock_in_report_template"
+    />
 </odoo>

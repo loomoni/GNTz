@@ -127,4 +127,127 @@
             </t>
         </t>
     </template>
+
+    <template id="stock_in_report_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <br/>
+                        <br/>
+                        <h2>Stock In Report</h2>
+                        <p>Reference Number:
+                            <strong>
+                                <span t-field="o.name"/>
+                            </strong>
+                        </p>
+
+                        <table class="table table-sm table-bordered">
+                            <tr>
+                                <td>
+                                    <strong>Received By</strong>
+                                </td>
+                                <td>
+                                    <span t-field="o.receiver_id.name"/>
+                                </td>
+                                <td>
+                                    <strong>Received Date</strong>
+                                </td>
+                                <td>
+                                    <span t-field="o.goods_received_date"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Purchased By</strong>
+                                </td>
+                                <td>
+                                    <span t-field="o.purchaser_id.name"/>
+                                </td>
+                                <td>
+                                    <strong>Department</strong>
+                                </td>
+                                <td>
+                                    <span t-field="o.department_id.name"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Supplier</strong>
+                                </td>
+                                <td>
+                                    <span t-field="o.supplier_id.name"/>
+                                </td>
+                                <td>
+                                    <strong>Delivery Note No</strong>
+                                </td>
+                                <td>
+                                    <span t-field="o.delivery_note_no"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Lpo Number</strong>
+                                </td>
+                                <td colspan="3">
+                                    <span t-field="o.lpo_number"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Gin Number</strong>
+                                </td>
+                                <td>
+                                    <span t-field="o.gin_number"/>
+                                </td>
+                                <td>
+                                    <strong>Grn Number</strong>
+                                </td>
+                                <td>
+                                    <span t-field="o.grn_number"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Quantity</th>
+                                    <th>Project</th>
+                                    <th>Unit Cost</th>
+                                    <th>Total Cost</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.line_ids" t-as="line">
+                                    <td>
+                                        <span t-field="line.product_id.name"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="line.quantity"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="line.project.name"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="line.unit_cost"/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="line.cost"/>
+
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p class="text-right">
+                            <strong>Authorized signature</strong>
+                            <br/>
+                            <span t-field="o.state"/>
+                        </p>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
 </odoo>
