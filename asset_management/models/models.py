@@ -381,6 +381,11 @@ class AccountAssetAssignWizard(models.TransientModel):
         if employee:
             job_position = employee.job_id.name or ''
 
+        # Find the department name of the employee
+        department_name = ''
+        if employee and employee.department_id:
+            department_name = employee.department_id.name or ''
+
         company_info = "\n".join(filter(None, [company.name, company.street2, company.street, company.city,
                                                company.country_id.name,
                                                'Phone: ' + company.phone + ' Email: ' + company.email + ' Web: ' + company.website]))
@@ -417,7 +422,7 @@ class AccountAssetAssignWizard(models.TransientModel):
         worksheet.merge_range('F4:I4', job_position, cell_text_info_body_format)
 
         worksheet.write('E6:E6', 'Department', cell_text_info_format)
-        worksheet.merge_range('F6:I6', 'Auto fill', cell_text_info_body_format)
+        worksheet.merge_range('F6:I6', department_name, cell_text_info_body_format)
 
         worksheet.write('A8:A8', 'S/N', cell_text_sub_title_format)
         worksheet.write('B8:B8', 'Request', cell_text_sub_title_format)
