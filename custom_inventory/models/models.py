@@ -142,7 +142,6 @@ class InventoryStockInLines(models.Model):
     state = fields.Selection(STATE_SELECTION, index=True, track_visibility='onchange', related='stockin_id.state',
                              store=True)
 
-
     @api.depends('stockin_id.goods_received_date')
     def compute_date(self):
         for rec in self:
@@ -189,8 +188,9 @@ class InventoryStockOut(models.Model):
     parent_department = fields.Integer(string="Parent Department", required=False,
                                        related='requester_id.department_parent_id.id')
     # readonly=True,
-    department_id = fields.Many2one('hr.department', string='Department', readonly=True, required=True, default=_default_department,
-                                store=True, )
+    department_id = fields.Many2one('hr.department', string='Department', readonly=True, required=True,
+                                    default=_default_department,
+                                    store=True, )
     state = fields.Selection(STATE_SELECTION, index=True, track_visibility='onchange',
                              readonly=True, required=True, copy=False, default='draft', store=True)
     line_ids = fields.One2many('inventory.stockout.lines', 'stockout_id', string="Stock Out Lines", index=True,
@@ -249,8 +249,6 @@ class InventoryStockOut(models.Model):
         mail_template.send_mail(self.id, force_send=True)
         return True
 
-
-
     @api.multi
     def button_review(self):
         self.write({'state': 'draft'})
@@ -281,12 +279,10 @@ class InventoryStockOut(models.Model):
         self.write({'state': 'line_manager'})
         return True
 
-
     @api.multi
     def button_approve(self):
         self.write({'state': 'approved'})
         return True
-
 
     @api.multi
     def button_issue(self):
@@ -663,6 +659,8 @@ class GeneralInventoryListWizard(models.TransientModel):
             asset_report_month = self.date_from.strftime("%B")
             worksheet.merge_range('A1:E2', 'Inventory Report For %s %s' % (asset_report_month, self.date_from.year),
                                   heading_format)
+            # worksheet.merge_range('E1:G2', 'LOGO', heading_format)
+
             worksheet.write('A3:A3', 'Company', cell_text_format_n)
             worksheet.merge_range('B3:C3', '%s' % self.company.name, cell_text_format_n)
 
@@ -834,8 +832,106 @@ class StockInInventoryListWizard(models.TransientModel):
             date_2 = datetime.strftime(self.date_to, '%d-%m-%Y')
             date_1 = datetime.strftime(self.date_from, '%d-%m-%Y')
             asset_report_month = self.date_from.strftime("%B")
-            worksheet.merge_range('A1:G2', 'Inventory Report For %s %s' % (asset_report_month, self.date_from.year),
-                                  heading_format)
+
+            # worksheet.merge_range('F1:G2', 'LOGO', heading_format)
+
+            # Retrieve the company information from the environment
+            company = self.env.user.company_id
+
+            # Convert the logo from base64 to binary data
+            logo_data = base64.b64decode(company.logo)
+
+            # Create a BytesIO object to hold the image data
+            image_stream = BytesIO(logo_data)
+            # Add the logo to the worksheet
+            worksheet.insert_image('F1', 'logo.png', {'image_data': image_stream})
+
+            # Merge cells for the logo in F1:G2
+            worksheet.merge_range('F1:G2', '')  # Merge the cells
+
+            # Add company details in merged cells A1:E2
+            # company_details = [
+            #     'Company Name: ' + company.name,
+            #     'Company Address: ' + company.street,
+            #     'Company Communication: ' + company.phone,
+            #     # Add more company details as needed
+            # ]
+            # company_details = (
+            #     (
+            #         "Company Name: {}\n"
+            #         "Company Street: {}\n"
+            #         "Company Phone: {}"
+            #         # Add more company details as needed
+            #     ).format(company.name, company.street, company.phone))
+            #
+            # # worksheet.write_rich_string('A1', company_details, heading_format)
+            # # Write company details to cell A1
+            # worksheet.write('A1', company_details)
+
+            # Create a single cell A containing all company details
+            # company_details = (
+            #     ("Company Name: {} \n"
+            #      "Company Street: {} \n"
+            #      "Company Phone: {}").format(company.name, company.street, company.phone)
+            # )
+            #
+            # # Write company details to cell A1
+            # worksheet.write_rich_string('A1', company_details, heading_format)
+
+            # Create a single cell A containing all company details
+            # company_details = (
+            #     f"Company Name: {company.name}\n"
+            #     f"Company Street: {company.street}\n"
+            #     f"Company Phone: {company.phone}\n"
+            # )
+            #
+            # # Write company details to cell A1
+            # worksheet.write('A1', company_details)
+            # worksheet.write('A2', company_details)
+
+            # Create a single cell A containing all company details
+            # company_details = (
+            #     f"Company Name: {company.name}\u00A0"
+            #     f"Company Street: {company.street}\u00A0"
+            #     f"Company Phone: {company.phone}"
+            # )
+            #
+            # # Write company details to cell A1
+            # worksheet.write('A1', company_details, heading_format)
+
+            # company_details = (
+            #     "Company Name: {}\n"
+            #     "Company Street: {}\n"
+            #     "Company Phone: {}"
+            # ).format(company.name, company.street, company.phone)
+            #
+            # # Create a Rich Text object
+            # rich_text = worksheet.add_rich_string('A1', company_details)
+            #
+            # # Write the Rich Text to cell A1
+            # worksheet.write_rich_string('A1', rich_text)
+            # row1 = 0
+            # Write company details to the merged cells
+            # for row, detail in enumerate(company_details):
+            #     worksheet.write(row1, 0, detail)
+            # for row, detail in enumerate(company_details):
+            #     for col, value in enumerate(detail):
+            #         worksheet.write(row, col, value)
+            # worksheet.write('A1:A1', company.name)
+            # worksheet.write('A1:A1', company.street)
+            # worksheet.write('A1:A1', company.phone)
+            # Set the starting row for writing company details
+            # start_row = 0
+            # Write company details to the left side of the worksheet
+            # for detail in company_details:
+            #     worksheet.write_row(start_row, 0, company.name)
+            #     start_row += 1
+            # worksheet.merge_range('A1:E2', '')
+
+            # worksheet.merge_range('A1:E2', 'Inventory Report For %s %s' % (asset_report_month, self.date_from.year),
+            #                       heading_format)
+
+            # worksheet.merge_range('F1:G2', self.company_id.logo)
             worksheet.write('A3:A3', '', cell_text_format_n)
             worksheet.write('A4:A4', '', cell_text_format_n)
             worksheet.write('B3:B3', 'Company', cell_text_format_n)

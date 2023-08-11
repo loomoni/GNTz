@@ -60,7 +60,7 @@
                             <field name="job_title"/>
                         </group>
                         <group>
-                            <field name="id_number"/>
+                            <field name="department_id"/>
                         </group>
                     </group>
                     <group string="Attachment">
@@ -84,7 +84,9 @@
                                    domain="[('assigned','=', False)]">
                                 <tree>
                                     <field name="name"/>
+                                    <field name="asset_id_no"/>
                                     <field name="category_id"/>
+                                    <field name="date"/>
                                     <field name="value"/>
                                     <field name="state"/>
                                 </tree>

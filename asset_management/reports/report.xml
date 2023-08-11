@@ -9,4 +9,14 @@
             name="asset_management.asset_management_qr_code_template"
             file="asset_management.asset_management_qr_code_template"
     />
+
+        <report
+            id="asset_custodian_report"
+            model="account.asset.assign"
+            string="Asset Custodian Report"
+            menu="True"
+            report_type="qweb-pdf"
+            name="asset_management.asset_custodian_report_template"
+            file="asset_management.asset_custodian_report_template"
+    />
 </odoo>

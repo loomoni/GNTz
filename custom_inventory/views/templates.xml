@@ -41,6 +41,11 @@
                     <button name="button_line_manager" states="requested" string="Line Manager Approve" type="object"
                             class="btn-primary"
                             groups="custom_inventory.inventory_hod"/>
+                    <button name="button_review" states="requested" string="Review" type="object"
+                            groups="custom_inventory.inventory_hod"/>
+                    <button name="button_reject" states="requested" string="Reject" type="object"
+                            class="btn-primary"
+                            groups="custom_inventory.inventory_hod"/>
                     <button name="button_checked" states="line_manager" string="Issue Goods" type="object"
                             class="btn-primary"
                             groups="custom_inventory.inventory_procurement_HO"/>
@@ -49,13 +54,9 @@
                             groups="custom_inventory.inventory_admin"/>
                     <button name="button_procurement_review" states="checked" string="Review" type="object"
                             groups="custom_inventory.inventory_admin"/>
-                    <button name="button_review" states="requested" string="Review" type="object"
-                            groups="custom_inventory.inventory_hod"/>
                     <button name="button_back_to_line" states="line_manager" string="Back To Line Manager" type="object"
                             groups="custom_inventory.inventory_procurement_branch,custom_inventory.inventory_procurement_HO"/>
-                    <button name="button_reject" states="requested" string="Reject" type="object"
-                            class="btn-primary"
-                            groups="custom_inventory.inventory_hod"/>
+
                     <button name="button_reject" states="line_manager" string="Reject" type="object"
                             class="btn-primary"
                             groups="custom_inventory.inventory_procurement_HO"/>
@@ -65,7 +66,7 @@
                     <button name="button_reject" states="checked" string="Reject" type="object"
                             class="btn-primary"
                             groups="custom_inventory.inventory_admin"/>
-                    <button name="button_reset" states="requested" string="Review" type="object" class="btn-primary"
+                    <button name="button_reset" states="checked" string="Review" type="object" class="btn-primary"
                             groups="custom_inventory.inventory_procurement_HO"/>
                     <field name="state" widget="statusbar"
                            statusbar_visible="draft,requested,line_manager,checked,issued,rejected"/>
@@ -174,12 +175,12 @@
         <field name="model">product.template</field>
         <field name="inherit_id" ref="product.product_template_only_form_view"/>
         <field name="arch" type="xml">
-<!--            <xpath expr="//button[@name='action_update_quantity_on_hand']" position="attributes">-->
-<!--                <attribute name="invisible">1</attribute>-->
-<!--            </xpath>-->
-<!--            <xpath expr="//button[@name='150']" position="attributes">-->
-<!--                <attribute name="invisible">1</attribute>-->
-<!--            </xpath>-->
+            <!--            <xpath expr="//button[@name='action_update_quantity_on_hand']" position="attributes">-->
+            <!--                <attribute name="invisible">1</attribute>-->
+            <!--            </xpath>-->
+            <!--            <xpath expr="//button[@name='150']" position="attributes">-->
+            <!--                <attribute name="invisible">1</attribute>-->
+            <!--            </xpath>-->
             <xpath expr="//field[@name='list_price']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
