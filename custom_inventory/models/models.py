@@ -760,6 +760,15 @@ class StockInInventoryListWizard(models.TransientModel):
         fp = BytesIO()
 
         workbook = xlsxwriter.Workbook(fp)
+        heading_company_format = workbook.add_format({
+            # 'bold': True,
+            'font_size': 7,
+            'font_name': 'Arial',
+            # 'align': 'center',
+            'valign': 'vcenter',
+            'text_wrap': True,
+        })
+        heading_company_format.set_border()
         heading_format = workbook.add_format({'align': 'center',
                                               'valign': 'vcenter',
                                               'bold': True,
@@ -836,7 +845,14 @@ class StockInInventoryListWizard(models.TransientModel):
             # worksheet.merge_range('F1:G2', 'LOGO', heading_format)
 
             # Retrieve the company information from the environment
+            worksheet.set_row(0, 85)
+            # worksheet.set_column('A:E', 13)
+            # worksheet.merge_range('A1:F1', '')
             company = self.env.user.company_id
+            company_info = "\n".join(filter(None, [company.name, company.street2, company.street, company.city,
+                                                   company.country_id.name,
+                                                   'Phone: ' + company.phone + ' Email: ' + company.email + ' Web: ' + company.website]))
+            worksheet.merge_range('A1:G1', company_info, heading_company_format)
 
             # Convert the logo from base64 to binary data
             logo_data = base64.b64decode(company.logo)
@@ -844,10 +860,7 @@ class StockInInventoryListWizard(models.TransientModel):
             # Create a BytesIO object to hold the image data
             image_stream = BytesIO(logo_data)
             # Add the logo to the worksheet
-            worksheet.insert_image('F1', 'logo.png', {'image_data': image_stream})
-
-            # Merge cells for the logo in F1:G2
-            worksheet.merge_range('F1:G2', '')  # Merge the cells
+            worksheet.insert_image('E1', 'logo.png', {'image_data': image_stream, 'x_scale': 0.43, 'y_scale': 0.43})
 
             # Add company details in merged cells A1:E2
             # company_details = [

@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import base64
-from datetime import date
+import datetime
 from io import BytesIO
+from odoo import models, http
+from odoo.http import request
 
 import xlsxwriter
 from xlsxwriter.utility import xl_rowcol_to_cell
@@ -300,6 +302,211 @@ class AssetsInherit(models.Model):
                         'line_ids': [(0, 0, move_line_1), (0, 0, move_line_2)],
                     }
                     move = self.env['account.move'].create(move_vals)
+
+
+class AccountAssetAssignWizard(models.TransientModel):
+    _name = 'account.asset.assign.wizard'
+
+    department_id = fields.Many2one('hr.department', string='Department', required=False)
+    department_name = fields.Integer(string='Department', related='department_id.id')
+    print_date = fields.Datetime(string='Date', default=lambda self: fields.Datetime.now(), readonly=True)
+
+    @api.multi
+    def get_report(self):
+        file_name = _('GNTZ ASSET CUSTODIAN FORM ' ' report.xlsx')
+        fp = BytesIO()
+
+        workbook = xlsxwriter.Workbook(fp)
+        worksheet = workbook.add_worksheet()
+
+        # Define the heading format
+        heading_format = workbook.add_format({
+            # 'bold': True,
+            'font_size': 7,
+            'font_name': 'Arial',
+            # 'align': 'center',
+            'valign': 'vcenter',
+            'text_wrap': True,
+        })
+        heading_format.set_border()
+        title_format = workbook.add_format({
+            'bold': True,
+            'font_name': 'Arial',
+            'font_size': 14,
+            'align': 'center',
+            # 'valign': 'vcenter',
+            'text_wrap': True,
+        })
+        title_format.set_border()
+
+        cell_text_info_format = workbook.add_format({
+            'bold': True,
+            'font_name': 'Arial',
+            'font_size': 8,
+        })
+        cell_text_info_format.set_border()
+        cell_text_info_body_format = workbook.add_format({
+            'bold': True,
+            'font_name': 'Arial',
+            'font_size': 8,
+            'align': 'center',
+        })
+        cell_text_info_body_format.set_border()
+        cell_text_sub_title_format = workbook.add_format({
+            'bold': True,
+            'font_name': 'Arial',
+            'font_size': 8,
+        })
+        cell_text_sub_title_format.set_border()
+
+        cell_text_body_format = workbook.add_format({
+            'font_name': 'Arial',
+            'font_size': 8,
+        })
+        cell_text_body_format.set_border()
+        divider_format = workbook.add_format({'fg_color': '#9BBB59', })
+        # divider_format = workbook.add_format({'fg_color': '#89A130', })
+        divider_format.set_border()
+        worksheet.set_row(0, 85)
+        worksheet.set_column('A:E', 13)
+        # worksheet.merge_range('A1:F1', '')
+        company = self.env.user.company_id
+
+        # Get the logged-in user's name
+        user = request.env.user
+        user_name = user.name
+        email = user.login
+        job_position = ''
+        employee = request.env['hr.employee'].sudo().search([('user_id', '=', user.id), ('job_id', '!=', False)], limit=1)
+        if employee:
+            job_position = employee.job_id.name or ''
+
+        company_info = "\n".join(filter(None, [company.name, company.street2, company.street, company.city,
+                                               company.country_id.name,
+                                               'Phone: ' + company.phone + ' Email: ' + company.email + ' Web: ' + company.website]))
+        worksheet.merge_range('A1:I1', company_info, heading_format)
+
+        # Convert the logo from base64 to binary data
+        logo_data = base64.b64decode(company.logo)
+
+        # Create a BytesIO object to hold the image data
+        image_stream = BytesIO(logo_data)
+        # Add the logo to the worksheet
+        worksheet.insert_image('F1', 'logo.png', {'image_data': image_stream, 'x_scale': 0.43, 'y_scale': 0.43})
+
+        # Merge cells for the logo in F1:G2
+        # worksheet.merge_range('F1:G2', '')  # Merge the cells
+        worksheet.set_row(1, 26)
+        worksheet.merge_range('A2:I2', 'GNTZ ASSET CUSTODIAN FORM', title_format)
+
+        worksheet.set_row(2, 12)
+        worksheet.set_row(6, 12)
+        worksheet.merge_range('A3:I3', '', divider_format)
+        worksheet.merge_range('A7:I7', '', divider_format)
+
+        worksheet.write('A4:A4', 'Extracted by', cell_text_info_format)
+        worksheet.merge_range('B4:D4', user_name, cell_text_info_body_format)
+
+        worksheet.write('A5:A5', 'Date', cell_text_info_format)
+        worksheet.merge_range('B5:I5',  datetime.now().strftime('%m-%d-%Y'), cell_text_info_body_format)
+
+        worksheet.write('A6:A6', 'Email', cell_text_info_format)
+        worksheet.merge_range('B6:D6', email, cell_text_info_body_format)
+
+        worksheet.write('E4:E4', 'Designation', cell_text_info_format)
+        worksheet.merge_range('F4:I4', job_position, cell_text_info_body_format)
+
+        worksheet.write('E6:E6', 'Department', cell_text_info_format)
+        worksheet.merge_range('F6:I6', 'Auto fill', cell_text_info_body_format)
+
+        worksheet.write('A8:A8', 'S/N', cell_text_sub_title_format)
+        worksheet.write('B8:B8', 'Request', cell_text_sub_title_format)
+        worksheet.write('C8:C8', 'Department', cell_text_sub_title_format)
+        worksheet.write('D8:D8', 'Asset Name', cell_text_sub_title_format)
+        worksheet.write('E8:E8', 'Asset ID', cell_text_sub_title_format)
+        worksheet.write('F8:F8', 'Asset No', cell_text_sub_title_format)
+        worksheet.write('G8:G8', 'Purchased Date', cell_text_sub_title_format)
+        worksheet.write('H8:H8', 'Gross Value', cell_text_sub_title_format)
+        worksheet.write('I8:I8', 'Condition', cell_text_sub_title_format)
+
+        department_asset_custodian = self.env['account.asset.assign'].sudo().search(
+            [('assigned_person.department_id', '=', self.department_name)])
+        all_asset_custodian = self.env['account.asset.assign'].sudo().search([])
+
+        row = 8
+        col = 0
+        index = 1
+
+        if department_asset_custodian:
+            for department_custodian in department_asset_custodian:
+                index = index
+                assigned_person = department_custodian.assigned_person.name
+                department = department_custodian.assigned_person.department_id.name
+                for asset in department_custodian.asset_ids:
+                    asset_name = asset.name
+                    asset_id = asset.asset_id_no
+                    asset_no = asset.code
+                    purchase_date = datetime.strftime(asset.date, '%d-%m-%Y')
+                    gross_value = asset.value
+
+                    worksheet.write(row, col, index or '', cell_text_body_format)
+                    worksheet.write(row, col + 1, assigned_person or '', cell_text_body_format)
+                    worksheet.write(row, col + 2, department or '', cell_text_body_format)
+                    worksheet.write(row, col + 3, asset_name or '', cell_text_body_format)
+                    worksheet.write(row, col + 4, asset_id or '', cell_text_body_format)
+                    worksheet.write(row, col + 5, asset_no or '', cell_text_body_format)
+                    worksheet.write(row, col + 6, purchase_date or '', cell_text_body_format)
+                    worksheet.write(row, col + 7, gross_value or '', cell_text_body_format)
+                    worksheet.write(row, col + 8, '' or '', cell_text_body_format)
+                    row = row + 1
+                    index = index + 1
+        else:
+            for all_asset in all_asset_custodian:
+                index = index
+                assigned_person = all_asset.assigned_person.name
+                department = all_asset.assigned_person.department_id.name
+                for asset in all_asset.asset_ids:
+                    asset_name = asset.name
+                    asset_id = asset.asset_id_no
+                    asset_no = asset.code
+                    purchase_date = datetime.strftime(asset.date, '%d-%m-%Y')
+                    gross_value = asset.value
+
+                    worksheet.write(row, col, index or '', cell_text_body_format)
+                    worksheet.write(row, col + 1, assigned_person or '', cell_text_body_format)
+                    worksheet.write(row, col + 2, department or '', cell_text_body_format)
+                    worksheet.write(row, col + 3, asset_name or '', cell_text_body_format)
+                    worksheet.write(row, col + 4, asset_id or '', cell_text_body_format)
+                    worksheet.write(row, col + 5, asset_no or '', cell_text_body_format)
+                    worksheet.write(row, col + 6, purchase_date or '', cell_text_body_format)
+                    worksheet.write(row, col + 7, gross_value or '', cell_text_body_format)
+                    worksheet.write(row, col + 8, '' or '', cell_text_body_format)
+                    row = row + 1
+                    index = index + 1
+
+        workbook.close()
+        file_download = base64.b64encode(fp.getvalue())
+        fp.close()
+
+        self = self.with_context(default_name=file_name, default_file_download=file_download)
+
+        return {
+            'name': 'Asset Custodian Report',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'asset.custodian.excel',
+            'type': 'ir.actions.act_window',
+            'target': 'new',
+            'context': self._context,
+        }
+
+
+class AssetCustodianReportExcel(models.TransientModel):
+    _name = 'asset.custodian.excel'
+    _description = "Asset Custodian excel table"
+
+    name = fields.Char('File Name', size=256, readonly=True)
+    file_download = fields.Binary('Download Custodian Report', readonly=True)
 
 
 class AssetListWizard(models.TransientModel):

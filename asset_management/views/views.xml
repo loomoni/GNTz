@@ -53,7 +53,7 @@
                     <button name="back_to_draft" states="review,non_fixed" string="Review Asset" type="object"
                             groups="asset_management.asset_cd,asset_management.asset_dm"/>
                     <button name="button_reject" states="review,non_fixed" string="Reject" type="object"
-                            groups="asset_management.asset_cd,asset_management.asset_dm"  class="oe_highlight"/>
+                            groups="asset_management.asset_cd,asset_management.asset_dm" class="oe_highlight"/>
                     <field name="state" widget="statusbar"
                            statusbar_visible="draft,review,open,inuse,repair,replace,close"/>
                 </header>
@@ -205,9 +205,54 @@
         </field>
     </record>
 
+    <!--    Asset Custodian Wizard Form -->
+    <record model="ir.ui.view" id="asset_custodian_wizard">
+        <field name="name">Asset Custodian</field>
+        <field name="model">account.asset.assign.wizard</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Asset List">
+                <group>
+                    <field name="department_id" options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
+<!--                    <field name="print_date"/>-->
+                </group>
+                <!--                <group>-->
+                <!--                    <group>-->
+                <!--                        <field name="date_from"/>-->
+                <!--                    </group>-->
+                <!--                    <group>-->
+                <!--                        <field name="date_to"/>-->
+                <!--                    </group>-->
+                <!--                </group>-->
+                <footer>
+                    <button name="get_report" string="Get Report" type="object" class="oe_highlight"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+        <record model="ir.ui.view" id="view_asset_custodian_wizard_excel">
+        <field name="name">view.asset.list.excel</field>
+        <field name="model">asset.custodian.excel</field>
+        <field name="arch" type="xml">
+            <form string="Download Your Asset Report Here">
+                <field name="name" invisible="1"/>
+                <field name="file_download" widget="download_link" filename="name"/>
+            </form>
+        </field>
+    </record>
+
     <act_window id="action_asset_print_report"
                 name="Assets Report Excel"
                 res_model="asset.list.wizard"
+                view_mode="form"
+                target="new"
+    />
+
+    <act_window id="action_asset_custodian_print_report"
+                name="Custodian Report"
+                res_model="account.asset.assign.wizard"
                 view_mode="form"
                 target="new"
     />
@@ -243,6 +288,12 @@
     <menuitem action="action_asset_print_report"
               id="assets_report_print"
               sequence="30"
+              groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_ho"
+              parent="asset_management.assets_report_id"/>
+
+    <menuitem action="action_asset_custodian_print_report"
+              id="assets_custodian_report_print"
+              sequence="31"
               groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_ho"
               parent="asset_management.assets_report_id"/>
 
