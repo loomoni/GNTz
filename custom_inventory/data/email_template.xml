@@ -102,8 +102,8 @@
             <field name="model_id" ref="custom_inventory.model_inventory_stockout"/>
             <field name="auto_delete" eval="True"/>
             <field name="email_from">${object.department_id.manager_id.work_email |safe}</field>
-<!--            <field name="email_to">hmilando@goodneighbors.or.tz,tenzirugambwa@goodneighbors.or.tz,edinakaganda@goodneighbors.or.tz</field>-->
-            <field name="email_to">lmorwo@kalen.co.tz,loomonimorwo@gmail.com</field>
+            <field name="email_to">hmilando@goodneighbors.or.tz,tenzirugambwa@goodneighbors.or.tz,edinakaganda@goodneighbors.or.tz</field>
+<!--            <field name="email_to">lmorwo@kalen.co.tz,loomonimorwo@gmail.com</field>-->
             <!--            <field name="email_to">${object.department_id.branch_id.manager_id.work_email}-->
             <!--            </field>-->
             <field name="subject">${object.requester_id.name} Stock Out Request</field>
@@ -137,10 +137,10 @@
             <field name="model_id" ref="custom_inventory.model_inventory_stockout"/>
             <field name="auto_delete" eval="True"/>
 <!--            <field name="email_from">${object.department_id.branch_id.manager_id.work_email |safe}</field>-->
-<!--            <field name="email_from">tenzirugambwa@goodneighbors.or.tz</field>-->
-            <field name="email_from">loomonimorwo@gmail.com</field>
-<!--            <field name="email_to">hmilando@goodneighbors.or.tz</field>-->
-            <field name="email_to">lmorwo@kalen.co.tz</field>
+            <field name="email_from">tenzirugambwa@goodneighbors.or.tz</field>
+<!--            <field name="email_from">loomonimorwo@gmail.com</field>-->
+            <field name="email_to">hmilando@goodneighbors.or.tz</field>
+<!--            <field name="email_to">lmorwo@kalen.co.tz</field>-->
             <field name="subject">${object.requester_id.name} Stock Out Request</field>
             <field name="body_html" type="html">
                 <div style="margin: 0px; padding: 0px;">

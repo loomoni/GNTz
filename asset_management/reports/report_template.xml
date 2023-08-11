@@ -42,20 +42,20 @@
 <!--                        </p>-->
 
                         <table class="table table-sm table-bordered">
-<!--                            <tr>-->
-<!--                                <td>-->
-<!--                                    <strong>Name</strong>-->
-<!--                                </td>-->
-<!--                                <td>-->
-<!--                                    <span t-field="o.requester_id.name"/>-->
-<!--                                </td>-->
-<!--                                <td>-->
-<!--                                    <strong>Designation</strong>-->
-<!--                                </td>-->
-<!--                                <td>-->
-<!--                                    <span t-field="o.requester_id.job_id"/>-->
-<!--                                </td>-->
-<!--                            </tr>-->
+                            <tr>
+                                <td>
+                                    <strong>Extracted by</strong>
+                                </td>
+                                <td>
+                                    <span t-field="o.requester_id.name"/>
+                                </td>
+                                <td>
+                                    <strong>Designation</strong>
+                                </td>
+                                <td>
+                                    <span t-field="o.requester_id.job_id"/>
+                                </td>
+                            </tr>
 <!--                            <tr>-->
 <!--                                <td>-->
 <!--                                    <strong>Address</strong>-->
