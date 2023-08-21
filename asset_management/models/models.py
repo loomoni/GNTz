@@ -111,7 +111,8 @@ class AssetsInherit(models.Model):
 
     # code = fields.Char(string='Asset Number', size=32, readonly=True, required=True, states={'draft': [('readonly',
     # False)]}, default=_default_serial_no compute='_default_serial_no',)
-    code = fields.Char(string='Asset Number', compute='_default_serial_no', states={'draft': [('readonly', False)]}, )
+    code = fields.Char(string='Asset Number', compute='_default_serial_no')
+    # code = fields.Char(string='Asset Number', compute='_default_serial_no', states={'draft': [('readonly', False)]}, )
     cummulative_amount = fields.Float(string='Accumulated Depreciation', compute='_compute_accumulated_depreciation',
                                       method=True, digits=0)
     asset_origin = fields.Selection(ASSET_ORIGIN_SELECTION, index=True, track_visibility='onchange',
@@ -377,7 +378,8 @@ class AccountAssetAssignWizard(models.TransientModel):
         user_name = user.name
         email = user.login
         job_position = ''
-        employee = request.env['hr.employee'].sudo().search([('user_id', '=', user.id), ('job_id', '!=', False)], limit=1)
+        employee = request.env['hr.employee'].sudo().search([('user_id', '=', user.id), ('job_id', '!=', False)],
+                                                            limit=1)
         if employee:
             job_position = employee.job_id.name or ''
 
@@ -413,7 +415,7 @@ class AccountAssetAssignWizard(models.TransientModel):
         worksheet.merge_range('B4:D4', user_name, cell_text_info_body_format)
 
         worksheet.write('A5:A5', 'Date', cell_text_info_format)
-        worksheet.merge_range('B5:I5',  datetime.now().strftime('%m-%d-%Y'), cell_text_info_body_format)
+        worksheet.merge_range('B5:I5', datetime.now().strftime('%m-%d-%Y'), cell_text_info_body_format)
 
         worksheet.write('A6:A6', 'Email', cell_text_info_format)
         worksheet.merge_range('B6:D6', email, cell_text_info_body_format)
@@ -741,6 +743,7 @@ class AssetAssign(models.Model):
         ("procurement", "Procurement"),
         ("assigned", "Assign"),
         ("unassigned", "Unassign"),
+        ("reject", "Reject"),
     ]
 
     def _default_assignment(self):
@@ -786,9 +789,19 @@ class AssetAssign(models.Model):
         return True
 
     @api.multi
-    def button_line_manager_review(self):
+    def button_line_manager_reject(self):
         for asset in self.asset_ids:
-            asset.write({'line_manager': True})
+            asset.write({'close': True})
+        self.write({'state': 'reject'})
+        return True
+
+    @api.multi
+    def button_line_manager_back_to_draft(self):
+        self.write({'state': 'draft'})
+        return True
+
+    @api.multi
+    def button_line_manager_review(self):
         self.write({'state': 'line_manager'})
         return True
 
@@ -801,11 +814,32 @@ class AssetAssign(models.Model):
         return True
 
     @api.multi
+    def button_procurement_back_to_line_manager(self):
+        self.write({'state': 'send_request'})
+        return True
+
+    @api.multi
+    def button_procurement_reject(self):
+        self.write({'state': 'reject'})
+        return True
+
+    @api.multi
     def button_assign(self):
         for asset in self.asset_ids:
             asset.write({'assigned': True})
         self.write({'state': 'assigned'})
         return True
+
+    @api.multi
+    def button_back_to_procurement(self):
+        self.write({'state': 'line_manager'})
+        return True
+
+    @api.multi
+    def button_procurement_reject(self):
+        self.write({'state': 'reject'})
+        return True
+
 
     @api.multi
     def button_unassign(self):

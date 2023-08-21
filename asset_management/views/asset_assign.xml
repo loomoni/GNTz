@@ -36,20 +36,36 @@
                     <button name="button_staff_or_line_manager_request" states="draft" string="Submit Request"
                             type="object"
                             class="oe_highlight"
-                           />
+                    />
                     <button name="button_line_manager_review" states="send_request" string="Line Manager Review"
                             type="object" class="oe_highlight"
                             groups="asset_management.asset_lm"/>
                     <button name="button_procurement_assign" states="line_manager" string="Procurement Assign"
                             type="object" class="oe_highlight"
                             groups="asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"/>
+                    <button name="button_procurement_back_to_line_manager" states="line_manager"
+                            string="Back To Line Manager"
+                            type="object"
+                            groups="asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"/>
+                    <button name="button_procurement_reject" states="line_manager" string="Reject"
+                            type="object"
+                            groups="asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"/>
                     <button name="button_assign" states="procurement" string="Approve to Assignment" type="object"
                             class="oe_highlight"
                             groups="asset_management.asset_dm,asset_management.asset_cd"/>
-<!--                     <button name="button_back_to_procurement" states="procurement" string="Back To Procurement" type="object"-->
-<!--                            groups="asset_management.asset_dm,asset_management.asset_cd"/>-->
+                    <button name="button_back_to_procurement" states="procurement" string="Back To Procurement"
+                            type="object"
+                            groups="asset_management.asset_dm,asset_management.asset_cd"/>
+                    <button name="button_procurement_reject" states="procurement" string="Reject"
+                            type="object"
+                            groups="asset_management.asset_dm,asset_management.asset_cd"/>
                     <button name="button_unassign" states="assigned" string="Unassign" type="object"
                             groups="asset_management.asset_dm,asset_management.asset_cd"/>
+                    <button name="button_line_manager_reject" states="send_request" string="Reject" type="object"
+                            groups="asset_management.asset_lm"/>
+                    <button name="button_line_manager_back_to_draft" states="send_request" string="Back to Draft"
+                            type="object"
+                            groups="asset_management.asset_lm"/>
                     <field name="state" widget="statusbar"
                            statusbar_visible="draft,send_request,line_manager,procurement,assigned,unassigned"/>
                 </header>
