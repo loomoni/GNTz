@@ -4,6 +4,7 @@ import datetime
 from io import BytesIO
 from odoo import models, http
 from odoo.http import request
+import io
 
 import xlsxwriter
 from xlsxwriter.utility import xl_rowcol_to_cell
@@ -774,6 +775,50 @@ class AssetAssign(models.Model):
     state = fields.Selection(STATE_SELECTION, index=True, track_visibility='onchange', required=True, copy=False,
                              default='draft')
 
+    def get_custodian_report(self):
+        return self.env.ref('asset_management.asset_custodian_report_excel').report_action(self)
+
+    # @api.multi
+    # def get_custodian_report(self):
+    #     file_name = _('Custodian Report')
+    #     fp = BytesIO()
+    #
+    #     workbook = xlsxwriter.Workbook(fp)
+    #
+    #     workbook.close()
+    #     file_download = base64.b64encode(fp.getvalue())
+    #     fp.close()
+    #
+    #     self = self.with_context(default_name=file_name, default_file_download=file_download)
+
+    # @api.multi
+    # def get_custodian_report(self):
+    #     file_name = _('Custodian Report')
+    #     fp = BytesIO()
+    #
+    #     workbook = xlsxwriter.Workbook(fp)
+    #     worksheet = workbook.add_worksheet()
+    #
+    #     # Add headers
+    #     headers = ['Name', 'Age', 'Department']
+    #     for col_num, header in enumerate(headers):
+    #         worksheet.write(0, col_num, header)
+    #
+    #     # Add data from records
+    #     row = 1
+    #     for record in self:
+    #         worksheet.write(row, 0, 'record.name')
+    #         worksheet.write(row, 1, 'record.age')
+    #         worksheet.write(row, 2, 'record.department')
+    #         row += 1
+    #
+    #     workbook.close()
+    #     file_download = base64.b64encode(fp.getvalue())
+    #     fp.close()
+    #
+    #     # Set context for default values
+    #     self = self.with_context(default_name=file_name, default_file_download=file_download)
+
     @api.model
     def create(self, vals):
         ticketNumber = self.env["account.asset.assign"].search_count([])
@@ -839,7 +884,6 @@ class AssetAssign(models.Model):
     def button_procurement_reject(self):
         self.write({'state': 'reject'})
         return True
-
 
     @api.multi
     def button_unassign(self):

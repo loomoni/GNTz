@@ -59,6 +59,9 @@
                     <button name="button_procurement_reject" states="procurement" string="Reject"
                             type="object"
                             groups="asset_management.asset_dm,asset_management.asset_cd"/>
+                    <button name="get_custodian_report" states="" string="Custodian Report"
+                            type="object"
+                            groups="asset_management.asset_procurement_ho,asset_management.asset_procurement_branch,asset_management.asset_dm,asset_management.asset_cd"/>
                     <button name="button_unassign" states="assigned" string="Unassign" type="object"
                             groups="asset_management.asset_dm,asset_management.asset_cd"/>
                     <button name="button_line_manager_reject" states="send_request" string="Reject" type="object"

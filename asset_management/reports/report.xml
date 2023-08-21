@@ -19,4 +19,14 @@
             name="asset_management.asset_custodian_report_template"
             file="asset_management.asset_custodian_report_template"
     />
+
+            <report
+            id="asset_custodian_report_excel"
+            model="account.asset.assign"
+            string="Custodian Report"
+            menu="True"
+            report_type="xlsx"
+            name="asset_management.asset_custodian_report_xls"
+            file="asset_management.asset_custodian_report_xls"
+    />
 </odoo>
