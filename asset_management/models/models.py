@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import base64
+import imghdr
 from datetime import *
 from io import BytesIO
 from odoo import models, http
@@ -659,12 +660,25 @@ class AssetListWizard(models.TransientModel):
                     worksheet.write(ro, col + 4, amount or '', cell_text_format_new)
                     worksheet.write(ro, col + 5, assigned_to or '', cell_text_format_new)
                     worksheet.write(ro, col + 6, department or '', cell_text_format_new)
+                    # if image_small:
+                    #     image_binary = base64.b64decode(image_small)
+                    #     image_stream = BytesIO(image_binary)
+                    #     worksheet.insert_image(ro, col + 7, 'image.png',
+                    #                            {'image_data': image_stream, 'object_position': 1, 'x_scale': 0.02,
+                    #                             'y_scale': 0.02})
                     if image_small:
-                        image_binary = base64.b64decode(image_small)
-                        image_stream = BytesIO(image_binary)
-                        worksheet.insert_image(ro, col + 7, 'image.png',
-                                               {'image_data': image_stream, 'object_position': 1, 'x_scale': 0.02,
-                                                'y_scale': 0.02})
+                        # Determine the image format using imghdr
+                        image_format = imghdr.what('', h=image_small)
+
+                        if image_format:
+                            image_filename = f'image.{image_format}'
+
+                            image_binary = base64.b64decode(image_small)
+                            image_stream = BytesIO(image_binary)
+
+                            worksheet.insert_image(ro, col + 7, image_filename,
+                                                   {'image_data': image_stream, 'object_position': 1, 'x_scale': 0.02,
+                                                    'y_scale': 0.02})
                     else:
                         worksheet.write(ro, col + 7, '', cell_text_format_new)
                     worksheet.write(ro, col + 8, status or '', cell_text_format_new)
