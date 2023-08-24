@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import base64
-import datetime
+from datetime import *
 from io import BytesIO
 from odoo import models, http
 from odoo.http import request
