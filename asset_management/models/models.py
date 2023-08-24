@@ -708,45 +708,45 @@ class AssetListWizard(models.TransientModel):
                     #     worksheet.insert_image(ro, col + 7, 'image.png',
                     #                            {'image_data': image_stream, 'object_position': 1, 'x_scale': 0.02,
                     #                             'y_scale': 0.02})
+                    # if image_small:
+                        # # Determine the image format using imghdr
+                        # image_format = imghdr.what('', h=image_small)
+                        #
+                        # if image_format:
+                        #     image_filename = f'image.{image_format}'
+                        #
+                        #     image_binary = base64.b64decode(image_small)
+                        #     image_stream = BytesIO(image_binary)
+                        #
+                        #     worksheet.insert_image(ro, col + 7, image_filename,
+                        #                            {'image_data': image_stream, 'object_position': 1, 'x_scale': 0.02,
+                        #                             'y_scale': 0.02})
+
                     if image_small:
+                        # Convert the image to JPEG format
+                        image_binary = base64.b64decode(image_small)
+                        image_stream = BytesIO(image_binary)
+                        image = Image.open(image_stream)
+
+                        # Convert to RGB mode to ensure compatibility
+                        if image.mode != "RGB":
+                            image = image.convert("RGB")
+
+                        # Create a new BytesIO to hold the JPEG data
+                        jpeg_stream = BytesIO()
+                        image.save(jpeg_stream, format="JPEG")
+
                         # Determine the image format using imghdr
-                        image_format = imghdr.what('', h=image_small)
+                        image_format = imghdr.what('', h=jpeg_stream.getvalue())
 
                         if image_format:
                             image_filename = f'image.{image_format}'
 
-                            image_binary = base64.b64decode(image_small)
-                            image_stream = BytesIO(image_binary)
-
+                            # Create a new stream from the JPEG data
+                            jpeg_stream.seek(0)
                             worksheet.insert_image(ro, col + 7, image_filename,
-                                                   {'image_data': image_stream, 'object_position': 1, 'x_scale': 0.02,
+                                                   {'image_data': jpeg_stream, 'object_position': 1, 'x_scale': 0.02,
                                                     'y_scale': 0.02})
-
-                    # if image_small:
-                    #     # Convert the image to JPEG format
-                    #     image_binary = base64.b64decode(image_small)
-                    #     image_stream = BytesIO(image_binary)
-                    #     image = Image.open(image_stream)
-                    #
-                    #     # Convert to RGB mode to ensure compatibility
-                    #     if image.mode != "RGB":
-                    #         image = image.convert("RGB")
-                    #
-                    #     # Create a new BytesIO to hold the JPEG data
-                    #     jpeg_stream = BytesIO()
-                    #     image.save(jpeg_stream, format="JPEG")
-                    #
-                    #     # Determine the image format using imghdr
-                    #     image_format = imghdr.what('', h=jpeg_stream.getvalue())
-                    #
-                    #     if image_format:
-                    #         image_filename = f'image.{image_format}'
-                    #
-                    #         # Create a new stream from the JPEG data
-                    #         jpeg_stream.seek(0)
-                    #         worksheet.insert_image(ro, col + 7, image_filename,
-                    #                                {'image_data': jpeg_stream, 'object_position': 1, 'x_scale': 0.02,
-                    #                                 'y_scale': 0.02})
 
                     else:
                         worksheet.write(ro, col + 7, '', cell_text_format_new)
@@ -784,17 +784,29 @@ class AssetListWizard(models.TransientModel):
                     #                            {'image_data': image_stream, 'object_position': 1, 'x_scale': 0.02,
                     #                             'y_scale': 0.02})
                     if image_small:
+                        # Convert the image to JPEG format
+                        image_binary = base64.b64decode(image_small)
+                        image_stream = BytesIO(image_binary)
+                        image = Image.open(image_stream)
+
+                        # Convert to RGB mode to ensure compatibility
+                        if image.mode != "RGB":
+                            image = image.convert("RGB")
+
+                        # Create a new BytesIO to hold the JPEG data
+                        jpeg_stream = BytesIO()
+                        image.save(jpeg_stream, format="JPEG")
+
                         # Determine the image format using imghdr
-                        image_format = imghdr.what('', h=image_small)
+                        image_format = imghdr.what('', h=jpeg_stream.getvalue())
 
                         if image_format:
                             image_filename = f'image.{image_format}'
 
-                            image_binary = base64.b64decode(image_small)
-                            image_stream = BytesIO(image_binary)
-
+                            # Create a new stream from the JPEG data
+                            jpeg_stream.seek(0)
                             worksheet.insert_image(ro, col + 7, image_filename,
-                                                   {'image_data': image_stream, 'object_position': 1, 'x_scale': 0.02,
+                                                   {'image_data': jpeg_stream, 'object_position': 1, 'x_scale': 0.02,
                                                     'y_scale': 0.02})
                     else:
                         worksheet.write(ro, col + 7, '', cell_text_format_new)
