@@ -3,6 +3,9 @@ import base64
 import imghdr
 from datetime import *
 from io import BytesIO
+
+from pandas.io.sas.sas_constants import magic
+
 from odoo import models, http
 from odoo.http import request
 from PIL import Image
@@ -681,31 +684,72 @@ class AssetListWizard(models.TransientModel):
                     #                                {'image_data': image_stream, 'object_position': 1, 'x_scale': 0.02,
                     #                                 'y_scale': 0.02})
 
-                    if image_small:
-                        # Convert the image to JPEG format
-                        image_binary = base64.b64decode(image_small)
-                        image_stream = BytesIO(image_binary)
+                    # if image_small:
+                    #     # Convert the image to JPEG format
+                    #     image_binary = base64.b64decode(image_small)
+                    #     image_stream = BytesIO(image_binary)
+                    #     image = Image.open(image_stream)
+                    #
+                    #     # Convert to RGB mode to ensure compatibility
+                    #     if image.mode != "RGB":
+                    #         image = image.convert("RGB")
+                    #
+                    #     # Create a new BytesIO to hold the JPEG data
+                    #     jpeg_stream = BytesIO()
+                    #     image.save(jpeg_stream, format="JPEG")
+                    #
+                    #     # Determine the image format using imghdr
+                    #     image_format = imghdr.what('', h=jpeg_stream.getvalue())
+                    #
+                    #     if image_format:
+                    #         image_filename = f'image.{image_format}'
+                    #
+                    #         # Create a new stream from the JPEG data
+                    #         jpeg_stream.seek(0)
+                    #         worksheet.insert_image(ro, col + 7, image_filename,
+                    #                                {'image_data': jpeg_stream, 'object_position': 1, 'x_scale': 0.02,
+                    #                                 'y_scale': 0.02})
+
+                    def convert_to_jpeg(image_data):
+                        image_stream = BytesIO(base64.b64decode(image_data))
                         image = Image.open(image_stream)
 
-                        # Convert to RGB mode to ensure compatibility
+                        # Convert to RGB mode if needed
                         if image.mode != "RGB":
                             image = image.convert("RGB")
 
                         # Create a new BytesIO to hold the JPEG data
                         jpeg_stream = BytesIO()
                         image.save(jpeg_stream, format="JPEG")
+                        jpeg_stream.seek(0)
 
-                        # Determine the image format using imghdr
-                        image_format = imghdr.what('', h=jpeg_stream.getvalue())
+                        return jpeg_stream
+
+                    def detect_image_format(image_data):
+                        mime = magic.Magic(mime=True)
+                        image_stream = BytesIO(image_data)
+                        mime_type = mime.from_buffer(image_stream.read())
+
+                        if mime_type.startswith("image/"):
+                            return mime_type.split("/")[1]
+                        else:
+                            return None
+
+                    if image_small:
+                        image_format = detect_image_format(base64.b64decode(image_small))
 
                         if image_format:
-                            image_filename = f'image.{image_format}'
+                            if image_format in ["jpeg", "jpg", "png", "jfif", "pjpeg", "pjp"]:
+                                # Convert the image to JPEG format
+                                jpeg_stream = convert_to_jpeg(image_small)
 
-                            # Create a new stream from the JPEG data
-                            jpeg_stream.seek(0)
-                            worksheet.insert_image(ro, col + 7, image_filename,
-                                                   {'image_data': jpeg_stream, 'object_position': 1, 'x_scale': 0.02,
-                                                    'y_scale': 0.02})
+                                image_filename = f'image.jpg'  # Use .jpg format for all converted images
+
+                                # Insert the image into the Excel file
+                                worksheet.insert_image(ro, col + 7, image_filename,
+                                                       {'image_data': jpeg_stream, 'object_position': 1,
+                                                        'x_scale': 0.02,
+                                                        'y_scale': 0.02})
                     else:
                         worksheet.write(ro, col + 7, '', cell_text_format_new)
                     worksheet.write(ro, col + 8, status or '', cell_text_format_new)
