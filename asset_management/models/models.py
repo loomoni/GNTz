@@ -78,16 +78,25 @@ class AssetsInherit(models.Model):
                                   "If the asset is confirmed, the status goes in 'Running' and the depreciation lines can be posted in the accounting.\n"
                                   "You can manually close an asset when the depreciation is over. If the last line of depreciation is posted, the asset automatically goes in that status.")
 
-    @api.onchange('department_id.branch_id.code', 'category_id.asset_category_code')
-    @api.depends('department_id.branch_id.code', 'category_id.asset_category_code')
-    def _default_serial_no(self):
-        x = self.env['account.asset.asset'].sudo().search_count([]) + 1
-        for rec in self:
-            branch_code = str(rec.department_id.branch_id.code) if rec.department_id.branch_id.code else ""
-            department_code = str(
-                rec.department_id.manager_id.department_id.code) if rec.department_id.manager_id.department_id.code else ""
-            category_code = str(rec.category_id.asset_category_code) if rec.category_id.asset_category_code else ""
-            rec.code = 'GNTZ' + '-' + branch_code + '-' + department_code + '-' + category_code + '-' + str(x)
+    # @api.onchange('department_id.branch_id.code', 'category_id.asset_category_code')
+    # @api.depends('department_id.branch_id.code', 'category_id.asset_category_code')
+    # def _default_serial_no(self):
+
+        # for rec in self:
+        #     x = self.env['account.asset.asset'].sudo().search_count([]) + 1
+        #     branch_code = str(rec.department_id.branch_id.code) if rec.department_id.branch_id.code else ""
+        #     department_code = str(
+        #         rec.department_id.manager_id.department_id.code) if rec.department_id.manager_id.department_id.code else ""
+        #     category_code = str(rec.category_id.asset_category_code) if rec.category_id.asset_category_code else ""
+        #     rec.code = 'GNTZ' + '-' + branch_code + '-' + department_code + '-' + category_code + '-' + str(x)
+
+        # for rec in self:
+        # x = self.env['account.asset.asset'].sudo().search_count([])
+        # branch_code = str(self.department_id.branch_id.code) if self.department_id.branch_id.code else ""
+        # department_code = str(
+        #     self.department_id.manager_id.department_id.code) if self.department_id.manager_id.department_id.code else ""
+        # category_code = str(self.category_id.asset_category_code) if self.category_id.asset_category_code else ""
+        # self.code = 'GNTZ' + '-' + branch_code + '-' + department_code + '-' + category_code + '-' + str(x + 1)
 
     # @api.onchange('department_id_code')
     # @api.depends('category_id.asset_category_code')
@@ -109,6 +118,35 @@ class AssetsInherit(models.Model):
     #             pass
     #     return 'GNTZ-' + str(department_code) + '-' + str(x)
 
+    # @api.depends('department_id.branch_id.code', 'category_id.asset_category_code')
+    # def _default_serial_no(self):
+    #     for record in self:
+    #         branch_code = str(record.department_id.branch_id.code) if record.department_id.branch_id.code else ""
+    #         category_code = str(record.category_id.asset_category_code) if record.category_id.asset_category_code else ""
+    #
+    #         # Get the count of existing assets with similar characteristics
+    #         domain = [
+    #             ('department_id.branch_id.code', '=', record.department_id.branch_id.code),
+    #             ('category_id.asset_category_code', '=', record.category_id.asset_category_code)
+    #         ]
+    #         asset_count = self.env['account.asset.asset'].search_count(domain)
+    #
+    #         # Get the next number from the sequence
+    #         sequence_counter = asset_count + 1
+    #
+    #         record.code = 'GNTZ' + '-' + branch_code + '-' + category_code + '-' + str(sequence_counter)
+    @api.depends('department_id.branch_id.code', 'category_id.asset_category_code')
+    def _default_serial_no(self):
+        asset_count = self.env['account.asset.asset'].search_count([])
+
+        for record in self:
+            branch_code = str(record.department_id.branch_id.code) if record.department_id.branch_id.code else ""
+            category_code = str(record.category_id.asset_category_code) if record.category_id.asset_category_code else ""
+
+            sequence_counter = asset_count + 1
+
+            record.code = 'GNTZ' + '-' + branch_code + '-' + category_code + '-' + str(sequence_counter)
+
     def _default_department(self):
         employee = self.env['hr.employee'].sudo().search(
             [('user_id', '=', self.env.uid)], limit=1)
@@ -117,7 +155,7 @@ class AssetsInherit(models.Model):
 
     # code = fields.Char(string='Asset Number', size=32, readonly=True, required=True, states={'draft': [('readonly',
     # False)]}, default=_default_serial_no compute='_default_serial_no',)
-    code = fields.Char(string='Asset Number', compute='_default_serial_no')
+    code = fields.Char(string='Asset Number', compute='_default_serial_no', store=True, readonly=False)
     # code = fields.Char(string='Asset Number', compute='_default_serial_no', states={'draft': [('readonly', False)]}, )
     cummulative_amount = fields.Float(string='Accumulated Depreciation', compute='_compute_accumulated_depreciation',
                                       method=True, digits=0)
