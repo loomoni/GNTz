@@ -650,7 +650,7 @@ class AssetListWizard(models.TransientModel):
             date_2 = datetime.strftime(self.date_to, '%d-%m-%Y')
             date_1 = datetime.strftime(self.date_from, '%d-%m-%Y')
             asset_report_month = self.date_from.strftime("%B")
-            worksheet.merge_range('A1:J2', 'Asset Report For %s %s' % (asset_report_month, self.date_from.year),
+            worksheet.merge_range('A1:H2', 'Asset Report For %s %s' % (asset_report_month, self.date_from.year),
                                   heading_format)
             worksheet.write('A4:A4', 'Company', cell_text_format_n)
             # worksheet.write('G4:G4', '', cell_text_format_n)
@@ -672,9 +672,9 @@ class AssetListWizard(models.TransientModel):
             worksheet.write(row, 4, 'Amount', cell_text_format)
             worksheet.write(row, 5, 'Assigned To', cell_text_format)
             worksheet.write(row, 6, 'Department', cell_text_format)
-            worksheet.write(row, 7, 'Photo', cell_text_format)
-            worksheet.write(row, 8, 'Status', cell_text_format)
-            worksheet.write(row, 9, 'Remark', cell_text_format)
+            # worksheet.write(row, 7, 'Photo', cell_text_format)
+            worksheet.write(row, 7, 'Status', cell_text_format)
+            # worksheet.write(row, 9, 'Remark', cell_text_format)
 
             department_asset = self.env['account.asset.asset'].sudo().search(
                 [('department_id', '=', self.department_name)])
@@ -722,36 +722,36 @@ class AssetListWizard(models.TransientModel):
                         #                            {'image_data': image_stream, 'object_position': 1, 'x_scale': 0.02,
                         #                             'y_scale': 0.02})
 
-                    if image_small:
-                        # Convert the image to JPEG format
-                        image_binary = base64.b64decode(image_small)
-                        image_stream = BytesIO(image_binary)
-                        image = Image.open(image_stream)
-
-                        # Convert to RGB mode to ensure compatibility
-                        if image.mode != "RGB":
-                            image = image.convert("RGB")
-
-                        # Create a new BytesIO to hold the JPEG data
-                        jpeg_stream = BytesIO()
-                        image.save(jpeg_stream, format="JPEG")
-
-                        # Determine the image format using imghdr
-                        image_format = imghdr.what('', h=jpeg_stream.getvalue())
-
-                        if image_format:
-                            image_filename = f'image.{image_format}'
-
-                            # Create a new stream from the JPEG data
-                            jpeg_stream.seek(0)
-                            worksheet.insert_image(ro, col + 7, image_filename,
-                                                   {'image_data': jpeg_stream, 'object_position': 1, 'x_scale': 0.02,
-                                                    'y_scale': 0.02})
-
-                    else:
-                        worksheet.write(ro, col + 7, '', cell_text_format_new)
-                    worksheet.write(ro, col + 8, status or '', cell_text_format_new)
-                    worksheet.write(ro, col + 9, remark or '', cell_text_format_new)
+                    # if image_small:
+                    #     # Convert the image to JPEG format
+                    #     image_binary = base64.b64decode(image_small)
+                    #     image_stream = BytesIO(image_binary)
+                    #     image = Image.open(image_stream)
+                    #
+                    #     # Convert to RGB mode to ensure compatibility
+                    #     if image.mode != "RGB":
+                    #         image = image.convert("RGB")
+                    #
+                    #     # Create a new BytesIO to hold the JPEG data
+                    #     jpeg_stream = BytesIO()
+                    #     image.save(jpeg_stream, format="JPEG")
+                    #
+                    #     # Determine the image format using imghdr
+                    #     image_format = imghdr.what('', h=jpeg_stream.getvalue())
+                    #
+                    #     if image_format:
+                    #         image_filename = f'image.{image_format}'
+                    #
+                    #         # Create a new stream from the JPEG data
+                    #         jpeg_stream.seek(0)
+                    #         worksheet.insert_image(ro, col + 7, image_filename,
+                    #                                {'image_data': jpeg_stream, 'object_position': 1, 'x_scale': 0.02,
+                    #                                 'y_scale': 0.02})
+                    #
+                    # else:
+                    #     worksheet.write(ro, col + 7, '', cell_text_format_new)
+                    worksheet.write(ro, col + 7, status or '', cell_text_format_new)
+                    # worksheet.write(ro, col + 9, remark or '', cell_text_format_new)
                     ro = ro + 1
 
             else:
@@ -783,36 +783,36 @@ class AssetListWizard(models.TransientModel):
                     #     worksheet.insert_image(ro, col + 7, 'image.png',
                     #                            {'image_data': image_stream, 'object_position': 1, 'x_scale': 0.02,
                     #                             'y_scale': 0.02})
-                    if image_small:
-                        # Convert the image to JPEG format
-                        image_binary = base64.b64decode(image_small)
-                        image_stream = BytesIO(image_binary)
-                        image = Image.open(image_stream)
+                    # if image_small:
+                    #     # Convert the image to JPEG format
+                    #     image_binary = base64.b64decode(image_small)
+                    #     image_stream = BytesIO(image_binary)
+                    #     image = Image.open(image_stream)
+                    #
+                    #     # Convert to RGB mode to ensure compatibility
+                    #     if image.mode != "RGB":
+                    #         image = image.convert("RGB")
+                    #
+                    #     # Create a new BytesIO to hold the JPEG data
+                    #     jpeg_stream = BytesIO()
+                    #     image.save(jpeg_stream, format="JPEG")
+                    #
+                    #     # Determine the image format using imghdr
+                    #     image_format = imghdr.what('', h=jpeg_stream.getvalue())
+                    #
+                    #     if image_format:
+                    #         image_filename = f'image.{image_format}'
+                    #
+                    #         # Create a new stream from the JPEG data
+                    #         jpeg_stream.seek(0)
+                    #         worksheet.insert_image(ro, col + 7, image_filename,
+                    #                                {'image_data': jpeg_stream, 'object_position': 1, 'x_scale': 0.02,
+                    #                                 'y_scale': 0.02})
+                    # else:
+                    #     worksheet.write(ro, col + 7, '', cell_text_format_new)
 
-                        # Convert to RGB mode to ensure compatibility
-                        if image.mode != "RGB":
-                            image = image.convert("RGB")
-
-                        # Create a new BytesIO to hold the JPEG data
-                        jpeg_stream = BytesIO()
-                        image.save(jpeg_stream, format="JPEG")
-
-                        # Determine the image format using imghdr
-                        image_format = imghdr.what('', h=jpeg_stream.getvalue())
-
-                        if image_format:
-                            image_filename = f'image.{image_format}'
-
-                            # Create a new stream from the JPEG data
-                            jpeg_stream.seek(0)
-                            worksheet.insert_image(ro, col + 7, image_filename,
-                                                   {'image_data': jpeg_stream, 'object_position': 1, 'x_scale': 0.02,
-                                                    'y_scale': 0.02})
-                    else:
-                        worksheet.write(ro, col + 7, '', cell_text_format_new)
-
-                    worksheet.write(ro, col + 8, status or '', cell_text_format_new)
-                    worksheet.write(ro, col + 9, remark or '', cell_text_format_new)
+                    worksheet.write(ro, col + 7, status or '', cell_text_format_new)
+                    # worksheet.write(ro, col + 9, remark or '', cell_text_format_new)
                     ro = ro + 1
 
         workbook.close()
