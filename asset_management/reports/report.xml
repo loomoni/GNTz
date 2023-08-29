@@ -10,7 +10,7 @@
             file="asset_management.asset_management_qr_code_template"
     />
 
-        <report
+    <report
             id="asset_custodian_report"
             model="account.asset.assign"
             string="Asset Custodian Report"
@@ -20,7 +20,7 @@
             file="asset_management.asset_custodian_report_template"
     />
 
-            <report
+    <report
             id="asset_custodian_report_excel"
             model="account.asset.assign"
             string="Custodian Report"
@@ -29,4 +29,27 @@
             name="asset_management.asset_custodian_report_xls"
             file="asset_management.asset_custodian_report_xls"
     />
+
+<!--    <template id="asset_management.asset_custodian_report_xls">-->
+<!--        <t t-call="report_xlsx.abstract"/>-->
+<!--        <t t-foreach="docs" t-as="doc">-->
+<!--            <div class="page" style="padding: 10px">-->
+<!--                &lt;!&ndash; Your header content goes here &ndash;&gt;-->
+<!--                <table class="table table-condensed">-->
+<!--                    <tr>-->
+<!--                        <th>Name of the Employee</th>-->
+<!--                        <th>Other Column</th>-->
+<!--                        <th>Other Column</th>-->
+<!--                    </tr>-->
+<!--                    <tr>-->
+<!--                        <td>-->
+<!--                            <span t-field="doc.assigned_to.name"/>-->
+<!--                        </td>-->
+<!--                        <td>Other Data</td>-->
+<!--                        <td>Other Data</td>-->
+<!--                    </tr>-->
+<!--                </table>-->
+<!--            </div>-->
+<!--        </t>-->
+<!--    </template>-->
 </odoo>
