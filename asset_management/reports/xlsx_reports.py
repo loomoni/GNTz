@@ -141,7 +141,7 @@ class CustodianReportXLS(models.AbstractModel):
         worksheet.write('A4:A4', 'Name of the Employee', cell_text_employee_format)
         worksheet.merge_range('B4:D4', lines.assigned_person.name, cell_text_info_body_format)
         worksheet.write('A5:A5', 'ID Number', cell_text_employee_format)
-        worksheet.merge_range('B5:D5', lines.assigned_person.job_title or '', cell_text_info_body_format)
+        worksheet.merge_range('B5:D5', '', cell_text_info_body_format)
 
         worksheet.write('A6:A6', 'Department', cell_text_employee_format)
         worksheet.merge_range('B6:D6', lines.assigned_person.department_id.name, cell_text_info_body_format)
@@ -216,3 +216,11 @@ class CustodianReportXLS(models.AbstractModel):
         worksheet.set_row(row + 1, 60)
         worksheet.merge_range(row, col, row, col + 8, termsAndCondition, cell_text_term_format)
         worksheet.merge_range(row + 1, col, row + 1, col + 8, signature, cell_text_signature_format)
+
+        # Set up page break preview
+        worksheet.set_v_pagebreaks([row])  # Add a vertical page break after the specified row
+
+        # Set paper size to A4
+        worksheet.set_paper(9)  # 9 corresponds to A4 size
+        # Close the workbook
+        workbook.close()
