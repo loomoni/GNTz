@@ -2,6 +2,8 @@
 import base64
 from io import BytesIO
 
+import openpyxl
+
 from odoo import models, fields, api, _
 from odoo.http import request
 from odoo.tools import datetime
@@ -223,10 +225,4 @@ class CustodianReportXLS(models.AbstractModel):
         worksheet.merge_range(row, col, row, col + 8, termsAndCondition, cell_text_term_format)
         worksheet.merge_range(row + 1, col, row + 1, col + 8, signature, cell_text_signature_format)
 
-        # Set up page break preview
-        worksheet.set_v_pagebreaks([row])  # Add a vertical page break after the specified row
-
-        # Set paper size to A4
-        worksheet.set_paper(9)  # 9 corresponds to A4 size
-        # Close the workbook
         workbook.close()

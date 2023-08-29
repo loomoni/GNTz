@@ -588,52 +588,63 @@ class GeneralInventoryListWizard(models.TransientModel):
         workbook = xlsxwriter.Workbook(fp)
         heading_format = workbook.add_format({'align': 'center',
                                               'valign': 'vcenter',
+                                              'text_wrap': True,
                                               'bold': True,
                                               'size': 14,
                                               'fg_color': '#89A130', })
         heading_format.set_border()
         sub2_heading_format = workbook.add_format({'align': 'center',
                                                    'valign': 'vcenter',
+                                                   'text_wrap': True,
                                                    'bold': True, 'size': 14})
         sub2_heading_format.set_border()
         dr_cr_format = workbook.add_format({'align': 'center',
                                             # 'valign': 'vcenter',
+                                            'text_wrap': True,
                                             'bold': True, 'size': 14})
         dr_cr_format.set_border()
         sub_heading_format = workbook.add_format({'align': 'left',
                                                   # 'valign': 'vcenter',
+                                                  'text_wrap': True,
                                                   'bold': True, 'size': 14})
         sub_heading_format.set_border()
         cell_text_format_n = workbook.add_format({'align': 'center',
+                                                  'text_wrap': True,
                                                   'bold': True, 'size': 9,
                                                   })
         cell_text_format_n.set_border()
         cell_photo_format = workbook.add_format({'align': 'center',
+                                                 'text_wrap': True,
 
                                                  })
         cell_photo_format.set_border()
         cell_date_text_format = workbook.add_format({'align': 'left',
                                                      'size': 9,
+                                                     'text_wrap': True,
                                                      })
         cell_date_text_format.set_border()
 
         approve_format = workbook.add_format({'align': 'left',
+                                              'text_wrap': True,
                                               'bold': False, 'size': 14,
                                               })
 
         cell_text_format = workbook.add_format({'align': 'left',
                                                 'bold': True, 'size': 13,
                                                 'fg_color': '#695B55',
+                                                'text_wrap': True,
                                                 'font_color': 'white'
                                                 })
 
         cell_text_format.set_border()
         cell_text_format_new = workbook.add_format({'align': 'left',
                                                     'size': 9,
+                                                    'text_wrap': True,
                                                     'num_format': '#,###0.00',
                                                     })
         cell_text_format_new.set_border()
         cell_number_format = workbook.add_format({'align': 'right',
+                                                  'text_wrap': True,
                                                   'bold': False, 'size': 9,
                                                   'num_format': '#,###0.00'})
         cell_number_format.set_border()

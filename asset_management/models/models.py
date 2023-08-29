@@ -389,6 +389,7 @@ class AccountAssetAssignWizard(models.TransientModel):
             'bold': True,
             'font_name': 'Arial',
             'font_size': 8,
+            'text_wrap': True,
         })
         cell_text_info_format.set_border()
         cell_text_info_body_format = workbook.add_format({
@@ -396,18 +397,21 @@ class AccountAssetAssignWizard(models.TransientModel):
             'font_name': 'Arial',
             'font_size': 8,
             'align': 'center',
+            'text_wrap': True,
         })
         cell_text_info_body_format.set_border()
         cell_text_sub_title_format = workbook.add_format({
             'bold': True,
             'font_name': 'Arial',
             'font_size': 8,
+            'text_wrap': True,
         })
         cell_text_sub_title_format.set_border()
 
         cell_text_body_format = workbook.add_format({
             'font_name': 'Arial',
             'font_size': 8,
+            'text_wrap': True,
         })
         cell_text_body_format.set_border()
         divider_format = workbook.add_format({'fg_color': '#9BBB59', })
@@ -606,6 +610,7 @@ class AssetListWizard(models.TransientModel):
             'bold': True,
             'font_name': 'Arial',
             'font_size': 8,
+            'text_wrap': True,
         })
         cell_text_info_format.set_border()
         cell_text_info_body_format = workbook.add_format({
@@ -613,18 +618,21 @@ class AssetListWizard(models.TransientModel):
             'font_name': 'Arial',
             'font_size': 8,
             'align': 'center',
+            'text_wrap': True,
         })
         cell_text_info_body_format.set_border()
         cell_text_sub_title_format = workbook.add_format({
             'bold': True,
             'font_name': 'Arial',
             'font_size': 8,
+            'text_wrap': True,
         })
         cell_text_sub_title_format.set_border()
 
         cell_text_body_format = workbook.add_format({
             'font_name': 'Arial',
             'font_size': 8,
+            'text_wrap': True,
         })
         cell_text_body_format.set_border()
         divider_format = workbook.add_format({'fg_color': '#9BBB59', })
