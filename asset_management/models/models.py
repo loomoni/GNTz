@@ -632,6 +632,7 @@ class AssetListWizard(models.TransientModel):
         cell_text_body_format = workbook.add_format({
             'font_name': 'Arial',
             'font_size': 8,
+            'num_format': '#,##0',
             'text_wrap': True,
         })
         cell_text_body_format.set_border()
@@ -679,6 +680,7 @@ class AssetListWizard(models.TransientModel):
         worksheet.set_row(2, 12)
         worksheet.set_column('A:G', 20)
         worksheet.set_column('H:I', 11)
+        worksheet.set_column('H8:H8', 19)
         worksheet.set_row(6, 12)
         worksheet.merge_range('A3:I3', '', divider_format)
         worksheet.merge_range('A7:I7', '', divider_format)
