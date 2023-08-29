@@ -82,21 +82,21 @@ class AssetsInherit(models.Model):
     # @api.depends('department_id.branch_id.code', 'category_id.asset_category_code')
     # def _default_serial_no(self):
 
-        # for rec in self:
-        #     x = self.env['account.asset.asset'].sudo().search_count([]) + 1
-        #     branch_code = str(rec.department_id.branch_id.code) if rec.department_id.branch_id.code else ""
-        #     department_code = str(
-        #         rec.department_id.manager_id.department_id.code) if rec.department_id.manager_id.department_id.code else ""
-        #     category_code = str(rec.category_id.asset_category_code) if rec.category_id.asset_category_code else ""
-        #     rec.code = 'GNTZ' + '-' + branch_code + '-' + department_code + '-' + category_code + '-' + str(x)
+    # for rec in self:
+    #     x = self.env['account.asset.asset'].sudo().search_count([]) + 1
+    #     branch_code = str(rec.department_id.branch_id.code) if rec.department_id.branch_id.code else ""
+    #     department_code = str(
+    #         rec.department_id.manager_id.department_id.code) if rec.department_id.manager_id.department_id.code else ""
+    #     category_code = str(rec.category_id.asset_category_code) if rec.category_id.asset_category_code else ""
+    #     rec.code = 'GNTZ' + '-' + branch_code + '-' + department_code + '-' + category_code + '-' + str(x)
 
-        # for rec in self:
-        # x = self.env['account.asset.asset'].sudo().search_count([])
-        # branch_code = str(self.department_id.branch_id.code) if self.department_id.branch_id.code else ""
-        # department_code = str(
-        #     self.department_id.manager_id.department_id.code) if self.department_id.manager_id.department_id.code else ""
-        # category_code = str(self.category_id.asset_category_code) if self.category_id.asset_category_code else ""
-        # self.code = 'GNTZ' + '-' + branch_code + '-' + department_code + '-' + category_code + '-' + str(x + 1)
+    # for rec in self:
+    # x = self.env['account.asset.asset'].sudo().search_count([])
+    # branch_code = str(self.department_id.branch_id.code) if self.department_id.branch_id.code else ""
+    # department_code = str(
+    #     self.department_id.manager_id.department_id.code) if self.department_id.manager_id.department_id.code else ""
+    # category_code = str(self.category_id.asset_category_code) if self.category_id.asset_category_code else ""
+    # self.code = 'GNTZ' + '-' + branch_code + '-' + department_code + '-' + category_code + '-' + str(x + 1)
 
     # @api.onchange('department_id_code')
     # @api.depends('category_id.asset_category_code')
@@ -141,7 +141,8 @@ class AssetsInherit(models.Model):
 
         for record in self:
             branch_code = str(record.department_id.branch_id.code) if record.department_id.branch_id.code else ""
-            category_code = str(record.category_id.asset_category_code) if record.category_id.asset_category_code else ""
+            category_code = str(
+                record.category_id.asset_category_code) if record.category_id.asset_category_code else ""
 
             sequence_counter = asset_count + 1
 
@@ -579,241 +580,419 @@ class AssetListWizard(models.TransientModel):
         fp = BytesIO()
 
         workbook = xlsxwriter.Workbook(fp)
-        heading_format = workbook.add_format({'align': 'center',
-                                              'valign': 'vcenter',
-                                              'bold': True,
-                                              'size': 14,
-                                              'fg_color': '#89A130', })
+        worksheet = workbook.add_worksheet()
+
+        # Define the heading format
+        heading_format = workbook.add_format({
+            # 'bold': True,
+            'font_size': 7,
+            'font_name': 'Arial',
+            # 'align': 'center',
+            'valign': 'vcenter',
+            'text_wrap': True,
+        })
         heading_format.set_border()
-        sub2_heading_format = workbook.add_format({'align': 'center',
-                                                   'valign': 'vcenter',
-                                                   'bold': True, 'size': 14})
-        sub2_heading_format.set_border()
-        dr_cr_format = workbook.add_format({'align': 'center',
-                                            # 'valign': 'vcenter',
-                                            'bold': True, 'size': 14})
-        dr_cr_format.set_border()
-        sub_heading_format = workbook.add_format({'align': 'left',
-                                                  # 'valign': 'vcenter',
-                                                  'bold': True, 'size': 14})
-        sub_heading_format.set_border()
-        cell_text_format_n = workbook.add_format({'align': 'center',
-                                                  'bold': True, 'size': 9,
-                                                  })
-        cell_text_format_n.set_border()
-        cell_photo_format = workbook.add_format({'align': 'center',
+        title_format = workbook.add_format({
+            'bold': True,
+            'font_name': 'Arial',
+            'font_size': 14,
+            'align': 'center',
+            # 'valign': 'vcenter',
+            'text_wrap': True,
+        })
+        title_format.set_border()
 
-                                                 })
-        cell_photo_format.set_border()
-        cell_date_text_format = workbook.add_format({'align': 'left',
-                                                     'size': 9,
-                                                     })
-        cell_date_text_format.set_border()
+        cell_text_info_format = workbook.add_format({
+            'bold': True,
+            'font_name': 'Arial',
+            'font_size': 8,
+        })
+        cell_text_info_format.set_border()
+        cell_text_info_body_format = workbook.add_format({
+            'bold': True,
+            'font_name': 'Arial',
+            'font_size': 8,
+            'align': 'center',
+        })
+        cell_text_info_body_format.set_border()
+        cell_text_sub_title_format = workbook.add_format({
+            'bold': True,
+            'font_name': 'Arial',
+            'font_size': 8,
+        })
+        cell_text_sub_title_format.set_border()
 
-        approve_format = workbook.add_format({'align': 'left',
-                                              'bold': False, 'size': 14,
-                                              })
+        cell_text_body_format = workbook.add_format({
+            'font_name': 'Arial',
+            'font_size': 8,
+        })
+        cell_text_body_format.set_border()
+        divider_format = workbook.add_format({'fg_color': '#9BBB59', })
+        # divider_format = workbook.add_format({'fg_color': '#89A130', })
+        divider_format.set_border()
+        worksheet.set_row(0, 85)
+        worksheet.set_column('A:E', 13)
+        # worksheet.merge_range('A1:F1', '')
+        company = self.env.user.company_id
 
-        cell_text_format = workbook.add_format({'align': 'left',
-                                                'bold': True, 'size': 13,
-                                                'fg_color': '#695B55',
-                                                'font_color': 'white'
-                                                })
+        # Get the logged-in user's name
+        user = request.env.user
+        user_name = user.name
+        email = user.login
+        job_position = ''
+        employee = request.env['hr.employee'].sudo().search([('user_id', '=', user.id), ('job_id', '!=', False)],
+                                                            limit=1)
+        if employee:
+            job_position = employee.job_id.name or ''
 
-        cell_text_format.set_border()
-        cell_text_format_new = workbook.add_format({'align': 'left',
-                                                    'size': 9,
-                                                    'num_format': '#,###0.00',
-                                                    })
-        cell_text_format_new.set_border()
-        cell_number_format = workbook.add_format({'align': 'right',
-                                                  'bold': False, 'size': 9,
-                                                  'num_format': '#,###0.00'})
-        cell_number_format.set_border()
-        worksheet = workbook.add_worksheet(
-            'Asset report ' + str(self.date_from) + ' - ' + str(self.date_to) + ' report.xlsx')
-        normal_num_bold = workbook.add_format({'bold': True, 'num_format': '#,###0.00', 'size': 9, })
-        normal_num_bold.set_border()
-        worksheet.set_column('A:J', 20)
-        worksheet.set_default_row(45)
+        # Find the department name of the employee
+        department_name = ''
+        if employee and employee.department_id:
+            department_name = employee.department_id.name or ''
 
-        worksheet.set_row(0, 20)
-        worksheet.set_row(1, 20)
-        worksheet.set_row(2, 15)
-        worksheet.set_row(3, 15)
-        worksheet.set_row(4, 15)
-        worksheet.set_row(5, 20)
-        row = 2
-        row_set = row
+        company_info = "\n".join(filter(None, [company.name, company.street2, company.street, company.city,
+                                               company.country_id.name,
+                                               'Phone: ' + company.phone + ' Email: ' + company.email + ' Web: ' + company.website]))
+        worksheet.merge_range('A1:I1', company_info, heading_format)
 
-        if self.date_from and self.date_to:
-            date_2 = datetime.strftime(self.date_to, '%d-%m-%Y')
-            date_1 = datetime.strftime(self.date_from, '%d-%m-%Y')
-            asset_report_month = self.date_from.strftime("%B")
-            worksheet.merge_range('A1:H2', 'Asset Report For %s %s' % (asset_report_month, self.date_from.year),
-                                  heading_format)
-            worksheet.write('A4:A4', 'Company', cell_text_format_n)
-            # worksheet.write('G4:G4', '', cell_text_format_n)
-            # worksheet.write('H4:H4', '', cell_text_format_n)
-            # worksheet.write('I4:I4', '', cell_text_format_n)
-            # worksheet.write('J4:J4', '', cell_text_format_n)
-            worksheet.merge_range('B4:D4', '%s' % (self.company.name), cell_text_format_n)
-            worksheet.write(row, 4, 'Date From', cell_text_format_n)
-            worksheet.write(row, 5, date_1 or '', cell_date_text_format)
-            row += 1
-            worksheet.write(row, 4, 'Date To', cell_text_format_n)
-            worksheet.write(row, 5, date_2 or '', cell_date_text_format)
-            row += 2
+        # Convert the logo from base64 to binary data
+        logo_data = base64.b64decode(company.logo)
 
-            worksheet.write(row, 0, 'Asset Name', cell_text_format)
-            worksheet.write(row, 1, 'S/N/Asset ID', cell_text_format)
-            worksheet.write(row, 2, 'Asset No', cell_text_format)
-            worksheet.write(row, 3, 'Date of purchase', cell_text_format)
-            worksheet.write(row, 4, 'Amount', cell_text_format)
-            worksheet.write(row, 5, 'Assigned To', cell_text_format)
-            worksheet.write(row, 6, 'Department', cell_text_format)
-            # worksheet.write(row, 7, 'Photo', cell_text_format)
-            worksheet.write(row, 7, 'Status', cell_text_format)
-            # worksheet.write(row, 9, 'Remark', cell_text_format)
+        # Create a BytesIO object to hold the image data
+        image_stream = BytesIO(logo_data)
+        # Add the logo to the worksheet
+        worksheet.insert_image('F1', 'logo.png', {'image_data': image_stream, 'x_scale': 0.43, 'y_scale': 0.43})
 
-            department_asset = self.env['account.asset.asset'].sudo().search(
-                [('department_id', '=', self.department_name)])
-            all_asset = self.env['account.asset.asset'].sudo().search([])
+        # Merge cells for the logo in F1:G2
+        # worksheet.merge_range('F1:G2', '')  # Merge the cells
+        worksheet.set_row(1, 26)
+        worksheet.merge_range('A2:I2', 'ASSET REPORT', title_format)
 
-            ro = row + 1
-            col = 0
-            if department_asset:
-                for departmental_asset in department_asset:
-                    asset_name = departmental_asset.name
-                    asset_id = departmental_asset.asset_id_no
-                    asset_number = departmental_asset.code
-                    purchase_date = datetime.strftime(departmental_asset.date, '%d-%m-%Y')
-                    amount = departmental_asset.value
-                    assigned_to = 'Null'
-                    department = departmental_asset.department_id.name
-                    image_small = departmental_asset.image_small
-                    status = departmental_asset.state
-                    remark = ""
+        worksheet.set_row(2, 12)
+        worksheet.set_column('A:G', 20)
+        worksheet.set_column('H:I', 11)
+        worksheet.set_row(6, 12)
+        worksheet.merge_range('A3:I3', '', divider_format)
+        worksheet.merge_range('A7:I7', '', divider_format)
 
-                    worksheet.write(ro, col, asset_name or '', cell_text_format_new)
-                    worksheet.write(ro, col + 1, asset_id or '', cell_text_format_new)
-                    worksheet.write(ro, col + 2, asset_number or '', cell_text_format_new)
-                    worksheet.write(ro, col + 3, purchase_date or '', cell_text_format_new)
-                    worksheet.write(ro, col + 4, amount or '', cell_text_format_new)
-                    worksheet.write(ro, col + 5, assigned_to or '', cell_text_format_new)
-                    worksheet.write(ro, col + 6, department or '', cell_text_format_new)
-                    # if image_small:
-                    #     image_binary = base64.b64decode(image_small)
-                    #     image_stream = BytesIO(image_binary)
-                    #     worksheet.insert_image(ro, col + 7, 'image.png',
-                    #                            {'image_data': image_stream, 'object_position': 1, 'x_scale': 0.02,
-                    #                             'y_scale': 0.02})
-                    # if image_small:
-                        # # Determine the image format using imghdr
-                        # image_format = imghdr.what('', h=image_small)
-                        #
-                        # if image_format:
-                        #     image_filename = f'image.{image_format}'
-                        #
-                        #     image_binary = base64.b64decode(image_small)
-                        #     image_stream = BytesIO(image_binary)
-                        #
-                        #     worksheet.insert_image(ro, col + 7, image_filename,
-                        #                            {'image_data': image_stream, 'object_position': 1, 'x_scale': 0.02,
-                        #                             'y_scale': 0.02})
+        worksheet.write('A4:A4', 'Extracted by', cell_text_info_format)
+        worksheet.merge_range('B4:D4', user_name, cell_text_info_body_format)
 
-                    # if image_small:
-                    #     # Convert the image to JPEG format
-                    #     image_binary = base64.b64decode(image_small)
-                    #     image_stream = BytesIO(image_binary)
-                    #     image = Image.open(image_stream)
-                    #
-                    #     # Convert to RGB mode to ensure compatibility
-                    #     if image.mode != "RGB":
-                    #         image = image.convert("RGB")
-                    #
-                    #     # Create a new BytesIO to hold the JPEG data
-                    #     jpeg_stream = BytesIO()
-                    #     image.save(jpeg_stream, format="JPEG")
-                    #
-                    #     # Determine the image format using imghdr
-                    #     image_format = imghdr.what('', h=jpeg_stream.getvalue())
-                    #
-                    #     if image_format:
-                    #         image_filename = f'image.{image_format}'
-                    #
-                    #         # Create a new stream from the JPEG data
-                    #         jpeg_stream.seek(0)
-                    #         worksheet.insert_image(ro, col + 7, image_filename,
-                    #                                {'image_data': jpeg_stream, 'object_position': 1, 'x_scale': 0.02,
-                    #                                 'y_scale': 0.02})
-                    #
-                    # else:
-                    #     worksheet.write(ro, col + 7, '', cell_text_format_new)
-                    worksheet.write(ro, col + 7, status or '', cell_text_format_new)
-                    # worksheet.write(ro, col + 9, remark or '', cell_text_format_new)
-                    ro = ro + 1
+        worksheet.write('A5:A5', 'Date', cell_text_info_format)
+        worksheet.merge_range('B5:I5', datetime.now().strftime('%m-%d-%Y'), cell_text_info_body_format)
 
-            else:
-                for total_asset in all_asset:
-                    asset_name = total_asset.name
-                    asset_id = total_asset.asset_id_no
-                    asset_number = total_asset.code
-                    purchase_date = datetime.strftime(total_asset.date, '%d-%m-%Y')
-                    amount = total_asset.value
-                    assigned_to = "Null"
-                    department = total_asset.department_id.name
-                    image_small = total_asset.image_small
-                    status = total_asset.state
-                    remark = ""
+        worksheet.write('A6:A6', 'Email', cell_text_info_format)
+        worksheet.merge_range('B6:D6', email, cell_text_info_body_format)
 
-                    worksheet.write(ro, col, asset_name or '', cell_text_format_new)
-                    worksheet.write(ro, col + 1, asset_id or '', cell_text_format_new)
-                    worksheet.write(ro, col + 2, asset_number or '', cell_text_format_new)
-                    worksheet.write(ro, col + 3, purchase_date or '', cell_text_format_new)
-                    worksheet.write(ro, col + 4, amount or '', cell_text_format_new)
-                    worksheet.write(ro, col + 5, assigned_to or '', cell_text_format_new)
-                    worksheet.write(ro, col + 6, department or '', cell_text_format_new)
-                    # worksheet.insert_image(ro, col + 7, image_stream or '', cell_text_format_new)
-                    # Create a format for the image
+        worksheet.write('E4:E4', 'Designation', cell_text_info_format)
+        worksheet.merge_range('F4:I4', job_position, cell_text_info_body_format)
 
-                    # if image_small:
-                    #     image_binary = base64.b64decode(image_small)
-                    #     image_stream = BytesIO(image_binary)
-                    #     worksheet.insert_image(ro, col + 7, 'image.png',
-                    #                            {'image_data': image_stream, 'object_position': 1, 'x_scale': 0.02,
-                    #                             'y_scale': 0.02})
-                    # if image_small:
-                    #     # Convert the image to JPEG format
-                    #     image_binary = base64.b64decode(image_small)
-                    #     image_stream = BytesIO(image_binary)
-                    #     image = Image.open(image_stream)
-                    #
-                    #     # Convert to RGB mode to ensure compatibility
-                    #     if image.mode != "RGB":
-                    #         image = image.convert("RGB")
-                    #
-                    #     # Create a new BytesIO to hold the JPEG data
-                    #     jpeg_stream = BytesIO()
-                    #     image.save(jpeg_stream, format="JPEG")
-                    #
-                    #     # Determine the image format using imghdr
-                    #     image_format = imghdr.what('', h=jpeg_stream.getvalue())
-                    #
-                    #     if image_format:
-                    #         image_filename = f'image.{image_format}'
-                    #
-                    #         # Create a new stream from the JPEG data
-                    #         jpeg_stream.seek(0)
-                    #         worksheet.insert_image(ro, col + 7, image_filename,
-                    #                                {'image_data': jpeg_stream, 'object_position': 1, 'x_scale': 0.02,
-                    #                                 'y_scale': 0.02})
-                    # else:
-                    #     worksheet.write(ro, col + 7, '', cell_text_format_new)
+        worksheet.write('E6:E6', 'Department', cell_text_info_format)
+        worksheet.merge_range('F6:I6', department_name, cell_text_info_body_format)
 
-                    worksheet.write(ro, col + 7, status or '', cell_text_format_new)
-                    # worksheet.write(ro, col + 9, remark or '', cell_text_format_new)
-                    ro = ro + 1
+        worksheet.write('A8:A8', 'S/N', cell_text_sub_title_format)
+        worksheet.write('B8:B8', 'Asset Name', cell_text_sub_title_format)
+        worksheet.write('C8:C8', 'S/N/Asset ID', cell_text_sub_title_format)
+        worksheet.write('D8:D8', 'Asset No', cell_text_sub_title_format)
+        worksheet.write('E8:E8', 'Date', cell_text_sub_title_format)
+        worksheet.write('F8:F8', 'Amount', cell_text_sub_title_format)
+        worksheet.write('G8:G8', 'Assigned To', cell_text_sub_title_format)
+        worksheet.write('H8:H8', 'Department', cell_text_sub_title_format)
+        worksheet.write('I8:I8', 'Status', cell_text_sub_title_format)
+
+        department_asset = self.env['account.asset.asset'].sudo().search(
+            [('department_id', '=', self.department_name)])
+        all_asset = self.env['account.asset.asset'].sudo().search([])
+
+        row = 8
+        col = 0
+        index = 1
+
+        if department_asset:
+            for asset in department_asset:
+                index = index
+                asset_name = asset.name
+                asset_id = asset.asset_id_no
+                asset_number = asset.code
+                purchase_date = datetime.strftime(asset.date, '%d-%m-%Y')
+                amount = asset.value
+                assigned_to = 'Null'
+                department = asset.department_id.name
+                status = asset.state
+
+                worksheet.write(row, col, index or '', cell_text_body_format)
+                worksheet.write(row, col + 1, asset_name or '', cell_text_body_format)
+                worksheet.write(row, col + 2, asset_id or '', cell_text_body_format)
+                worksheet.write(row, col + 3, asset_number or '', cell_text_body_format)
+                worksheet.write(row, col + 4, purchase_date or '', cell_text_body_format)
+                worksheet.write(row, col + 5, amount or '', cell_text_body_format)
+                worksheet.write(row, col + 6, assigned_to or '', cell_text_body_format)
+                worksheet.write(row, col + 7, department or '', cell_text_body_format)
+                worksheet.write(row, col + 8, status or '', cell_text_body_format)
+
+                row = row + 1
+                index = index + 1
+        else:
+            for asset in all_asset:
+                index = index
+                asset_name = asset.name
+                asset_id = asset.asset_id_no
+                asset_number = asset.code
+                purchase_date = datetime.strftime(asset.date, '%d-%m-%Y')
+                amount = asset.value
+                assigned_to = 'Null'
+                department = asset.department_id.name
+                status = asset.state
+
+                worksheet.write(row, col, index or '', cell_text_body_format)
+                worksheet.write(row, col + 1, asset_name or '', cell_text_body_format)
+                worksheet.write(row, col + 2, asset_id or '', cell_text_body_format)
+                worksheet.write(row, col + 3, asset_number or '', cell_text_body_format)
+                worksheet.write(row, col + 4, purchase_date or '', cell_text_body_format)
+                worksheet.write(row, col + 5, amount or '', cell_text_body_format)
+                worksheet.write(row, col + 6, assigned_to or '', cell_text_body_format)
+                worksheet.write(row, col + 7, department or '', cell_text_body_format)
+                worksheet.write(row, col + 8, status or '', cell_text_body_format)
+
+                row = row + 1
+                index = index + 1
+
+        # workbook = xlsxwriter.Workbook(fp)
+        # heading_format = workbook.add_format({'align': 'center',
+        #                                       'valign': 'vcenter',
+        #                                       'bold': True,
+        #                                       'size': 14,
+        #                                       'fg_color': '#89A130', })
+        # heading_format.set_border()
+        # sub2_heading_format = workbook.add_format({'align': 'center',
+        #                                            'valign': 'vcenter',
+        #                                            'bold': True, 'size': 14})
+        # sub2_heading_format.set_border()
+        # dr_cr_format = workbook.add_format({'align': 'center',
+        #                                     # 'valign': 'vcenter',
+        #                                     'bold': True, 'size': 14})
+        # dr_cr_format.set_border()
+        # sub_heading_format = workbook.add_format({'align': 'left',
+        #                                           # 'valign': 'vcenter',
+        #                                           'bold': True, 'size': 14})
+        # sub_heading_format.set_border()
+        # cell_text_format_n = workbook.add_format({'align': 'center',
+        #                                           'bold': True, 'size': 9,
+        #                                           })
+        # cell_text_format_n.set_border()
+        # cell_photo_format = workbook.add_format({'align': 'center',
+        #
+        #                                          })
+        # cell_photo_format.set_border()
+        # cell_date_text_format = workbook.add_format({'align': 'left',
+        #                                              'size': 9,
+        #                                              })
+        # cell_date_text_format.set_border()
+        #
+        # approve_format = workbook.add_format({'align': 'left',
+        #                                       'bold': False, 'size': 14,
+        #                                       })
+        #
+        # cell_text_format = workbook.add_format({'align': 'left',
+        #                                         'bold': True, 'size': 13,
+        #                                         'fg_color': '#695B55',
+        #                                         'font_color': 'white'
+        #                                         })
+        #
+        # cell_text_format.set_border()
+        # cell_text_format_new = workbook.add_format({'align': 'left',
+        #                                             'size': 9,
+        #                                             'num_format': '#,###0.00',
+        #                                             })
+        # cell_text_format_new.set_border()
+        # cell_number_format = workbook.add_format({'align': 'right',
+        #                                           'bold': False, 'size': 9,
+        #                                           'num_format': '#,###0.00'})
+        # cell_number_format.set_border()
+        # worksheet = workbook.add_worksheet(
+        #     'Asset report ' + str(self.date_from) + ' - ' + str(self.date_to) + ' report.xlsx')
+        # normal_num_bold = workbook.add_format({'bold': True, 'num_format': '#,###0.00', 'size': 9, })
+        # normal_num_bold.set_border()
+        # worksheet.set_column('A:J', 20)
+        # worksheet.set_default_row(15)
+        #
+        # worksheet.set_row(0, 20)
+        # worksheet.set_row(1, 20)
+        # worksheet.set_row(2, 15)
+        # worksheet.set_row(3, 15)
+        # worksheet.set_row(4, 15)
+        # worksheet.set_row(5, 20)
+        # row = 2
+        # row_set = row
+        #
+        # if self.date_from and self.date_to:
+        #     date_2 = datetime.strftime(self.date_to, '%d-%m-%Y')
+        #     date_1 = datetime.strftime(self.date_from, '%d-%m-%Y')
+        #     asset_report_month = self.date_from.strftime("%B")
+        #     worksheet.merge_range('A1:H2', 'Asset Report For %s %s' % (asset_report_month, self.date_from.year),
+        #                           heading_format)
+        #     worksheet.write('A4:A4', 'Company', cell_text_format_n)
+        #     # worksheet.write('G4:G4', '', cell_text_format_n)
+        #     # worksheet.write('H4:H4', '', cell_text_format_n)
+        #     # worksheet.write('I4:I4', '', cell_text_format_n)
+        #     # worksheet.write('J4:J4', '', cell_text_format_n)
+        #     # worksheet.merge_range('B4:D4', '%s' % (self.company.name), cell_text_format_n)
+        #     # worksheet.write(row, 4, 'Date From', cell_text_format_n)
+        #     # worksheet.write(row, 5, date_1 or '', cell_date_text_format)
+        #     # row += 1
+        #     # worksheet.write(row, 4, 'Date To', cell_text_format_n)
+        #     # worksheet.write(row, 5, date_2 or '', cell_date_text_format)
+        #     # row += 2
+        #
+        #     worksheet.write(row, 0, 'Asset Name', cell_text_format)
+        #     worksheet.write(row, 1, 'S/N/Asset ID', cell_text_format)
+        #     worksheet.write(row, 2, 'Asset No', cell_text_format)
+        #     worksheet.write(row, 3, 'Date of purchase', cell_text_format)
+        #     worksheet.write(row, 4, 'Amount', cell_text_format)
+        #     worksheet.write(row, 5, 'Assigned To', cell_text_format)
+        #     worksheet.write(row, 6, 'Department', cell_text_format)
+        #     # worksheet.write(row, 7, 'Photo', cell_text_format)
+        #     worksheet.write(row, 7, 'Status', cell_text_format)
+        #     # worksheet.write(row, 9, 'Remark', cell_text_format)
+        #
+        #     department_asset = self.env['account.asset.asset'].sudo().search(
+        #         [('department_id', '=', self.department_name)])
+        #     all_asset = self.env['account.asset.asset'].sudo().search([])
+        #
+        #     ro = row + 1
+        #     col = 0
+        #     if department_asset:
+        #         for departmental_asset in department_asset:
+        #             asset_name = departmental_asset.name
+        #             asset_id = departmental_asset.asset_id_no
+        #             asset_number = departmental_asset.code
+        #             purchase_date = datetime.strftime(departmental_asset.date, '%d-%m-%Y')
+        #             amount = departmental_asset.value
+        #             assigned_to = 'Null'
+        #             department = departmental_asset.department_id.name
+        #             image_small = departmental_asset.image_small
+        #             status = departmental_asset.state
+        #             remark = ""
+        #
+        #             worksheet.write(ro, col, asset_name or '', cell_text_format_new)
+        #             worksheet.write(ro, col + 1, asset_id or '', cell_text_format_new)
+        #             worksheet.write(ro, col + 2, asset_number or '', cell_text_format_new)
+        #             worksheet.write(ro, col + 3, purchase_date or '', cell_text_format_new)
+        #             worksheet.write(ro, col + 4, amount or '', cell_text_format_new)
+        #             worksheet.write(ro, col + 5, assigned_to or '', cell_text_format_new)
+        #             worksheet.write(ro, col + 6, department or '', cell_text_format_new)
+        #             # if image_small:
+        #             #     image_binary = base64.b64decode(image_small)
+        #             #     image_stream = BytesIO(image_binary)
+        #             #     worksheet.insert_image(ro, col + 7, 'image.png',
+        #             #                            {'image_data': image_stream, 'object_position': 1, 'x_scale': 0.02,
+        #             #                             'y_scale': 0.02})
+        #             # if image_small:
+        #                 # # Determine the image format using imghdr
+        #                 # image_format = imghdr.what('', h=image_small)
+        #                 #
+        #                 # if image_format:
+        #                 #     image_filename = f'image.{image_format}'
+        #                 #
+        #                 #     image_binary = base64.b64decode(image_small)
+        #                 #     image_stream = BytesIO(image_binary)
+        #                 #
+        #                 #     worksheet.insert_image(ro, col + 7, image_filename,
+        #                 #                            {'image_data': image_stream, 'object_position': 1, 'x_scale': 0.02,
+        #                 #                             'y_scale': 0.02})
+        #
+        #             # if image_small:
+        #             #     # Convert the image to JPEG format
+        #             #     image_binary = base64.b64decode(image_small)
+        #             #     image_stream = BytesIO(image_binary)
+        #             #     image = Image.open(image_stream)
+        #             #
+        #             #     # Convert to RGB mode to ensure compatibility
+        #             #     if image.mode != "RGB":
+        #             #         image = image.convert("RGB")
+        #             #
+        #             #     # Create a new BytesIO to hold the JPEG data
+        #             #     jpeg_stream = BytesIO()
+        #             #     image.save(jpeg_stream, format="JPEG")
+        #             #
+        #             #     # Determine the image format using imghdr
+        #             #     image_format = imghdr.what('', h=jpeg_stream.getvalue())
+        #             #
+        #             #     if image_format:
+        #             #         image_filename = f'image.{image_format}'
+        #             #
+        #             #         # Create a new stream from the JPEG data
+        #             #         jpeg_stream.seek(0)
+        #             #         worksheet.insert_image(ro, col + 7, image_filename,
+        #             #                                {'image_data': jpeg_stream, 'object_position': 1, 'x_scale': 0.02,
+        #             #                                 'y_scale': 0.02})
+        #             #
+        #             # else:
+        #             #     worksheet.write(ro, col + 7, '', cell_text_format_new)
+        #             worksheet.write(ro, col + 7, status or '', cell_text_format_new)
+        #             # worksheet.write(ro, col + 9, remark or '', cell_text_format_new)
+        #             ro = ro + 1
+        #
+        #     else:
+        #         for total_asset in all_asset:
+        #             asset_name = total_asset.name
+        #             asset_id = total_asset.asset_id_no
+        #             asset_number = total_asset.code
+        #             purchase_date = datetime.strftime(total_asset.date, '%d-%m-%Y')
+        #             amount = total_asset.value
+        #             assigned_to = "Null"
+        #             department = total_asset.department_id.name
+        #             image_small = total_asset.image_small
+        #             status = total_asset.state
+        #             remark = ""
+        #
+        #             worksheet.write(ro, col, asset_name or '', cell_text_format_new)
+        #             worksheet.write(ro, col + 1, asset_id or '', cell_text_format_new)
+        #             worksheet.write(ro, col + 2, asset_number or '', cell_text_format_new)
+        #             worksheet.write(ro, col + 3, purchase_date or '', cell_text_format_new)
+        #             worksheet.write(ro, col + 4, amount or '', cell_text_format_new)
+        #             worksheet.write(ro, col + 5, assigned_to or '', cell_text_format_new)
+        #             worksheet.write(ro, col + 6, department or '', cell_text_format_new)
+        #             # worksheet.insert_image(ro, col + 7, image_stream or '', cell_text_format_new)
+        #             # Create a format for the image
+        #
+        #             # if image_small:
+        #             #     image_binary = base64.b64decode(image_small)
+        #             #     image_stream = BytesIO(image_binary)
+        #             #     worksheet.insert_image(ro, col + 7, 'image.png',
+        #             #                            {'image_data': image_stream, 'object_position': 1, 'x_scale': 0.02,
+        #             #                             'y_scale': 0.02})
+        #             # if image_small:
+        #             #     # Convert the image to JPEG format
+        #             #     image_binary = base64.b64decode(image_small)
+        #             #     image_stream = BytesIO(image_binary)
+        #             #     image = Image.open(image_stream)
+        #             #
+        #             #     # Convert to RGB mode to ensure compatibility
+        #             #     if image.mode != "RGB":
+        #             #         image = image.convert("RGB")
+        #             #
+        #             #     # Create a new BytesIO to hold the JPEG data
+        #             #     jpeg_stream = BytesIO()
+        #             #     image.save(jpeg_stream, format="JPEG")
+        #             #
+        #             #     # Determine the image format using imghdr
+        #             #     image_format = imghdr.what('', h=jpeg_stream.getvalue())
+        #             #
+        #             #     if image_format:
+        #             #         image_filename = f'image.{image_format}'
+        #             #
+        #             #         # Create a new stream from the JPEG data
+        #             #         jpeg_stream.seek(0)
+        #             #         worksheet.insert_image(ro, col + 7, image_filename,
+        #             #                                {'image_data': jpeg_stream, 'object_position': 1, 'x_scale': 0.02,
+        #             #                                 'y_scale': 0.02})
+        #             # else:
+        #             #     worksheet.write(ro, col + 7, '', cell_text_format_new)
+        #
+        #             worksheet.write(ro, col + 7, status or '', cell_text_format_new)
+        #             # worksheet.write(ro, col + 9, remark or '', cell_text_format_new)
+        #             ro = ro + 1
 
         workbook.close()
         file_download = base64.b64encode(fp.getvalue())
