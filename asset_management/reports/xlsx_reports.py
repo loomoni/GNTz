@@ -2,8 +2,6 @@
 import base64
 from io import BytesIO
 
-import openpyxl
-
 from odoo import models, fields, api, _
 from odoo.http import request
 from odoo.tools import datetime
