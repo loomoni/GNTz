@@ -194,11 +194,11 @@ class AssetsInherit(models.Model):
     # asset_assignment_ids = fields.Many2many(comodel_name='account.asset.assign', string="Assets Assignment",
     #                                         inverse_name="asset_ids")
 
-    _sql_constraints = [
-        ('code_unique',
-         'unique(code)',
-         'Choose another reference no - it has to be unique!')
-    ]
+    # _sql_constraints = [
+    #     ('code_unique',
+    #      'unique(code)',
+    #      'Choose another reference no - it has to be unique!')
+    # ]
 
     @api.onchange('journal_id')
     def onchange_journal_id(self):
