@@ -10,6 +10,7 @@ from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 import math
 from odoo.exceptions import ValidationError, UserError
+from odoo.http import request
 
 
 class InventoryStockIn(models.Model):
@@ -586,65 +587,96 @@ class GeneralInventoryListWizard(models.TransientModel):
         fp = BytesIO()
 
         workbook = xlsxwriter.Workbook(fp)
+        heading_company_format = workbook.add_format({
+            # 'bold': True,
+            'font_size': 7,
+            'font_name': 'Arial',
+            # 'align': 'center',
+            'valign': 'vcenter',
+            'text_wrap': True,
+        })
+        heading_company_format.set_border()
         heading_format = workbook.add_format({'align': 'center',
                                               'valign': 'vcenter',
-                                              'text_wrap': True,
                                               'bold': True,
                                               'size': 14,
                                               'fg_color': '#89A130', })
         heading_format.set_border()
+        title_format = workbook.add_format({
+            'bold': True,
+            'font_name': 'Arial',
+            'font_size': 14,
+            'align': 'center',
+            # 'valign': 'vcenter',
+            'text_wrap': True,
+        })
+        title_format.set_border()
+        divider_format = workbook.add_format({'fg_color': '#9BBB59', })
+        divider_format.set_border()
+        cell_text_info_body_format = workbook.add_format({
+            'bold': True,
+            'font_name': 'Arial',
+            'font_size': 8,
+            'align': 'center',
+            'text_wrap': True,
+        })
+        cell_text_info_body_format = workbook.add_format({
+            'bold': True,
+            'font_name': 'Arial',
+            'font_size': 8,
+            'align': 'center',
+            'text_wrap': True,
+        })
+        cell_text_info_body_format.set_border()
+        cell_text_info_format = workbook.add_format({
+            'bold': True,
+            'font_name': 'Arial',
+            'font_size': 8,
+            'text_wrap': True,
+        })
+        cell_text_info_format.set_border()
+        cell_text_format = workbook.add_format({'align': 'left',
+                                                'bold': True,
+                                                'size': 12,
+                                                })
+        cell_text_format.set_border()
+
         sub2_heading_format = workbook.add_format({'align': 'center',
                                                    'valign': 'vcenter',
-                                                   'text_wrap': True,
                                                    'bold': True, 'size': 14})
         sub2_heading_format.set_border()
         dr_cr_format = workbook.add_format({'align': 'center',
                                             # 'valign': 'vcenter',
-                                            'text_wrap': True,
                                             'bold': True, 'size': 14})
         dr_cr_format.set_border()
         sub_heading_format = workbook.add_format({'align': 'left',
                                                   # 'valign': 'vcenter',
-                                                  'text_wrap': True,
                                                   'bold': True, 'size': 14})
         sub_heading_format.set_border()
+
         cell_text_format_n = workbook.add_format({'align': 'center',
-                                                  'text_wrap': True,
                                                   'bold': True, 'size': 9,
                                                   })
         cell_text_format_n.set_border()
         cell_photo_format = workbook.add_format({'align': 'center',
-                                                 'text_wrap': True,
 
                                                  })
         cell_photo_format.set_border()
         cell_date_text_format = workbook.add_format({'align': 'left',
                                                      'size': 9,
-                                                     'text_wrap': True,
                                                      })
         cell_date_text_format.set_border()
 
         approve_format = workbook.add_format({'align': 'left',
-                                              'text_wrap': True,
                                               'bold': False, 'size': 14,
                                               })
 
-        cell_text_format = workbook.add_format({'align': 'left',
-                                                'bold': True, 'size': 13,
-                                                'fg_color': '#695B55',
-                                                'text_wrap': True,
-                                                'font_color': 'white'
-                                                })
-
-        cell_text_format.set_border()
         cell_text_format_new = workbook.add_format({'align': 'left',
                                                     'size': 9,
-                                                    'text_wrap': True,
                                                     'num_format': '#,###0.00',
                                                     })
         cell_text_format_new.set_border()
         cell_number_format = workbook.add_format({'align': 'right',
-                                                  'text_wrap': True,
                                                   'bold': False, 'size': 9,
                                                   'num_format': '#,###0.00'})
         cell_number_format.set_border()
@@ -652,7 +684,7 @@ class GeneralInventoryListWizard(models.TransientModel):
             'Inventory report ' + str(self.date_from) + ' - ' + str(self.date_to) + ' report.xlsx')
         normal_num_bold = workbook.add_format({'bold': True, 'num_format': '#,###0.00', 'size': 9, })
         normal_num_bold.set_border()
-        worksheet.set_column('A:J', 20)
+        worksheet.set_column('A:E', 20)
         # worksheet.set_default_row(45)
 
         worksheet.set_row(0, 20)
@@ -661,45 +693,87 @@ class GeneralInventoryListWizard(models.TransientModel):
         worksheet.set_row(3, 15)
         worksheet.set_row(4, 15)
         worksheet.set_row(5, 20)
-        row = 2
-        row_set = row
+        worksheet.set_row(6, 20)
 
         if self.date_from and self.date_to:
-            date_2 = datetime.strftime(self.date_to, '%d-%m-%Y')
             date_1 = datetime.strftime(self.date_from, '%d-%m-%Y')
+            date_2 = datetime.strftime(self.date_to, '%d-%m-%Y')
             asset_report_month = self.date_from.strftime("%B")
-            worksheet.merge_range('A1:E2', 'Inventory Report For %s %s' % (asset_report_month, self.date_from.year),
-                                  heading_format)
-            # worksheet.merge_range('E1:G2', 'LOGO', heading_format)
 
-            worksheet.write('A3:A3', 'Company', cell_text_format_n)
-            worksheet.merge_range('B3:C3', '%s' % self.company.name, cell_text_format_n)
+            # Retrieve the company information from the environment
+            worksheet.set_row(0, 85)
+            # worksheet.set_column('A:E', 13)
+            # worksheet.merge_range('A1:F1', '')
+            company = self.env.user.company_id
+            # Get the logged-in user's name
+            user = request.env.user
+            user_name = user.name
+            email = user.login
+            job_position = ''
+            employee = request.env['hr.employee'].sudo().search([('user_id', '=', user.id), ('job_id', '!=', False)],
+                                                                limit=1)
+            if employee:
+                job_position = employee.job_id.name or ''
 
-            worksheet.write('A4:A4', 'Department', cell_text_format_n)
-            if self.department_name:
-                worksheet.merge_range('B4:C4', '%s' % self.department_id.name, cell_text_format_n)
-            else:
-                worksheet.merge_range('B4:C4', "All", cell_text_format_n)
+            # Find the department name of the employee
+            department_name = ''
+            if employee and employee.department_id:
+                department_name = employee.department_id.name or ''
+            company_info = "\n".join(filter(None, [company.name, company.street2, company.street, company.city,
+                                                   company.country_id.name,
+                                                   'Phone: ' + company.phone + ' Email: ' + company.email + ' Web: ' + company.website]))
+            worksheet.merge_range('A1:E1', company_info, heading_company_format)
 
-            worksheet.write(row, 3, 'Date From', cell_text_format_n)
-            worksheet.write(row, 4, date_1 or '', cell_date_text_format)
-            row += 1
-            worksheet.write(row, 3, 'Date To', cell_text_format_n)
-            worksheet.write(row, 4, date_2 or '', cell_date_text_format)
-            row += 2
+            # Convert the logo from base64 to binary data
+            logo_data = base64.b64decode(company.logo)
 
+            # Create a BytesIO object to hold the image data
+            image_stream = BytesIO(logo_data)
+            # Add the logo to the worksheet
+            worksheet.insert_image('D1', 'logo.png', {'image_data': image_stream, 'x_scale': 0.43, 'y_scale': 0.43})
+
+            worksheet.set_row(1, 26)
+            worksheet.merge_range('A2:E2', "GNTZ HO General Report", title_format)
+
+            worksheet.set_row(2, 17)
+            worksheet.set_row(6, 17)
+            worksheet.merge_range('A3:E3', '', divider_format)
+            worksheet.merge_range('A7:E7', '', divider_format)
+
+            worksheet.write('A4:A4', 'Extracted by', cell_text_info_format)
+            worksheet.merge_range('B4:C4', user_name or '', cell_text_info_body_format)
+
+            worksheet.write('A5:A5', 'From', cell_text_info_format)
+            worksheet.merge_range('B5:C5', date_1, cell_text_info_body_format)
+
+            worksheet.write('D5:D5', 'TO', cell_text_info_format)
+            worksheet.write('E5:E5', date_2, cell_text_info_body_format)
+
+            worksheet.write('A6:A6', 'Email', cell_text_info_format)
+            worksheet.merge_range('B6:C6', email or '', cell_text_info_body_format)
+
+            worksheet.write('D4:D4', 'Designation', cell_text_info_format)
+            worksheet.write('E4:E4', job_position or '', cell_text_info_body_format)
+
+            worksheet.write('D6:D6', 'Department', cell_text_info_format)
+            worksheet.write('E6:E6', department_name or '', cell_text_info_body_format)
+
+            row = 7
+
+            # End of the header part
             worksheet.write(row, 0, 'Item', cell_text_format)
-            # worksheet.write(row, 1, 'Remark', cell_text_format)
             worksheet.write(row, 1, 'Total Purchased', cell_text_format)
             worksheet.write(row, 2, 'Total Used', cell_text_format)
             worksheet.write(row, 3, 'Balance', cell_text_format)
+            worksheet.write(row, 4, 'Action', cell_text_format)
 
             department_general_inventory = self.env['product.template'].sudo().search(
                 [('department_id', '=', self.department_name)])
             general_inventory_report = self.env['product.template'].sudo().search([])
 
-            ro = row + 1
+            row = row + 1
             col = 0
+            index = 1
             if department_general_inventory:
                 for department_inventory in department_general_inventory:
                     item = department_inventory.name
@@ -707,12 +781,14 @@ class GeneralInventoryListWizard(models.TransientModel):
                     total_used = department_inventory.issued_quantity
                     balance = department_inventory.balance_stock
 
-                    worksheet.write(ro, col, item or '', cell_text_format_new)
-                    # worksheet.write(ro, col + 1, '', cell_text_format_new)
-                    worksheet.write(ro, col + 1, total_purchased or '', cell_text_format_new)
-                    worksheet.write(ro, col + 2, total_used or '', cell_text_format_new)
-                    worksheet.write(ro, col + 3, balance or '', cell_text_format_new)
-                    ro = ro + 1
+                    worksheet.write(row, col, index or '', cell_text_format_new)
+                    worksheet.write(row, col, item or '', cell_text_format_new)
+                    worksheet.write(row, col + 1, total_purchased or '', cell_text_format_new)
+                    worksheet.write(row, col + 2, total_used or '', cell_text_format_new)
+                    worksheet.write(row, col + 3, balance or '', cell_text_format_new)
+                    worksheet.write(row, col + 4, '', cell_text_format_new)
+                    row = row + 1
+                    index = index + 1
             else:
                 for all_inventory_available in general_inventory_report:
                     item = all_inventory_available.name
@@ -720,12 +796,14 @@ class GeneralInventoryListWizard(models.TransientModel):
                     total_used = all_inventory_available.issued_quantity
                     balance = all_inventory_available.balance_stock
 
-                    worksheet.write(ro, col, item or '', cell_text_format_new)
-                    # worksheet.write(ro, col + 1, '', cell_text_format_new)
-                    worksheet.write(ro, col + 1, total_purchased or '', cell_text_format_new)
-                    worksheet.write(ro, col + 2, total_used or '', cell_text_format_new)
-                    worksheet.write(ro, col + 3, balance or '', cell_text_format_new)
-                    ro = ro + 1
+                    worksheet.write(row, col, index or '', cell_text_format_new)
+                    worksheet.write(row, col, item or '', cell_text_format_new)
+                    worksheet.write(row, col + 1, total_purchased or '', cell_text_format_new)
+                    worksheet.write(row, col + 2, total_used or '', cell_text_format_new)
+                    worksheet.write(row, col + 3, balance or '', cell_text_format_new)
+                    worksheet.write(row, col + 4, '', cell_text_format_new)
+                    row = row + 1
+                    index = index + 1
 
         workbook.close()
         file_download = base64.b64encode(fp.getvalue())
