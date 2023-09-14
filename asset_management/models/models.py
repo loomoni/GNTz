@@ -24,6 +24,7 @@ import calendar
 
 class AssetsInherit(models.Model):
     _inherit = 'account.asset.asset'
+    _name = "account.asset.asset"
 
     ASSET_ORIGIN_SELECTION = [
         ("donated", "Donations"),
@@ -81,15 +82,11 @@ class AssetsInherit(models.Model):
     @api.depends('department_id.branch_id.code', 'category_id.asset_category_code')
     def _default_serial_no(self):
         asset_count = self.env['account.asset.asset'].search_count([])
-
         for record in self:
             branch_code = str(record.department_id.branch_id.code) if record.department_id.branch_id.code else ""
-            category_code = str(
-                record.category_id.asset_category_code) if record.category_id.asset_category_code else ""
+            category_code = str(record.category_id.asset_category_code) if record.category_id.asset_category_code else ""
 
-            sequence_counter = asset_count + 1
-
-            record.code = 'GNTZ' + '-' + branch_code + '-' + category_code + '-' + str(sequence_counter)
+            record.code = 'GNTZ' + '-' + branch_code + '-' + category_code + '-' + str(asset_count + 1)
 
     def _default_department(self):
         employee = self.env['hr.employee'].sudo().search(
@@ -97,7 +94,8 @@ class AssetsInherit(models.Model):
         if employee and employee.department_id:
             return employee.department_id.id
 
-    code = fields.Char(string='Asset Number', compute='_default_serial_no', readonly=False)
+    code = fields.Char(string='Asset Number', compute='_default_serial_no', store=True, readonly=False)
+    # code = fields.Char(string='Asset Number', readonly=False)
     cummulative_amount = fields.Float(string='Accumulated Depreciation', compute='_compute_accumulated_depreciation',
                                       method=True, digits=0)
     asset_origin = fields.Selection(ASSET_ORIGIN_SELECTION, index=True, track_visibility='onchange',
