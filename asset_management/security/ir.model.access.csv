@@ -8,6 +8,7 @@ asset_type_dm,Asset Type DM Group,model_account_asset_category,asset_dm,1,1,1,1
 asset_type_all_staff,Asset Type all_staff Group,model_account_asset_category,all_staff,1,1,1,0
 asset_type_ict_officer,Asset Type ict officer Group,model_account_asset_category,all_ict_officer,1,1,1,0
 
+asset_management_staff,Asset staff Group,model_account_asset_asset,asset_management.all_staff,1,1,1,1
 asset_management_ad,Asset ad Group,model_account_asset_asset,asset_management.asset_dm,1,1,1,1
 asset_management_cd,Asset cd Group,model_account_asset_asset,asset_management.asset_cd,1,1,1,1
 asset_management_dfa,Asset ho Group,model_account_asset_asset,asset_management.asset_procurement_ho,1,1,1,1
@@ -62,3 +63,5 @@ account_asset_asset_reevaluation_depreciation_lines_es,Asset Reevaluation Deprec
 account_asset_hand_over_lines,account asset hand over lines,model_account_asset_hand_over_lines,,1,1,1,1
 
 account_asset_description_line,account asset description.lines,model_description_line,,1,1,1,1
+
+account_damage_line_assets_rel,account asset damage.line.assets.rel,model_damage_line_assets_rel,,1,1,1,1

@@ -114,12 +114,12 @@
         </record>
 
         <!--  Asset assignment rules -->
-        <record model="ir.rule" id="custom_asset_all_staff_access_rule">
-            <field name="name">All Staff Asset Assignment access rule</field>
-            <field name="model_id" ref="asset_management.model_account_asset_assign"/>
-            <field name="domain_force">[('assigned_person.user_id','=',user.id)]</field>
-            <field name="groups" eval="[(4,ref('asset_management.all_staff'))]"/>
-        </record>
+<!--        <record model="ir.rule" id="custom_asset_all_staff_access_rule">-->
+<!--            <field name="name">All Staff Asset Assignment access rule</field>-->
+<!--            <field name="model_id" ref="asset_management.model_account_asset_assign"/>-->
+<!--            <field name="domain_force">[('assigned_person.user_id','=',user.id)]</field>-->
+<!--            <field name="groups" eval="[(4,ref('asset_management.all_staff'))]"/>-->
+<!--        </record>-->
 
         <record model="ir.rule" id="custom_asset_finance_ho_access_rule">
             <field name="name">Finance HO Asset Assignment access rule</field>

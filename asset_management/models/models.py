@@ -84,7 +84,8 @@ class AssetsInherit(models.Model):
         asset_count = self.env['account.asset.asset'].search_count([])
         for record in self:
             branch_code = str(record.department_id.branch_id.code) if record.department_id.branch_id.code else ""
-            category_code = str(record.category_id.asset_category_code) if record.category_id.asset_category_code else ""
+            category_code = str(
+                record.category_id.asset_category_code) if record.category_id.asset_category_code else ""
 
             record.code = 'GNTZ' + '-' + branch_code + '-' + category_code + '-' + str(asset_count + 1)
 
@@ -129,6 +130,9 @@ class AssetsInherit(models.Model):
     description_line_ids = fields.One2many(comodel_name='description.line',
                                            string="description IDS",
                                            inverse_name="description_ids")
+    asset_assignment_line_ids = fields.One2many(comodel_name='account.asset.assign',
+                                                string="Asset Assignment IDS",
+                                                inverse_name="asset_ids")
 
     # asset_assignment_ids = fields.Many2many(comodel_name='account.asset.assign', string="Assets Assignment",
     #                                         inverse_name="asset_ids")

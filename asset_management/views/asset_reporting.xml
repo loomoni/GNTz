@@ -123,9 +123,9 @@
                         <page string="Equipment Information">
                             <field name="asset_reporting_damage_line_ids">
                                 <tree editable="bottom">
-                                    <field name="name"
-                                           options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
-                                    <!--                                    <field name="identification_number"/>-->
+                                    <field name="name" options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
+
+                                    <!-- options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>                                   <field name="identification_number"/>-->
                                     <field name="report_attachment" filename="report_attachment_name" widget="download_link"/>
                                     <field name="report_attachment_name" invisible="1"/>
                                     <field name="location"/>

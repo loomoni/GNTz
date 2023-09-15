@@ -160,8 +160,8 @@ class AssetReportingDamage(models.Model):
                                                       inverse_name="asset_reporting_damage_id",
                                                       string="Asset Reporting damage line",
                                                       required=False, )
-    damage_asset_name = fields.Char(string="Damage Asset", related="asset_reporting_damage_line_ids.name.asset_name")
-    # damage_asset_name = fields.Char(string="Damage Asset", related="asset_reporting_damage_line_ids.location")
+    # damage_asset_name = fields.Char(string="Damage Asset", related="asset_reporting_damage_line_ids.name.asset_name")
+    damage_asset_name = fields.Char(string="Damage Asset")
 
 
 class AssetReportingDamageLine(models.Model):
@@ -189,8 +189,16 @@ class AssetReportingDamageLine(models.Model):
                              default='draft')
     IT_state = fields.Selection(IT_SELECTION, index=True, track_visibility='onchange',
                                 default='draft_it')
-    name = fields.Many2one(comodel_name="account.asset.assign", string="Asset")
-    identification_number = fields.Char(string="Code", related="name.asset_number")
+    name = fields.Many2one(comodel_name="account.asset.asset", compute='_compute_available_assets', string="Asset", readonly=False)
+    # name = fields.Many2many(
+    #     comodel_name="account.asset.assign",
+    #     relation="damage_line_assets_rel",
+    #     column1="damage_line_id",
+    #     column2="asset_id",
+    #     string="Assets",
+    # )
+
+    # identification_number = fields.Char(string="Code", related="name.asset_number")
     location = fields.Char(string="Location")
     damage_description = fields.Text(string="Description")
     cost = fields.Char(string="Estimated Cost ")
@@ -199,6 +207,45 @@ class AssetReportingDamageLine(models.Model):
     person_responsible = fields.Many2one(comodel_name="res.users", string="Person responsible")
     asset_reporting_damage_id = fields.Many2one(comodel_name="asset.reporting.damage", string="Reporting damage ID",
                                                 required=False)
+
+    @api.onchange('asset_ids')  # Add dependencies if needed
+    def _compute_available_assets(self):
+        for rec in self:
+            # Fetch all the available assignments
+            available_assignments = self.env['account.asset.asset'].search([('asset_assignment_line_ids.assigned_person', '=', self.asset_reporting_damage_id.name)])
+            # Create a list of (id, name) pairs for the available assignments
+            # assignment_options = [(assignment.id, assignment.name) for assignment in available_assignments]
+            # Set the computed field with the available assignment options
+            rec.name = available_assignments
+
+    # def _compute_available_assets(self):
+    #     for line in self:
+    #         # Fetch all the available assignments
+    #         available_assignments = self.env['account.asset.asset'].search([])
+    #         # Create a list of (id, name) pairs for the available assignments
+    #         assignment_options = [(assignment.id, assignment.name) for assignment in available_assignments]
+    #         # Set the computed field with the available assignment options
+    #         line.name = False  # Clear the existing value
+    #         return {'domain': {'name': [('id', 'in', [x[0] for x in assignment_options])]}}
+
+
+class DamageLineAssetsRel(models.Model):
+    _name = 'damage.line.assets.rel'
+    _description = 'Damage Line - Assigned Assets Relation'
+
+    damage_line_id = fields.Many2one(
+        comodel_name='asset.reporting.damage.line',
+        string='Damage Line',
+        required=True,
+        ondelete='cascade',
+    )
+
+    asset_id = fields.Many2one(
+        comodel_name='account.asset.assign',
+        string='Asset',
+        required=True,
+        ondelete='cascade',
+    )
 
 
 class AssetReportingLost(models.Model):
@@ -236,7 +283,7 @@ class AssetReportingLost(models.Model):
             return employee.id
 
     name = fields.Many2one(comodel_name='hr.employee', string='Employee Name',
-                           required=True,  default=_default_employee)
+                           required=True, default=_default_employee)
     state = fields.Selection(SELECTION, index=True, track_visibility='onchange',
                              default='draft')
     employee_no = fields.Char(string='Employee Number', related='name.work_phone')

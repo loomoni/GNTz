@@ -10,6 +10,7 @@ from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 import math
 from odoo.exceptions import ValidationError, UserError
+from odoo.fields import Many2one
 from odoo.http import request
 
 
@@ -571,7 +572,7 @@ class ProjectConfiguration(models.Model):
 class GeneralInventoryListWizard(models.TransientModel):
     _name = 'general.inventory.report.wizard'
 
-    department_id = fields.Many2one('hr.department', string='Department', required=False)
+    department_id: Many2one = fields.Many2one('hr.department', string='Department', required=False)
     department_name = fields.Integer(string='Department', related='department_id.id')
     date_from = fields.Date(string='Date From', required=True,
                             default=lambda self: fields.Date.to_string(date.today().replace(day=1)))
@@ -774,6 +775,8 @@ class GeneralInventoryListWizard(models.TransientModel):
             row = row + 1
             col = 0
             index = 1
+
+            # if self.department_id != '':
             if department_general_inventory:
                 for department_inventory in department_general_inventory:
                     item = department_inventory.name
@@ -789,6 +792,7 @@ class GeneralInventoryListWizard(models.TransientModel):
                     worksheet.write(row, col + 4, '', cell_text_format_new)
                     row = row + 1
                     index = index + 1
+            # elif self.department_id == '':
             else:
                 for all_inventory_available in general_inventory_report:
                     item = all_inventory_available.name

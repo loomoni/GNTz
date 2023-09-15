@@ -9,7 +9,6 @@
             <tree>
                 <field name="branch"/>
                 <field name="value"/>
-                <field name="code"/>
                 <field name="value_residual" widget="monetary"/>
                 <field name="currency_id" groups="base.group_multi_currency"/>
                 <field name="company_id" groups="base.group_multi_company"/>
