@@ -8,7 +8,7 @@
         <field name="arch" type="xml">
             <tree string="Asset Reporting">
                 <field name="name"/>
-                <field name="damage_asset_name"/>
+<!--                <field name="damage_asset_name"/>-->
                 <field name="report_date"/>
                 <field name="recommendation" string="Action Taken"/>
             </tree>
