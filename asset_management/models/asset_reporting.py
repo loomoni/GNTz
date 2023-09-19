@@ -189,7 +189,7 @@ class AssetReportingDamageLine(models.Model):
                              default='draft')
     IT_state = fields.Selection(IT_SELECTION, index=True, track_visibility='onchange',
                                 default='draft_it')
-    name = fields.Many2one(comodel_name="account.asset.asset", compute='_compute_available_assets', string="Asset", readonly=False)
+    name = fields.Many2one(comodel_name="account.asset.asset", string="Asset", readonly=False)
     # name = fields.Many2many(
     #     comodel_name="account.asset.assign",
     #     relation="damage_line_assets_rel",
@@ -208,15 +208,15 @@ class AssetReportingDamageLine(models.Model):
     asset_reporting_damage_id = fields.Many2one(comodel_name="asset.reporting.damage", string="Reporting damage ID",
                                                 required=False)
 
-    @api.onchange('asset_ids')  # Add dependencies if needed
-    def _compute_available_assets(self):
-        for rec in self:
-            # Fetch all the available assignments
-            available_assignments = self.env['account.asset.asset'].search([('asset_assignment_line_ids.assigned_person', '=', self.asset_reporting_damage_id.name)])
-            # Create a list of (id, name) pairs for the available assignments
-            # assignment_options = [(assignment.id, assignment.name) for assignment in available_assignments]
-            # Set the computed field with the available assignment options
-            rec.name = available_assignments
+    # @api.onchange('asset_ids')  # Add dependencies if needed
+    # def _compute_available_assets(self):
+    #     for rec in self:
+    #         # Fetch all the available assignments
+    #         available_assignments = self.env['account.asset.asset'].search([('asset_assignment_line_ids.assigned_person', '=', self.asset_reporting_damage_id.name)])
+    #         # Create a list of (id, name) pairs for the available assignments
+    #         # assignment_options = [(assignment.id, assignment.name) for assignment in available_assignments]
+    #         # Set the computed field with the available assignment options
+    #         rec.name = available_assignments
 
     # def _compute_available_assets(self):
     #     for line in self:
