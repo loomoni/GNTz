@@ -76,18 +76,14 @@ class AssetReportingDamage(models.Model):
     def button_procurement_review(self):
         if self.recommendation == "repair":
             for asset in self.asset_reporting_damage_line_ids:
-                asset.write({'state': 'procurement'})
-                for reported_asset in asset.name:
-                    for asset_name in reported_asset.asset_ids:
-                        asset_name.write({'state': 'repair'})
+                for asset_name in asset.name:
+                    asset_name.write({'state': 'repair'})
             self.write({'state': 'procurement'})
             return True
         else:
             for asset in self.asset_reporting_damage_line_ids:
-                asset.write({'state': 'procurement'})
-                for reported_asset in asset.name:
-                    for asset_name in reported_asset.asset_ids:
-                        asset_name.write({'state': 'replace'})
+                for asset_name in asset.name:
+                    asset_name.write({'state': 'replace'})
             self.write({'state': 'procurement'})
             return True
 
