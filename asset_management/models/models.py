@@ -528,6 +528,8 @@ class AssetListWizard(models.TransientModel):
 
         workbook = xlsxwriter.Workbook(fp)
         worksheet = workbook.add_worksheet()
+        # Disable gridlines
+        worksheet.hide_gridlines(2)  # 2 means 'both'
 
         # Define the heading format
         heading_format = workbook.add_format({
@@ -654,13 +656,10 @@ class AssetListWizard(models.TransientModel):
         worksheet.write('I8:I8', 'Status', cell_text_sub_title_format)
 
         department_asset = self.env['account.asset.asset'].sudo().search(
-            [('department_id', '=', self.department_name), ('date', '>=', self.date_from),
-             ('date', '<=', self.date_to)])
+            [('department_id', '=', self.department_name), ('date', '<=', self.date_to)])
+
         # all_asset = self.env['account.asset.asset'].sudo().search([])
-        all_asset = self.env['account.asset.asset'].sudo().search([
-            ('date', '>=', self.date_from),
-            ('date', '<=', self.date_to)
-        ])
+        all_asset = self.env['account.asset.asset'].sudo().search([('date', '<=', self.date_to)])
 
         row = 8
         col = 0
