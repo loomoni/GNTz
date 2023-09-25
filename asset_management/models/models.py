@@ -623,7 +623,8 @@ class AssetListWizard(models.TransientModel):
         worksheet.merge_range('A2:I2', 'ASSET REPORT', title_format)
 
         worksheet.set_row(2, 12)
-        worksheet.set_column('A:G', 20)
+        worksheet.set_column('A:A', 9)
+        worksheet.set_column('B:G', 20)
         worksheet.set_column('H:I', 11)
         worksheet.set_column('H8:H8', 19)
         worksheet.set_row(6, 12)
