@@ -654,8 +654,13 @@ class AssetListWizard(models.TransientModel):
         worksheet.write('I8:I8', 'Status', cell_text_sub_title_format)
 
         department_asset = self.env['account.asset.asset'].sudo().search(
-            [('department_id', '=', self.department_name)])
-        all_asset = self.env['account.asset.asset'].sudo().search([])
+            [('department_id', '=', self.department_name), ('date', '>=', self.date_from),
+             ('date', '<=', self.date_to)])
+        # all_asset = self.env['account.asset.asset'].sudo().search([])
+        all_asset = self.env['account.asset.asset'].sudo().search([
+            ('date', '>=', self.date_from),
+            ('date', '<=', self.date_to)
+        ])
 
         row = 8
         col = 0
