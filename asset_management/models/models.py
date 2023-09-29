@@ -617,8 +617,6 @@ class AssetListWizard(models.TransientModel):
         # Add the logo to the worksheet
         worksheet.insert_image('F1', 'logo.png', {'image_data': image_stream, 'x_scale': 0.43, 'y_scale': 0.43})
 
-        # Merge cells for the logo in F1:G2
-        # worksheet.merge_range('F1:G2', '')  # Merge the cells
         worksheet.set_row(1, 26)
         worksheet.merge_range('A2:I2', 'ASSET REPORT', title_format)
 

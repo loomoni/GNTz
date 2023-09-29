@@ -53,6 +53,7 @@ class InventoryStockIn(models.Model):
     goods_received_date = fields.Date(string="Goods Received Date", required=True, default=fields.Date.today())
     receiver_id = fields.Many2one('hr.employee', string="Received By", required=True, default=_default_receiver)
     supplier_id = fields.Many2one('res.partner', string="Supplier", domain=[('supplier', '=', True)])
+    supplier_name = fields.Char(string="Supplier Name", related='supplier_id.name', store=True)
     purchaser_id = fields.Many2one('hr.employee', string="Purchased By")
     invoice_no = fields.Many2one('account.invoice', string="Invoice No")
     state = fields.Selection(STATE_SELECTION, index=True, track_visibility='onchange',
@@ -133,21 +134,32 @@ class InventoryStockInLines(models.Model):
     project = fields.Many2one(comodel_name='project.configuration', string='Project')
     unit_cost = fields.Float('Unit Cost', digits=(12, 2), required=True, default=1)
     cost = fields.Float('Total Cost', digits=(12, 2), required=True, compute="total_cost_compute")
-    received_date = fields.Date('Received Date', compute="compute_date")
+    # received_date = fields.Date('Received Date', compute="compute_date")
+    stock_in_no = fields.Char('Stock In Ref No', compute="compute_stock_in_no")
     uom_id = fields.Many2one('uom.uom', string='Unit of Measure',
                              default=lambda self: self.env['uom.uom'].search([], limit=1, order='id'))
     stockin_id = fields.Many2one('inventory.stockin', string="Stock In")
+
     reference_no = fields.Char(string="Serial No", related="stockin_id.name")
     department_name = fields.Char(string="Department", related="stockin_id.department_id.name")
     department_id = fields.Integer(string="Department", related="stockin_id.department_id.id")
     receiver_id = fields.Char(string="Received by", related="stockin_id.receiver_id.name")
+    supplier_info = fields.Char(string="Supplier inf", related="stockin_id.supplier_id.name")
+    lpo_no = fields.Char(string="LPO Number", related="stockin_id.lpo_number")
+    received_date = fields.Date(string="LPO Number", related="stockin_id.goods_received_date", store=True)
+    purchased_by = fields.Char(string="Purchased by", related="stockin_id.purchaser_id.name")
     state = fields.Selection(STATE_SELECTION, index=True, track_visibility='onchange', related='stockin_id.state',
                              store=True)
 
-    @api.depends('stockin_id.goods_received_date')
-    def compute_date(self):
+    # @api.depends('stockin_id.goods_received_date')
+    # def compute_date(self):
+    #     for rec in self:
+    #         rec.received_date = rec.stockin_id.goods_received_date
+
+    @api.depends('stockin_id.name')
+    def compute_stock_in_no(self):
         for rec in self:
-            rec.received_date = rec.stockin_id.goods_received_date
+            rec.stock_in_no = rec.stockin_id.name
 
 
 class InventoryStockOut(models.Model):
@@ -849,11 +861,16 @@ class StockInInventoryListWizard(models.TransientModel):
 
     @api.multi
     def get_report(self):
-        file_name = _('Inventory report ' + str(self.date_from) + ' - ' + str(self.date_to) + ' report.xlsx')
+        file_name = _('Inventory StockIn report ' + str(self.date_from) + ' - ' + str(self.date_to) + ' report.xlsx')
         fp = BytesIO()
 
         workbook = xlsxwriter.Workbook(fp)
-        heading_company_format = workbook.add_format({
+        worksheet = workbook.add_worksheet()
+        # Disable gridlines
+        worksheet.hide_gridlines(2)  # 2 means 'both'
+
+        # Define the heading format
+        heading_format = workbook.add_format({
             # 'bold': True,
             'font_size': 7,
             'font_name': 'Arial',
@@ -861,253 +878,204 @@ class StockInInventoryListWizard(models.TransientModel):
             'valign': 'vcenter',
             'text_wrap': True,
         })
-        heading_company_format.set_border()
-        heading_format = workbook.add_format({'align': 'center',
-                                              'valign': 'vcenter',
-                                              'bold': True,
-                                              'size': 14,
-                                              'fg_color': '#89A130', })
         heading_format.set_border()
-        sub2_heading_format = workbook.add_format({'align': 'center',
-                                                   'valign': 'vcenter',
-                                                   'bold': True, 'size': 14})
-        sub2_heading_format.set_border()
-        dr_cr_format = workbook.add_format({'align': 'center',
-                                            # 'valign': 'vcenter',
-                                            'bold': True, 'size': 14})
-        dr_cr_format.set_border()
-        sub_heading_format = workbook.add_format({'align': 'left',
-                                                  # 'valign': 'vcenter',
-                                                  'bold': True, 'size': 14})
-        sub_heading_format.set_border()
-        cell_text_format_n = workbook.add_format({'align': 'center',
-                                                  'bold': True, 'size': 9,
-                                                  })
-        cell_text_format_n.set_border()
-        cell_photo_format = workbook.add_format({'align': 'center',
+        title_format = workbook.add_format({
+            'bold': True,
+            'font_name': 'Arial',
+            'font_size': 14,
+            'align': 'center',
+            # 'valign': 'vcenter',
+            'text_wrap': True,
+        })
+        title_format.set_border()
 
-                                                 })
-        cell_photo_format.set_border()
-        cell_date_text_format = workbook.add_format({'align': 'left',
-                                                     'size': 9,
-                                                     })
-        cell_date_text_format.set_border()
+        cell_text_info_format = workbook.add_format({
+            'bold': True,
+            'font_name': 'Arial',
+            'font_size': 8,
+            'text_wrap': True,
+        })
+        cell_text_info_format.set_border()
+        cell_text_info_body_format = workbook.add_format({
+            'bold': True,
+            'font_name': 'Arial',
+            'font_size': 8,
+            'align': 'center',
+            'text_wrap': True,
+        })
+        cell_text_info_body_format.set_border()
+        cell_text_sub_title_format = workbook.add_format({
+            'bold': True,
+            'font_name': 'Arial',
+            'font_size': 8,
+            'text_wrap': True,
+        })
+        cell_text_sub_title_format.set_border()
 
-        approve_format = workbook.add_format({'align': 'left',
-                                              'bold': False, 'size': 14,
-                                              })
+        cell_text_body_format = workbook.add_format({
+            'font_name': 'Arial',
+            'font_size': 8,
+            'num_format': '#,##0',
+            'text_wrap': True,
+        })
+        cell_text_body_format.set_border()
+        divider_format = workbook.add_format({'fg_color': '#9BBB59', })
+        # divider_format = workbook.add_format({'fg_color': '#89A130', })
+        divider_format.set_border()
+        worksheet.set_row(0, 85)
+        worksheet.set_column('A:E', 13)
+        # worksheet.merge_range('A1:F1', '')
+        company = self.env.user.company_id
 
-        cell_text_format = workbook.add_format({'align': 'left',
-                                                'bold': True, 'size': 13,
-                                                'fg_color': '#695B55',
-                                                'font_color': 'white'
-                                                })
+        # Get the logged-in user's name
+        user = request.env.user
+        user_name = user.name
+        email = user.login
+        job_position = ''
+        employee = request.env['hr.employee'].sudo().search([('user_id', '=', user.id), ('job_id', '!=', False)],
+                                                            limit=1)
+        if employee:
+            job_position = employee.job_id.name or ''
 
-        cell_text_format.set_border()
-        cell_text_format_new = workbook.add_format({'align': 'left',
-                                                    'size': 9,
-                                                    'num_format': '#,###0.00',
-                                                    })
-        cell_text_format_new.set_border()
-        cell_number_format = workbook.add_format({'align': 'right',
-                                                  'bold': False, 'size': 9,
-                                                  'num_format': '#,###0.00'})
-        cell_number_format.set_border()
-        worksheet = workbook.add_worksheet(
-            'Inventory report ' + str(self.date_from) + ' - ' + str(self.date_to) + ' report.xlsx')
-        normal_num_bold = workbook.add_format({'bold': True, 'num_format': '#,###0.00', 'size': 9, })
-        normal_num_bold.set_border()
-        worksheet.set_column('A:G', 20)
-        # worksheet.set_default_row(45)
+        # Find the department name of the employee
+        department_name = ''
+        if employee and employee.department_id:
+            department_name = employee.department_id.name or ''
 
-        worksheet.set_row(0, 20)
-        worksheet.set_row(1, 20)
-        worksheet.set_row(2, 15)
-        worksheet.set_row(3, 15)
-        worksheet.set_row(4, 15)
-        worksheet.set_row(5, 20)
-        worksheet.set_row(6, 20)
-        row = 2
-        row_set = row
+        company_info = "\n".join(filter(None, [company.name, company.street2, company.street, company.city,
+                                               company.country_id.name,
+                                               'Phone: ' + company.phone + ' Email: ' + company.email + ' Web: ' + company.website]))
+        worksheet.merge_range('A1:L1', company_info, heading_format)
 
-        if self.date_from and self.date_to:
-            date_2 = datetime.strftime(self.date_to, '%d-%m-%Y')
-            date_1 = datetime.strftime(self.date_from, '%d-%m-%Y')
-            asset_report_month = self.date_from.strftime("%B")
+        # Convert the logo from base64 to binary data
+        logo_data = base64.b64decode(company.logo)
 
-            # worksheet.merge_range('F1:G2', 'LOGO', heading_format)
+        # Create a BytesIO object to hold the image data
+        image_stream = BytesIO(logo_data)
+        # Add the logo to the worksheet
+        worksheet.insert_image('H1', 'logo.png', {'image_data': image_stream, 'x_scale': 0.43, 'y_scale': 0.43})
 
-            # Retrieve the company information from the environment
-            worksheet.set_row(0, 85)
-            # worksheet.set_column('A:E', 13)
-            # worksheet.merge_range('A1:F1', '')
-            company = self.env.user.company_id
-            company_info = "\n".join(filter(None, [company.name, company.street2, company.street, company.city,
-                                                   company.country_id.name,
-                                                   'Phone: ' + company.phone + ' Email: ' + company.email + ' Web: ' + company.website]))
-            worksheet.merge_range('A1:G1', company_info, heading_company_format)
+        worksheet.set_row(1, 26)
+        worksheet.merge_range('A2:L2', 'GNTZ HO Stock In Report', title_format)
 
-            # Convert the logo from base64 to binary data
-            logo_data = base64.b64decode(company.logo)
+        worksheet.set_row(2, 12)
+        worksheet.set_column('A:A', 9)
+        worksheet.set_column('B:B', 25)
+        worksheet.set_column('C:C', 15)
+        worksheet.set_column('D:D', 5)
+        worksheet.set_column('E:I', 20)
+        worksheet.set_column('J:J', 8)
+        worksheet.set_column('K:L', 19)
+        worksheet.set_row(6, 12)
+        worksheet.merge_range('A3:L3', '', divider_format)
+        worksheet.merge_range('A7:L7', '', divider_format)
 
-            # Create a BytesIO object to hold the image data
-            image_stream = BytesIO(logo_data)
-            # Add the logo to the worksheet
-            worksheet.insert_image('E1', 'logo.png', {'image_data': image_stream, 'x_scale': 0.43, 'y_scale': 0.43})
+        worksheet.write('A4:A4', 'Extracted by', cell_text_info_format)
+        worksheet.merge_range('B4:D4', user_name, cell_text_info_body_format)
 
-            # Add company details in merged cells A1:E2
-            # company_details = [
-            #     'Company Name: ' + company.name,
-            #     'Company Address: ' + company.street,
-            #     'Company Communication: ' + company.phone,
-            #     # Add more company details as needed
-            # ]
-            # company_details = (
-            #     (
-            #         "Company Name: {}\n"
-            #         "Company Street: {}\n"
-            #         "Company Phone: {}"
-            #         # Add more company details as needed
-            #     ).format(company.name, company.street, company.phone))
-            #
-            # # worksheet.write_rich_string('A1', company_details, heading_format)
-            # # Write company details to cell A1
-            # worksheet.write('A1', company_details)
+        worksheet.write('A5:A5', 'From', cell_text_info_format)
+        worksheet.merge_range('B5:D5', datetime.strftime(self.date_from, '%d-%m-%Y'), cell_text_info_body_format)
 
-            # Create a single cell A containing all company details
-            # company_details = (
-            #     ("Company Name: {} \n"
-            #      "Company Street: {} \n"
-            #      "Company Phone: {}").format(company.name, company.street, company.phone)
-            # )
-            #
-            # # Write company details to cell A1
-            # worksheet.write_rich_string('A1', company_details, heading_format)
+        worksheet.write('E5:E5', 'To', cell_text_info_format)
+        worksheet.merge_range('F5:L5', datetime.strftime(self.date_to, '%d-%m-%Y'), cell_text_info_body_format)
 
-            # Create a single cell A containing all company details
-            # company_details = (
-            #     f"Company Name: {company.name}\n"
-            #     f"Company Street: {company.street}\n"
-            #     f"Company Phone: {company.phone}\n"
-            # )
-            #
-            # # Write company details to cell A1
-            # worksheet.write('A1', company_details)
-            # worksheet.write('A2', company_details)
+        worksheet.write('A6:A6', 'Email', cell_text_info_format)
+        worksheet.merge_range('B6:D6', email, cell_text_info_body_format)
 
-            # Create a single cell A containing all company details
-            # company_details = (
-            #     f"Company Name: {company.name}\u00A0"
-            #     f"Company Street: {company.street}\u00A0"
-            #     f"Company Phone: {company.phone}"
-            # )
-            #
-            # # Write company details to cell A1
-            # worksheet.write('A1', company_details, heading_format)
+        worksheet.write('E4:E4', 'Designation', cell_text_info_format)
+        worksheet.merge_range('F4:L4', job_position, cell_text_info_body_format)
 
-            # company_details = (
-            #     "Company Name: {}\n"
-            #     "Company Street: {}\n"
-            #     "Company Phone: {}"
-            # ).format(company.name, company.street, company.phone)
-            #
-            # # Create a Rich Text object
-            # rich_text = worksheet.add_rich_string('A1', company_details)
-            #
-            # # Write the Rich Text to cell A1
-            # worksheet.write_rich_string('A1', rich_text)
-            # row1 = 0
-            # Write company details to the merged cells
-            # for row, detail in enumerate(company_details):
-            #     worksheet.write(row1, 0, detail)
-            # for row, detail in enumerate(company_details):
-            #     for col, value in enumerate(detail):
-            #         worksheet.write(row, col, value)
-            # worksheet.write('A1:A1', company.name)
-            # worksheet.write('A1:A1', company.street)
-            # worksheet.write('A1:A1', company.phone)
-            # Set the starting row for writing company details
-            # start_row = 0
-            # Write company details to the left side of the worksheet
-            # for detail in company_details:
-            #     worksheet.write_row(start_row, 0, company.name)
-            #     start_row += 1
-            # worksheet.merge_range('A1:E2', '')
+        worksheet.write('E6:E6', 'Department', cell_text_info_format)
+        worksheet.merge_range('F6:L6', department_name, cell_text_info_body_format)
 
-            # worksheet.merge_range('A1:E2', 'Inventory Report For %s %s' % (asset_report_month, self.date_from.year),
-            #                       heading_format)
+        worksheet.write('A8:A8', 'S/N', cell_text_sub_title_format)
+        worksheet.write('B8:B8', 'Stock In No', cell_text_sub_title_format)
+        worksheet.write('C8:C8', 'Project', cell_text_sub_title_format)
+        worksheet.write('D8:D8', 'LPO', cell_text_sub_title_format)
+        worksheet.write('E8:E8', 'Item', cell_text_sub_title_format)
+        worksheet.write('F8:F8', 'Supplier Info', cell_text_sub_title_format)
+        worksheet.write('G8:G8', 'Department', cell_text_sub_title_format)
+        worksheet.write('H8:H8', 'Purchased by', cell_text_sub_title_format)
+        worksheet.write('I8:I8', 'Received by', cell_text_sub_title_format)
+        worksheet.write('J8:J8', 'Qty', cell_text_sub_title_format)
+        worksheet.write('K8:K8', 'Unit price', cell_text_sub_title_format)
+        worksheet.write('L8:L8', 'Total cost', cell_text_sub_title_format)
+        # Head Report End here
 
-            # worksheet.merge_range('F1:G2', self.company_id.logo)
-            worksheet.write('A3:A3', '', cell_text_format_n)
-            worksheet.write('A4:A4', '', cell_text_format_n)
-            worksheet.write('B3:B3', 'Company', cell_text_format_n)
-            worksheet.merge_range('C3:E3', '%s' % self.company.name, cell_text_format_n)
+        # Body part of the Excel starts
 
-            worksheet.write('B4:B4', 'Department', cell_text_format_n)
-            if self.department_name:
-                worksheet.merge_range('C4:E4', '%s' % self.department_id.name, cell_text_format_n)
-            else:
-                worksheet.merge_range('C4:E4', "All", cell_text_format_n)
+        department_stockin_inventory = self.env['inventory.stockin.lines'].sudo().search(
+            [('department_id', '=', self.department_name), ('received_date', '<=', self.date_to),
+             ('received_date', '>=', self.date_from)])
+        stockin_inventory_report = self.env['inventory.stockin.lines'].sudo().search(
+            [('received_date', '<=', self.date_to), ('received_date', '>=', self.date_from)])
 
-            worksheet.write(row, 5, 'Date From', cell_text_format_n)
-            worksheet.write(row, 6, date_1 or '', cell_date_text_format)
-            row += 1
-            worksheet.write(row, 5, 'Date To', cell_text_format_n)
-            worksheet.write(row, 6, date_2 or '', cell_date_text_format)
-            row += 2
+        ro = 8
+        col = 0
+        index = 1
 
-            worksheet.write(row, 0, 'Item', cell_text_format)
-            worksheet.write(row, 1, 'Department', cell_text_format)
-            worksheet.write(row, 2, 'Received Date', cell_text_format)
-            worksheet.write(row, 3, 'Quantity', cell_text_format)
-            worksheet.write(row, 4, 'Unit Price', cell_text_format)
-            worksheet.write(row, 5, 'Total Cost', cell_text_format)
-            worksheet.write(row, 6, 'Received by', cell_text_format)
+        if department_stockin_inventory:
+            for department_inventory in department_stockin_inventory:
+                index = index
+                stock_in_no = department_inventory.stock_in_no
+                project = department_inventory.project.name
+                lpo_number = department_inventory.lpo_no
+                item = department_inventory.product_id.name
+                supplier_info = department_inventory.supplier_info
+                department = department_inventory.department_name
+                purchaser_id = department_inventory.purchased_by
+                received_by = department_inventory.receiver_id
+                quantity = department_inventory.quantity
+                unit_cost = department_inventory.unit_cost
+                total_cost = department_inventory.cost
 
-            department_stockin_inventory = self.env['inventory.stockin.lines'].sudo().search(
-                [('department_id', '=', self.department_name), ('received_date', '<=', self.date_to),
-                 ('received_date', '>=', self.date_from)])
-            stockin_inventory_report = self.env['inventory.stockin.lines'].sudo().search(
-                [('received_date', '<=', self.date_to), ('received_date', '>=', self.date_from)])
+                worksheet.write(ro, col, index or '', cell_text_body_format)
+                worksheet.write(ro, col + 1, stock_in_no or '', cell_text_body_format)
+                worksheet.write(ro, col + 2, project or '', cell_text_body_format)
+                worksheet.write(ro, col + 3, lpo_number or '', cell_text_body_format)
+                worksheet.write(ro, col + 4, item or '', cell_text_body_format)
+                worksheet.write(ro, col + 5, supplier_info or '', cell_text_body_format)
+                worksheet.write(ro, col + 6, department or '', cell_text_body_format)
+                worksheet.write(ro, col + 7, purchaser_id or '', cell_text_body_format)
+                worksheet.write(ro, col + 8, received_by or '', cell_text_body_format)
+                worksheet.write(ro, col + 9, quantity or '', cell_text_body_format)
+                worksheet.write(ro, col + 10, unit_cost or '', cell_text_body_format)
+                worksheet.write(ro, col + 11, total_cost or '', cell_text_body_format)
 
-            ro = row + 1
-            col = 0
-            if department_stockin_inventory:
-                for department_inventory in department_stockin_inventory:
-                    item = department_inventory.product_id.name
-                    department = department_inventory.department_name
-                    received_date_format = datetime.strftime(department_inventory.received_date, '%d-%m-%Y')
-                    quantity = department_inventory.quantity
-                    unit_cost = department_inventory.unit_cost
-                    total_cost = department_inventory.cost
-                    received_by = department_inventory.receiver_id
+                ro = ro + 1
+                index = index + 1
+        else:
+            for all_stock_in_inventory in stockin_inventory_report:
+                index = index
+                stock_in_no = all_stock_in_inventory.stock_in_no
+                project = all_stock_in_inventory.project.name
+                lpo_number = all_stock_in_inventory.lpo_no
+                item = all_stock_in_inventory.product_id.name
+                supplier_info = all_stock_in_inventory.supplier_info
+                department = all_stock_in_inventory.department_name
+                purchaser_id = all_stock_in_inventory.purchased_by
+                received_by = all_stock_in_inventory.receiver_id
+                quantity = all_stock_in_inventory.quantity
+                unit_cost = all_stock_in_inventory.unit_cost
+                total_cost = all_stock_in_inventory.cost
 
-                    worksheet.write(ro, col, item or '', cell_text_format_new)
-                    worksheet.write(ro, col + 1, department or '', cell_text_format_new)
-                    worksheet.write(ro, col + 2, received_date_format or '', cell_text_format_new)
-                    worksheet.write(ro, col + 3, quantity or '', cell_text_format_new)
-                    worksheet.write(ro, col + 4, unit_cost or '', cell_text_format_new)
-                    worksheet.write(ro, col + 5, total_cost or '', cell_text_format_new)
-                    worksheet.write(ro, col + 6, received_by or '', cell_text_format_new)
-                    ro = ro + 1
-            else:
-                for all_inventory_available in stockin_inventory_report:
-                    item = all_inventory_available.product_id.name
-                    department = all_inventory_available.department_name
-                    received_date_format = datetime.strftime(all_inventory_available.received_date, '%d-%m-%Y')
-                    quantity = all_inventory_available.quantity
-                    unit_cost = all_inventory_available.unit_cost
-                    total_cost = all_inventory_available.cost
-                    received_by = all_inventory_available.receiver_id
+                worksheet.write(ro, col, index or '', cell_text_body_format)
+                worksheet.write(ro, col + 1, stock_in_no or '', cell_text_body_format)
+                worksheet.write(ro, col + 2, project or '', cell_text_body_format)
+                worksheet.write(ro, col + 3, lpo_number or '', cell_text_body_format)
+                worksheet.write(ro, col + 4, item or '', cell_text_body_format)
+                worksheet.write(ro, col + 5, supplier_info or '', cell_text_body_format)
+                worksheet.write(ro, col + 6, department or '', cell_text_body_format)
+                worksheet.write(ro, col + 7, purchaser_id or '', cell_text_body_format)
+                worksheet.write(ro, col + 8, received_by or '', cell_text_body_format)
+                worksheet.write(ro, col + 9, quantity or '', cell_text_body_format)
+                worksheet.write(ro, col + 10, unit_cost or '', cell_text_body_format)
+                worksheet.write(ro, col + 11, total_cost or '', cell_text_body_format)
 
-                    worksheet.write(ro, col, item or '', cell_text_format_new)
-                    worksheet.write(ro, col + 1, department or '', cell_text_format_new)
-                    worksheet.write(ro, col + 2, received_date_format or '', cell_text_format_new)
-                    worksheet.write(ro, col + 3, quantity or '', cell_text_format_new)
-                    worksheet.write(ro, col + 4, unit_cost or '', cell_text_format_new)
-                    worksheet.write(ro, col + 5, total_cost or '', cell_text_format_new)
-                    worksheet.write(ro, col + 6, received_by or '', cell_text_format_new)
-                    ro = ro + 1
+                ro = ro + 1
+                index = index + 1
+
+        # Body of the Excel End
 
         workbook.close()
         file_download = base64.b64encode(fp.getvalue())
@@ -1149,171 +1117,137 @@ class StockOutInventoryListWizard(models.TransientModel):
 
     @api.multi
     def get_report(self):
-        file_name = _('Inventory report ' + str(self.date_from) + ' - ' + str(self.date_to) + ' report.xlsx')
+
+        file_name = _('Asset report ' + str(self.date_from) + ' - ' + str(self.date_to) + ' report.xlsx')
         fp = BytesIO()
 
         workbook = xlsxwriter.Workbook(fp)
-        heading_format = workbook.add_format({'align': 'center',
-                                              'valign': 'vcenter',
-                                              'bold': True,
-                                              'size': 14,
-                                              'fg_color': '#89A130', })
+        worksheet = workbook.add_worksheet()
+        # Disable gridlines
+        worksheet.hide_gridlines(2)  # 2 means 'both'
+
+        # Define the heading format
+        heading_format = workbook.add_format({
+            # 'bold': True,
+            'font_size': 7,
+            'font_name': 'Arial',
+            # 'align': 'center',
+            'valign': 'vcenter',
+            'text_wrap': True,
+        })
         heading_format.set_border()
-        sub2_heading_format = workbook.add_format({'align': 'center',
-                                                   'valign': 'vcenter',
-                                                   'bold': True, 'size': 14})
-        sub2_heading_format.set_border()
-        dr_cr_format = workbook.add_format({'align': 'center',
-                                            # 'valign': 'vcenter',
-                                            'bold': True, 'size': 14})
-        dr_cr_format.set_border()
-        sub_heading_format = workbook.add_format({'align': 'left',
-                                                  # 'valign': 'vcenter',
-                                                  'bold': True, 'size': 14})
-        sub_heading_format.set_border()
-        cell_text_format_n = workbook.add_format({'align': 'center',
-                                                  'bold': True, 'size': 9,
-                                                  })
-        cell_text_format_n.set_border()
-        cell_photo_format = workbook.add_format({'align': 'center',
+        title_format = workbook.add_format({
+            'bold': True,
+            'font_name': 'Arial',
+            'font_size': 14,
+            'align': 'center',
+            # 'valign': 'vcenter',
+            'text_wrap': True,
+        })
+        title_format.set_border()
 
-                                                 })
-        cell_photo_format.set_border()
-        cell_date_text_format = workbook.add_format({'align': 'left',
-                                                     'size': 9,
-                                                     })
-        cell_date_text_format.set_border()
+        cell_text_info_format = workbook.add_format({
+            'bold': True,
+            'font_name': 'Arial',
+            'font_size': 8,
+            'text_wrap': True,
+        })
+        cell_text_info_format.set_border()
+        cell_text_info_body_format = workbook.add_format({
+            'bold': True,
+            'font_name': 'Arial',
+            'font_size': 8,
+            'align': 'center',
+            'text_wrap': True,
+        })
+        cell_text_info_body_format.set_border()
+        cell_text_sub_title_format = workbook.add_format({
+            'bold': True,
+            'font_name': 'Arial',
+            'font_size': 8,
+            'text_wrap': True,
+        })
+        cell_text_sub_title_format.set_border()
 
-        approve_format = workbook.add_format({'align': 'left',
-                                              'bold': False, 'size': 14,
-                                              })
+        cell_text_body_format = workbook.add_format({
+            'font_name': 'Arial',
+            'font_size': 8,
+            'num_format': '#,##0',
+            'text_wrap': True,
+        })
+        cell_text_body_format.set_border()
+        divider_format = workbook.add_format({'fg_color': '#9BBB59', })
+        # divider_format = workbook.add_format({'fg_color': '#89A130', })
+        divider_format.set_border()
+        worksheet.set_row(0, 85)
+        worksheet.set_column('A:E', 13)
+        # worksheet.merge_range('A1:F1', '')
+        company = self.env.user.company_id
 
-        cell_text_format = workbook.add_format({'align': 'left',
-                                                'bold': True, 'size': 13,
-                                                'fg_color': '#695B55',
-                                                'font_color': 'white'
-                                                })
+        # Get the logged-in user's name
+        user = request.env.user
+        user_name = user.name
+        email = user.login
+        job_position = ''
+        employee = request.env['hr.employee'].sudo().search([('user_id', '=', user.id), ('job_id', '!=', False)],
+                                                            limit=1)
+        if employee:
+            job_position = employee.job_id.name or ''
 
-        cell_text_format.set_border()
-        cell_text_format_new = workbook.add_format({'align': 'left',
-                                                    'size': 9,
-                                                    'num_format': '#,###0.00',
-                                                    })
-        cell_text_format_new.set_border()
-        cell_number_format = workbook.add_format({'align': 'right',
-                                                  'bold': False, 'size': 9,
-                                                  'num_format': '#,###0.00'})
-        cell_number_format.set_border()
-        worksheet = workbook.add_worksheet(
-            'Inventory report ' + str(self.date_from) + ' - ' + str(self.date_to) + ' report.xlsx')
-        normal_num_bold = workbook.add_format({'bold': True, 'num_format': '#,###0.00', 'size': 9, })
-        normal_num_bold.set_border()
-        worksheet.set_column('A:J', 20)
-        # worksheet.set_default_row(45)
+        # Find the department name of the employee
+        department_name = ''
+        if employee and employee.department_id:
+            department_name = employee.department_id.name or ''
 
-        worksheet.set_row(0, 20)
-        worksheet.set_row(1, 20)
-        worksheet.set_row(2, 15)
-        worksheet.set_row(3, 15)
-        worksheet.set_row(4, 15)
-        worksheet.set_row(5, 20)
-        worksheet.set_row(6, 20)
-        row = 2
-        row_set = row
+        company_info = "\n".join(filter(None, [company.name, company.street2, company.street, company.city,
+                                               company.country_id.name,
+                                               'Phone: ' + company.phone + ' Email: ' + company.email + ' Web: ' + company.website]))
+        worksheet.merge_range('A1:I1', company_info, heading_format)
 
-        if self.date_from and self.date_to:
-            date_2 = datetime.strftime(self.date_to, '%d-%m-%Y')
-            date_1 = datetime.strftime(self.date_from, '%d-%m-%Y')
-            asset_report_month = self.date_from.strftime("%B")
-            worksheet.merge_range('A1:J2', 'Inventory Report For %s %s' % (asset_report_month, self.date_from.year),
-                                  heading_format)
-            worksheet.write('A3:A3', '', cell_text_format_n)
-            worksheet.write('A4:A4', '', cell_text_format_n)
-            worksheet.write('B3:B3', 'Company', cell_text_format_n)
-            worksheet.merge_range('C3:E3', '%s' % self.company.name, cell_text_format_n)
+        # Convert the logo from base64 to binary data
+        logo_data = base64.b64decode(company.logo)
 
-            worksheet.write('B4:B4', 'Department', cell_text_format_n)
-            if self.department_name:
-                worksheet.merge_range('C4:E4', '%s' % self.department_id.name, cell_text_format_n)
-            else:
-                worksheet.merge_range('C4:E4', "All", cell_text_format_n)
+        # Create a BytesIO object to hold the image data
+        image_stream = BytesIO(logo_data)
+        # Add the logo to the worksheet
+        worksheet.insert_image('F1', 'logo.png', {'image_data': image_stream, 'x_scale': 0.43, 'y_scale': 0.43})
 
-            worksheet.write(row, 5, 'Date From', cell_text_format_n)
-            worksheet.write(row, 6, date_1 or '', cell_date_text_format)
-            row += 1
-            worksheet.write(row, 5, 'Date To', cell_text_format_n)
-            worksheet.write(row, 6, date_2 or '', cell_date_text_format)
-            row += 2
+        worksheet.set_row(1, 26)
+        worksheet.merge_range('A2:I2', 'ASSET REPORT', title_format)
 
-            worksheet.write(row, 0, 'Item', cell_text_format)
-            worksheet.write(row, 1, 'Department', cell_text_format)
-            worksheet.write(row, 2, 'Requested Quantity', cell_text_format)
-            worksheet.write(row, 3, 'Issued Quantity', cell_text_format)
-            worksheet.write(row, 4, 'Requested Purpose', cell_text_format)
-            worksheet.write(row, 5, 'Project', cell_text_format)
-            worksheet.write(row, 6, 'Requested by', cell_text_format)
-            worksheet.write(row, 7, 'Issued by', cell_text_format)
-            worksheet.write(row, 8, 'Date', cell_text_format)
-            worksheet.write(row, 9, 'Status', cell_text_format)
+        worksheet.set_row(2, 12)
+        worksheet.set_column('A:A', 9)
+        worksheet.set_column('B:G', 20)
+        worksheet.set_column('H:I', 11)
+        worksheet.set_column('H8:H8', 19)
+        worksheet.set_row(6, 12)
+        worksheet.merge_range('A3:I3', '', divider_format)
+        worksheet.merge_range('A7:I7', '', divider_format)
 
-            # department_stockout_inventory = self.env['inventory.stockout.lines'].sudo().search(
-            #     [('department', '=', self.department_id)])
-            department_stockout_inventory = self.env['inventory.stockout.lines'].sudo().search(
-                [('department_id', '=', self.department_name), ('requested_date', '<=', self.date_to),
-                 ('requested_date', '>=', self.date_from)])
-            stockin_inventory_report = self.env['inventory.stockout.lines'].sudo().search([])
+        worksheet.write('A4:A4', 'Extracted by', cell_text_info_format)
+        worksheet.merge_range('B4:D4', user_name, cell_text_info_body_format)
 
-            ro = row + 1
-            col = 0
-            if department_stockout_inventory:
-                for department_inventory in department_stockout_inventory:
-                    item = department_inventory.product_id.name
-                    department = department_inventory.stockout_id.department_id.name
-                    requested_quantity = department_inventory.requested_quantity
-                    issued_quantity = department_inventory.issued_quantity
-                    purpose = department_inventory.request_reason
-                    project = department_inventory.project.name
-                    requester = department_inventory.stockout_id.requester_id.name
-                    issuer = department_inventory.stockout_id.issuer_id.name
-                    request_date_format = datetime.strftime(department_inventory.requested_date, '%d-%m-%Y')
-                    status = department_inventory.stockout_id.state
+        worksheet.write('A5:A5', 'Date', cell_text_info_format)
+        worksheet.merge_range('B5:I5', datetime.now().strftime('%m-%d-%Y'), cell_text_info_body_format)
 
-                    worksheet.write(ro, col, item or '', cell_text_format_new)
-                    worksheet.write(ro, col + 1, department or '', cell_text_format_new)
-                    worksheet.write(ro, col + 2, requested_quantity or '', cell_text_format_new)
-                    worksheet.write(ro, col + 3, issued_quantity or '', cell_text_format_new)
-                    worksheet.write(ro, col + 4, purpose or '', cell_text_format_new)
-                    worksheet.write(ro, col + 5, project or '', cell_text_format_new)
-                    worksheet.write(ro, col + 6, requester or '', cell_text_format_new)
-                    worksheet.write(ro, col + 7, issuer or '', cell_text_format_new)
-                    worksheet.write(ro, col + 8, request_date_format or '', cell_text_format_new)
-                    worksheet.write(ro, col + 9, status or '', cell_text_format_new)
-                    ro = ro + 1
-            else:
-                for all_inventory_available in stockin_inventory_report:
-                    item = all_inventory_available.product_id.name
-                    department = all_inventory_available.stockout_id.department_id.name
-                    requested_quantity = all_inventory_available.requested_quantity
-                    issued_quantity = all_inventory_available.issued_quantity
-                    purpose = all_inventory_available.request_reason
-                    project = all_inventory_available.project.name
-                    requester = all_inventory_available.stockout_id.requester_id.name
-                    issuer = all_inventory_available.stockout_id.issuer_id.name
-                    # request_date_format = datetime.strftime(department_inventory.requested_date, '%d-%m-%Y')
-                    request_date_format = all_inventory_available.requested_date
-                    status = all_inventory_available.stockout_id.state
+        worksheet.write('A6:A6', 'Email', cell_text_info_format)
+        worksheet.merge_range('B6:D6', email, cell_text_info_body_format)
 
-                    worksheet.write(ro, col, item or '', cell_text_format_new)
-                    worksheet.write(ro, col + 1, department or '', cell_text_format_new)
-                    worksheet.write(ro, col + 2, requested_quantity or '', cell_text_format_new)
-                    worksheet.write(ro, col + 3, issued_quantity or '', cell_text_format_new)
-                    worksheet.write(ro, col + 4, purpose or '', cell_text_format_new)
-                    worksheet.write(ro, col + 5, project or '', cell_text_format_new)
-                    worksheet.write(ro, col + 6, requester or '', cell_text_format_new)
-                    worksheet.write(ro, col + 7, issuer or '', cell_text_format_new)
-                    worksheet.write(ro, col + 8, request_date_format or '', cell_text_format_new)
-                    worksheet.write(ro, col + 9, status or '', cell_text_format_new)
-                    ro = ro + 1
+        worksheet.write('E4:E4', 'Designation', cell_text_info_format)
+        worksheet.merge_range('F4:I4', job_position, cell_text_info_body_format)
+
+        worksheet.write('E6:E6', 'Department', cell_text_info_format)
+        worksheet.merge_range('F6:I6', department_name, cell_text_info_body_format)
+
+        worksheet.write('A8:A8', 'S/N', cell_text_sub_title_format)
+        worksheet.write('B8:B8', 'Asset Name', cell_text_sub_title_format)
+        worksheet.write('C8:C8', 'S/N/Asset ID', cell_text_sub_title_format)
+        worksheet.write('D8:D8', 'Asset No', cell_text_sub_title_format)
+        worksheet.write('E8:E8', 'Date', cell_text_sub_title_format)
+        worksheet.write('F8:F8', 'Amount', cell_text_sub_title_format)
+        worksheet.write('G8:G8', 'Assigned To', cell_text_sub_title_format)
+        worksheet.write('H8:H8', 'Department', cell_text_sub_title_format)
+        worksheet.write('I8:I8', 'Status', cell_text_sub_title_format)
 
         workbook.close()
         file_download = base64.b64encode(fp.getvalue())
