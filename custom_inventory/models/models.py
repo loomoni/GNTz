@@ -1219,8 +1219,11 @@ class StockOutInventoryListWizard(models.TransientModel):
 
         worksheet.set_row(2, 12)
         worksheet.set_column('A:A', 9)
-        worksheet.set_column('G:G', 14)
-        worksheet.set_column('B:G', 20)
+        worksheet.set_column('B:C', 20)
+        worksheet.set_column('D:D', 10)
+        worksheet.set_column('E:E', 18)
+        worksheet.set_column('F:F', 16)
+        worksheet.set_column('G:G', 35)
         worksheet.set_column('H:K', 9)
         worksheet.set_row(6, 12)
         worksheet.merge_range('A3:K3', '', divider_format)
