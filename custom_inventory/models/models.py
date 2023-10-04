@@ -301,7 +301,7 @@ class InventoryStockOut(models.Model):
     @api.multi
     def button_issue(self):
         for line in self.line_ids:
-            if line.issued_quantity <= 0:
+            if line.issued_quantity < 0:
                 raise ValidationError(_("One of The Lines Has an Invalid Issued Amount.Please Check"))
         self.write({'state': 'issued'})
         for line in self.line_ids:
