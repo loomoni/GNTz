@@ -256,4 +256,174 @@
             </t>
         </t>
     </template>
+
+    <template id="asset_reporting_damage_report_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <br/>
+                        <br/>
+                        <h2>Asset Damage Report</h2>
+                        <p>Asset damage report of
+                            <span t-field="o.name.name"/>
+                            for
+                            <span t-field="o.report_date"/>
+                        </p>
+
+                        <table class="table table-sm table-bordered">
+                            <tr>
+                                <td>
+                                    <strong>Name</strong>
+                                </td>
+                                <td>
+                                    <span t-field="o.name.name"/>
+                                </td>
+                                <td>
+                                    <strong>Designation</strong>
+                                </td>
+                                <td>
+                                    <span t-field="o.name.job_id"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Address</strong>
+                                </td>
+                                <td colspan="3">
+                                    <div t-field="o.name.address_home_id"
+                                         t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Email</strong>
+                                </td>
+                                <td>
+                                    <span t-field="o.name.work_email"/>
+                                </td>
+                                <td>
+                                    <strong>Department</strong>
+                                </td>
+                                <td>
+                                    <span t-field="o.department"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Incident Location</strong>
+                                </td>
+                                <td>
+                                    <span t-field="o.incident_location"/>
+                                </td>
+                                <td>
+                                    <strong>Electronic asset?</strong>
+                                </td>
+                                <td>
+                                    <span t-field="o.electronic_asset"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Incident Date</strong>
+                                </td>
+                                <td>
+                                    <span t-field="o.incident_date"/>
+                                </td>
+                                <td>
+                                    <strong>Reported Date</strong>
+                                </td>
+                                <td>
+                                    <span t-field="o.report_date"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Supervisor Recommendation</strong>
+                                </td>
+                                <td colspan="3">
+                                    <span t-field="o.recommendation"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Asset</th>
+                                    <th>Location</th>
+                                    <th>Description</th>
+                                    <th>Estimated Cost</th>
+                                    <th>Person responsible</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.asset_reporting_damage_line_ids" t-as="line">
+                                    <td>
+                                        <span t-field="line.name.name"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="line.location"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="line.damage_description"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="line.cost"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="line.person_responsible.name"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <!--  Comments -->
+                        <table style="width:100%;" class="table table-condensed">
+                            <t t-if="o.line_manager_comment">
+                                <tr>
+                                    <td style="width: 30%;">
+                                        <span>
+                                            <strong>Line Manager Recommendation comment</strong>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span t-field="o.line_manager_comment"/>
+                                    </td>
+                                </tr>
+                            </t>
+                            <t t-if="o.ict_officer_comment">
+                                <tr>
+                                    <td style="width: 30%;">
+                                        <span>
+                                            <strong>ICT Officer Recommendation comment</strong>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span t-field="o.ict_officer_comment"/>
+                                    </td>
+                                </tr>
+                            </t>
+                            <t t-if="o.procurement_comment">
+                                <tr>
+                                    <td style="width: 30%;">
+                                        <span>
+                                            <strong>Procurement comment</strong>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span t-field="o.procurement_comment"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </table>
+                        <p class="text-right">
+                            <strong>Authorized signature</strong>
+                            <br/>
+                            <span t-field="o.state"/>
+                        </p>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
 </odoo>

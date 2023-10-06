@@ -30,26 +30,13 @@
             file="asset_management.asset_custodian_report_xls"
     />
 
-<!--    <template id="asset_management.asset_custodian_report_xls">-->
-<!--        <t t-call="report_xlsx.abstract"/>-->
-<!--        <t t-foreach="docs" t-as="doc">-->
-<!--            <div class="page" style="padding: 10px">-->
-<!--                &lt;!&ndash; Your header content goes here &ndash;&gt;-->
-<!--                <table class="table table-condensed">-->
-<!--                    <tr>-->
-<!--                        <th>Name of the Employee</th>-->
-<!--                        <th>Other Column</th>-->
-<!--                        <th>Other Column</th>-->
-<!--                    </tr>-->
-<!--                    <tr>-->
-<!--                        <td>-->
-<!--                            <span t-field="doc.assigned_to.name"/>-->
-<!--                        </td>-->
-<!--                        <td>Other Data</td>-->
-<!--                        <td>Other Data</td>-->
-<!--                    </tr>-->
-<!--                </table>-->
-<!--            </div>-->
-<!--        </t>-->
-<!--    </template>-->
+        <report
+            id="asset_reporting_damage_report_pdf"
+            model="asset.reporting.damage"
+            string="Report"
+            menu="True"
+            report_type="qweb-pdf"
+            name="asset_management.asset_reporting_damage_report_template"
+            file="asset_management.asset_reporting_damage_report_template"
+    />
 </odoo>
