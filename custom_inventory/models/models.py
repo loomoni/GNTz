@@ -211,6 +211,13 @@ class InventoryStockOut(models.Model):
                                track_visibility='onchange')
 
     @api.multi
+    def unlink(self):
+        for stockout in self:
+            if stockout.state == 'issued':
+                raise ValidationError(_("You cannot delete an approved stockout."))
+        return super(InventoryStockOut, self).unlink()
+
+    @api.multi
     def button_requested(self):
         self.write({'state': 'requested'})
         mail_template = self.env.ref('custom_inventory.stock_out_staff_request_line_manager_notification_email')
@@ -374,6 +381,13 @@ class InventoryStockOutLines(models.Model):
     state = fields.Selection(STATE_SELECTION, index=True, track_visibility='onchange', related='stockout_id.state',
                              store=True)
 
+    @api.multi
+    def unlink(self):
+        for stockout in self:
+            if stockout.state == 'issued':
+                raise ValidationError(_("You cannot delete an approved stockout."))
+        return super(InventoryStockOutLines, self).unlink()
+
     @api.depends('stockout_id.requester_id.name')
     def requested_by_compute(self):
         for rec in self:
@@ -384,6 +398,13 @@ class InventoryStockOutLines(models.Model):
     def onchange_product_id(self):
         if self.product_id:
             self.balance_stock = self.product_id.balance_stock
+
+    @api.onchange('issued_quantity')
+    @api.depends('issued_quantity')
+    def onchange_issued_quantity(self):
+        if self.issued_quantity and self.balance_stock:
+            if self.balance_stock < self.issued_quantity:
+                raise ValidationError(_("Please Issue Value <= Stock Balance"))
 
     @api.onchange('requested_quantity')
     @api.depends('requested_quantity')
