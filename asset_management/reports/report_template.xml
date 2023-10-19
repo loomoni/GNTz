@@ -1,36 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
 
-    <!--    First Draft barcode , -->
-    <!--    <template id="asset_management_qr_code_template">-->
-    <!--        <t t-call="web.basic_layout">-->
-    <!--            <div class="page">-->
-    <!--                <t t-foreach="docs" t-as="asset">-->
-    <!--                    <div style="width: 32%; display: inline-table; height: 10rem;">-->
-    <!--                        <table class="table table-bordered mb-0" style="border: 2px solid black !important;">-->
-    <!--                            <tr>-->
-    <!--                                <td class="text-center align-middle" style="height: 6rem;">-->
-    <!--                                    <img alt="Barcode" t-if="len(asset.code) == 13"-->
-    <!--                                         t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('EAN13', quote_plus(asset.name or ''), 600, 150)"-->
-    <!--                                         style="width:100%;height:4rem;"/>-->
-    <!--                                    <img alt="Barcode" t-elif="len(asset.code) == 8"-->
-    <!--                                         t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('EAN8', quote_plus(asset.name  or ''), 600, 150)"-->
-    <!--                                         style="width:100%;height:4rem;"/>-->
-    <!--                                    <img alt="Barcode" t-else=""-->
-    <!--                                         t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('Code128', quote_plus(asset.name or ''), 600, 150)"-->
-    <!--                                         style="width:100%;height:4rem"/>-->
-    <!--                                    <span t-field="asset.code"/>-->
-    <!--                                </td>-->
-    <!--                            </tr>-->
-    <!--                        </table>-->
-    <!--                    </div>-->
-    <!--                </t>-->
-    <!--            </div>-->
-    <!--        </t>-->
-    <!--    </template>-->
-
-    <!--    Second Draft barcode Template-->
-            <template id="asset_management_qr_code_template">
+    <!-- Asset barcode template-->
+                <template id="asset_management_qr_code_template">
                 <t t-call="web.basic_layout">
                     <div class="page">
                         <t t-foreach="docs" t-as="asset">
@@ -41,13 +13,13 @@
                                         <td class="text-center align-middle" style="height: 6rem;">
                                             <span style="font-size: 12px"><strong>Property of Good Neighbours Tanzania</strong></span>
                                             <img alt="Barcode" t-if="len(asset.code) == 13"
-                                                 t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('EAN13', quote_plus(asset.name or ''), 600, 150)"
+                                                 t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('EAN13', quote_plus(asset.code or ''), 600, 150)"
                                                  style="width:100%;height:4rem;"/>
                                             <img alt="Barcode" t-elif="len(asset.code) == 8"
-                                                 t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('EAN8', quote_plus(asset.name  or ''), 600, 150)"
+                                                 t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('EAN8', quote_plus(asset.code  or ''), 600, 150)"
                                                  style="width:100%;height:4rem;"/>
                                             <img alt="Barcode" t-else=""
-                                                 t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('Code128', quote_plus(asset.name or ''), 600, 150)"
+                                                 t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('Code128', quote_plus(asset.code or ''), 600, 150)"
                                                  style="width:100%;height:4rem"/>
                                             <span t-field="asset.code"/>
                                         </td>
@@ -59,70 +31,8 @@
                 </t>
             </template>
 
-    <!--    Barcode draft three-->
-<!--    <template id="asset_management_qr_code_template">-->
-<!--        <t t-call="web.basic_layout">-->
-<!--            <div class="page">-->
-<!--                <t t-foreach="docs" t-as="asset">-->
-<!--                    <div style="width: 50%; display: inline-table; height: 10rem;">-->
-<!--                        <table class="table table-bordered mb-0" style="border: 2px solid black !important;">-->
-<!--                            <tr>-->
-<!--                                <td>-->
-<!--                                    <strong>Name:</strong>-->
-<!--                                </td>-->
-<!--                                <td>-->
-<!--                                    <span t-field="asset.name"/>-->
-<!--                                </td>-->
-<!--                                <td rowspan="3" style="vertical-align: center;">-->
-<!--                                    <p style="text-align:center;padding-top:10px;">-->
-<!--                                        <img t-if="not asset.image_small"-->
-<!--                                             t-att-src="'/web/static/src/img/placeholder.png'" height="120"-->
-<!--                                             border="1" width="120"/>-->
-<!--                                        <img t-if="asset.image_small"-->
-<!--                                             t-att-src="'data:image/png;base64,%s' % to_text(asset.image_small)"-->
-<!--                                             height="120" border="1" width="120"/>-->
 
-<!--                                    </p>-->
-<!--                                </td>-->
-<!--                            </tr>-->
-<!--                            <tr>-->
-<!--                                <td>-->
-<!--                                    <strong>Asset ID:</strong>-->
-<!--                                </td>-->
-<!--                                <td>-->
-<!--                                    <span t-field="asset.asset_id_no"/>-->
-<!--                                </td>-->
-<!--                            </tr>-->
-<!--                            <tr>-->
-<!--                                <td>-->
-<!--                                    <strong>Serial #:</strong>-->
-<!--                                </td>-->
-<!--                                <td>-->
-<!--                                    <span t-field="asset.code"/>-->
-<!--                                </td>-->
-<!--                            </tr>-->
-<!--                            <tr>-->
-<!--                                <td colspan="3" class="text-center align-middle" style="height: 6rem;">-->
-<!--                                    <img alt="Barcode" t-if="len(asset.code) == 13"-->
-<!--                                         t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('EAN13', quote_plus(asset.code or ''), 600, 150)"-->
-<!--                                         style="width:100%;height:4rem;"/>-->
-<!--                                    <img alt="Barcode" t-elif="len(asset.code) == 8"-->
-<!--                                         t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('EAN8', quote_plus(asset.code  or ''), 600, 150)"-->
-<!--                                         style="width:100%;height:4rem;"/>-->
-<!--                                    <img alt="Barcode" t-else=""-->
-<!--                                         t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('Code128', quote_plus(asset.code or ''), 600, 150)"-->
-<!--                                         style="width:100%;height:4rem"/>-->
-<!--                                    <span t-field="asset.code"/>-->
-<!--                                </td>-->
-<!--                            </tr>-->
-<!--                        </table>-->
-<!--                    </div>-->
-<!--                </t>-->
-<!--            </div>-->
-<!--        </t>-->
-<!--    </template>-->
-
-
+    <!--Asset custodian template-->
     <template id="asset_custodian_report_template">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">

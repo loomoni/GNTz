@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import base64
+# import base64
 import imghdr
 from datetime import *
 from io import BytesIO
@@ -21,10 +21,41 @@ from odoo.tools import float_compare, float_is_zero, datetime
 from dateutil.relativedelta import relativedelta
 import calendar
 
+import qrcode
+import base64
+
+class AssetQRCodeReport(models.AbstractModel):
+    _name = 'report.asset_management_qr_code_template'
+    _description = 'Asset QR Code Report'
+
+    @api.model
+    def _get_report_values(self, docids, data=None):
+        assets = self.env['asset.asset'].browse(docids)
+        return {
+            'docs': assets,
+        }
+
 
 class AssetsInherit(models.Model):
     _inherit = 'account.asset.asset'
     _name = "account.asset.asset"
+
+    def generate_qr_code(self):
+        data = f"{self.name} | {self.code} | {self.department_id.name if self.department_id else ''} | {self.category_id.name if self.category_id else ''}"
+        print(data)
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_L,
+            box_size=10,
+            border=4,
+        )
+        qr.add_data(data)
+        qr.make(fit=True)
+        img = qr.make_image(fill_color="black", back_color="white")
+        buffered = BytesIO()
+        img.save(buffered, format="PNG")
+        qr_base64 = base64.b64encode(buffered.getvalue()).decode('utf-8')
+        return qr_base64
 
     ASSET_ORIGIN_SELECTION = [
         ("donated", "Donations"),
@@ -95,7 +126,7 @@ class AssetsInherit(models.Model):
         if employee and employee.department_id:
             return employee.department_id.id
 
-    code = fields.Char(string='Asset Number', compute='_default_serial_no', store=True, readonly=False)
+    code = fields.Char(string='Asset Number', searchable=True, compute='_default_serial_no', store=True, readonly=False)
     # code = fields.Char(string='Asset Number', readonly=False)
     cummulative_amount = fields.Float(string='Accumulated Depreciation', compute='_compute_accumulated_depreciation',
                                       method=True, digits=0)

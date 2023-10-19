@@ -7,6 +7,7 @@
         <field name="inherit_id" ref="om_account_asset.view_account_asset_asset_purchase_tree"/>
         <field name="arch" type="xml">
             <tree>
+<!--                <field name="code"/>-->
                 <field name="branch"/>
                 <field name="value"/>
                 <field name="value_residual" widget="monetary"/>
@@ -17,6 +18,16 @@
             </tree>
         </field>
     </record>
+
+<!--    <record id="account_asset_asset_search_view" model="ir.ui.view">-->
+<!--        <field name="name">asset.asset.search.view</field>-->
+<!--        <field name="model">account.asset.asset</field>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <search string="asset assign search">-->
+<!--                <field name="code" string="code" filter_domain="[('code','ilike',self)]"/>-->
+<!--            </search>-->
+<!--        </field>-->
+<!--    </record>-->
 
     <!--    account asset form inherit-->
     <record id="om_account_asset_view_form_inherited" model="ir.ui.view">
@@ -127,6 +138,8 @@
         <field name="arch" type="xml">
             <search string="Fixed Assets Report Search">
                 <field name="name" string="Asset"/>
+<!--                <field name="code" string="Asset Number"/>-->
+                <field name="code" string="code" domain="[('code','ilike',self)]"/>
                 <field name="date" string="Purchase Date"/>
                 <filter string="Current" name="current" domain="[('state','in', ('draft','open'))]"
                         help="Assets in draft and open states"/>
@@ -215,7 +228,7 @@
             <form string="Asset List">
                 <group>
                     <field name="department_id" options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
-<!--                    <field name="print_date"/>-->
+                    <!--                    <field name="print_date"/>-->
                 </group>
                 <!--                <group>-->
                 <!--                    <group>-->
@@ -233,7 +246,7 @@
         </field>
     </record>
 
-        <record model="ir.ui.view" id="view_asset_custodian_wizard_excel">
+    <record model="ir.ui.view" id="view_asset_custodian_wizard_excel">
         <field name="name">view.asset.list.excel</field>
         <field name="model">asset.custodian.excel</field>
         <field name="arch" type="xml">
