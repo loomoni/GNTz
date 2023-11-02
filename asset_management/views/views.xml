@@ -7,7 +7,7 @@
         <field name="inherit_id" ref="om_account_asset.view_account_asset_asset_purchase_tree"/>
         <field name="arch" type="xml">
             <tree>
-<!--                <field name="code"/>-->
+                <field name="code"/>
                 <field name="branch"/>
                 <field name="value"/>
                 <field name="value_residual" widget="monetary"/>
