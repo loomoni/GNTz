@@ -32,6 +32,7 @@
         'views/asset_disposal.xml',
         'views/asset_reporting.xml',
         'views/asset_transfer.xml',
+        'views/asset_handover.xml',
         'views/assets_checkout.xml',
         'views/asset_reevaluation.xml',
     ],

@@ -24,6 +24,7 @@ import calendar
 import qrcode
 import base64
 
+
 class AssetQRCodeReport(models.AbstractModel):
     _name = 'report.asset_management_qr_code_template'
     _description = 'Asset QR Code Report'
@@ -39,23 +40,6 @@ class AssetQRCodeReport(models.AbstractModel):
 class AssetsInherit(models.Model):
     _inherit = 'account.asset.asset'
     _name = "account.asset.asset"
-
-    def generate_qr_code(self):
-        data = f"{self.name} | {self.code} | {self.department_id.name if self.department_id else ''} | {self.category_id.name if self.category_id else ''}"
-        print(data)
-        qr = qrcode.QRCode(
-            version=1,
-            error_correction=qrcode.constants.ERROR_CORRECT_L,
-            box_size=10,
-            border=4,
-        )
-        qr.add_data(data)
-        qr.make(fit=True)
-        img = qr.make_image(fill_color="black", back_color="white")
-        buffered = BytesIO()
-        img.save(buffered, format="PNG")
-        qr_base64 = base64.b64encode(buffered.getvalue()).decode('utf-8')
-        return qr_base64
 
     ASSET_ORIGIN_SELECTION = [
         ("donated", "Donations"),
@@ -105,10 +89,38 @@ class AssetsInherit(models.Model):
         self.write({'state': 'close'})
         return True
 
+    name = fields.Char(string="name", readonly=True)
     state = fields.Selection(SELECTION, 'Status', required=True, copy=False, default='draft',
                              help="When an asset is created, the status is 'Draft'.\n"
                                   "If the asset is confirmed, the status goes in 'Running' and the depreciation lines can be posted in the accounting.\n"
                                   "You can manually close an asset when the depreciation is over. If the last line of depreciation is posted, the asset automatically goes in that status.")
+
+    @api.multi
+    def unlink(self):
+        for asset in self:
+            if asset.state in ('open', 'inuse', 'repair', 'repair', 'close'):
+                raise ValidationError(_("You cannot delete an approved asset."))
+        return super(AssetsInherit, self).unlink()
+
+    # @api.model
+    # def fields_get(self, allfields=None, attributes=None):
+    #     res = super(AssetsInherit, self).fields_get(allfields, attributes)
+    #     for record in self:
+    #         if record.state in ['open', 'inuse']:
+    #             for field_name in res:
+    #                 # Make all fields readonly for assets in 'open' and 'running' state
+    #                 res[field_name]['readonly'] = True
+    #     return res
+
+    # @api.model
+    # def fields_get(self, allfields=None, attributes=None):
+    #     res = super(AssetsInherit, self).fields_get(allfields, attributes)
+    #     for record in self:
+    #         if record.state in ['open', 'inuse']:
+    #             for field_name in res:
+    #                 if 'readonly' not in res[field_name]['attrs']:
+    #                     res[field_name]['attrs'] = {'readonly': [(True, '1')]}
+    #     return res
 
     @api.depends('department_id.branch_id.code', 'category_id.asset_category_code')
     def _default_serial_no(self):

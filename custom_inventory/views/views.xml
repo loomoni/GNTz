@@ -50,38 +50,38 @@
                 <sheet>
                     <group>
                         <group>
-                            <field name="name"/>
-                            <field name="goods_received_date"/>
+                            <field name="name" attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
+                            <field name="goods_received_date"  attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
                         </group>
                         <group>
-                            <field name="delivery_note_no"/>
-                            <field name="receiver_id"/>
+                            <field name="delivery_note_no"  attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
+                            <field name="receiver_id"  attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
                         </group>
                     </group>
                     <group>
                         <group>
-                            <field name="department_id"/>
-                            <field name="purchaser_id"/>
-                            <field name="invoice_no"/>
+                            <field name="department_id"  attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
+                            <field name="purchaser_id"  attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
+                            <field name="invoice_no"  attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
                         </group>
                         <group>
-                            <field name="supplier_id"/>
-                            <field name="delivery_attachment" filename="delivery_attachment_name"/>
-                            <field name="delivery_attachment_name" invisible="1"/>
+                            <field name="supplier_id"  attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
+                            <field name="delivery_attachment" filename="delivery_attachment_name"  attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
+                            <field name="delivery_attachment_name" invisible="1"  attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
                         </group>
                     </group>
                      <group>
                         <group>
-                            <field name="lpo_number"/>
-                            <field name="gin_number"/>
-                            <field name="grn_number"/>
+                            <field name="lpo_number"  attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
+                            <field name="gin_number"  attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
+                            <field name="grn_number"  attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
                         </group>
                         <group>
-                            <field name="lpo_attachment" filename="lpo_attachment_name"/>
+                            <field name="lpo_attachment" filename="lpo_attachment_name"  attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
                             <field name="lpo_attachment_name" invisible="1"/>
-                            <field name="gin_attachment" filename="gin_attachment_name"/>
+                            <field name="gin_attachment" filename="gin_attachment_name"  attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
                             <field name="gin_attachment_name" invisible="1"/>
-                            <field name="grn_attachment" filename="grn_attachment_name"/>
+                            <field name="grn_attachment" filename="grn_attachment_name"  attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
                             <field name="grn_attachment_name" invisible="1"/>
                         </group>
                     </group>
@@ -90,7 +90,7 @@
                             <field name="line_ids">
                                 <tree editable="bottom">
                                     <field name="product_id"
-                                           options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
+                                           options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"  attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
                                     <field name="quantity"/>
                                     <field name="department" invisible="1"/>
                                     <field name="stockin_id" invisible="1"/>
@@ -98,12 +98,6 @@
                                     <field name="unit_cost"/>
                                     <field name="cost"/>
                                      <field name="uom_id"/>
-<!--                                    <field name="lpo_number"/>-->
-<!--                                    <field name="lpo_attachment"/>-->
-<!--                                    <field name="gin_number"/>-->
-<!--                                    <field name="gin_attachment"/>-->
-<!--                                    <field name="grn_number"/>-->
-<!--                                    <field name="grn_attachment"/>-->
                                 </tree>
                                 <form>
                                     <sheet>

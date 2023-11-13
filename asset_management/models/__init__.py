@@ -6,3 +6,4 @@ from . import asset_reevaluation
 from . import asset_reporting
 from . import asset_transfer
 from . import assets_checkout
+from . import asset_handover

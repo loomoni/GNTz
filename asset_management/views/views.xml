@@ -19,15 +19,15 @@
         </field>
     </record>
 
-<!--    <record id="account_asset_asset_search_view" model="ir.ui.view">-->
-<!--        <field name="name">asset.asset.search.view</field>-->
-<!--        <field name="model">account.asset.asset</field>-->
-<!--        <field name="arch" type="xml">-->
-<!--            <search string="asset assign search">-->
-<!--                <field name="code" string="code" filter_domain="[('code','ilike',self)]"/>-->
-<!--            </search>-->
-<!--        </field>-->
-<!--    </record>-->
+    <!--    <record id="account_asset_asset_search_view" model="ir.ui.view">-->
+    <!--        <field name="name">asset.asset.search.view</field>-->
+    <!--        <field name="model">account.asset.asset</field>-->
+    <!--        <field name="arch" type="xml">-->
+    <!--            <search string="asset assign search">-->
+    <!--                <field name="code" string="code" filter_domain="[('code','ilike',self)]"/>-->
+    <!--            </search>-->
+    <!--        </field>-->
+    <!--    </record>-->
 
     <!--    account asset form inherit-->
     <record id="om_account_asset_view_form_inherited" model="ir.ui.view">
@@ -38,6 +38,9 @@
             <!--            <xpath expr="//field[@name='department_id']" position="after">-->
             <!--                <field name="branch"/>-->
             <!--            </xpath>-->
+<!--            <xpath expr="//field[@name='name']" position="attributes">-->
+<!--                <field name="name" attrs="{'readonly': [('state', 'in', ('open', 'inuse'))]}"/>-->
+<!--            </xpath>-->
             <xpath expr="//field[@name='category_id']" position="before">
                 <field name="image_small" widget="image" options="{'size': (100, 100)}"/>
             </xpath>
@@ -138,7 +141,7 @@
         <field name="arch" type="xml">
             <search string="Fixed Assets Report Search">
                 <field name="name" string="Asset"/>
-<!--                <field name="code" string="Asset Number"/>-->
+                <!--                <field name="code" string="Asset Number"/>-->
                 <field name="code" string="code" domain="[('code','ilike',self)]"/>
                 <field name="date" string="Purchase Date"/>
                 <filter string="Current" name="current" domain="[('state','in', ('draft','open'))]"

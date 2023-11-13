@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
-    <!--    Asset transfer starts -->
-    <!--    Asset transfer tree view-->
-    <record id="asset_transfer_tree_view" model="ir.ui.view">
-        <field name="name">asset.transfer.tree.view</field>
-        <field name="model">account.asset.transfer</field>
+    <!--    Asset HandOver starts -->
+    <!--    Asset HandOver tree view-->
+    <record id="asset_handover_tree_view" model="ir.ui.view">
+        <field name="name">asset.handover.tree.view</field>
+        <field name="model">account.asset.handover</field>
         <field name="arch" type="xml">
-            <tree string="Asset Transfer">
+            <tree string="Asset HandOver">
                 <field name="name"/>
             </tree>
         </field>
     </record>
 
-    <!--    asset transfer form view -->
-    <record id="asset_transfer_form_view" model="ir.ui.view">
-        <field name="name">asset.transfer.form.view</field>
-        <field name="model">account.asset.transfer</field>
+    <!--    asset HandOver form view -->
+    <record id="asset_handover_form_view" model="ir.ui.view">
+        <field name="name">asset.handover.form.view</field>
+        <field name="model">account.asset.handover</field>
         <field name="arch" type="xml">
             <form>
                 <header>
@@ -90,22 +90,22 @@
     </record>
 
 
-    <record id="asset_transfer_action" model="ir.actions.act_window">
-        <field name="name">Asset Transfer</field>
-        <field name="res_model">account.asset.transfer</field>
+    <record id="asset_handover_action" model="ir.actions.act_window">
+        <field name="name">Asset HandOver</field>
+        <field name="res_model">account.asset.handover</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                There is no asset transfer yet.!
+                There is no asset HandOver yet.!
             </p>
         </field>
     </record>
 
-    <menuitem name="Asset Transfer"
-              id="asset_transfer_menu_id"
+    <menuitem name="Asset handover"
+              id="asset_handover_menu_id"
               parent="asset_management.menu_root"
-              action="asset_transfer_action"
+              action="asset_handover_action"
               sequence="8"
                groups="asset_management.all_staff,asset_management.asset_cd,asset_management.asset_dm,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_branch,asset_management.asset_procurement_ho"/>
 </odoo>

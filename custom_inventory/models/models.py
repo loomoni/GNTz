@@ -74,6 +74,13 @@ class InventoryStockIn(models.Model):
     grn_attachment_name = fields.Char('Attachment Name')
 
     @api.multi
+    def unlink(self):
+        for stockin in self:
+            if stockin.state == 'approved':
+                raise ValidationError(_("You cannot delete an approved stock In."))
+        return super(InventoryStockIn, self).unlink()
+
+    @api.multi
     def button_approve(self):
         self.write({'state': 'approved'})
         for line in self.line_ids:
@@ -151,15 +158,18 @@ class InventoryStockInLines(models.Model):
     state = fields.Selection(STATE_SELECTION, index=True, track_visibility='onchange', related='stockin_id.state',
                              store=True)
 
-    # @api.depends('stockin_id.goods_received_date')
-    # def compute_date(self):
-    #     for rec in self:
-    #         rec.received_date = rec.stockin_id.goods_received_date
 
     @api.depends('stockin_id.name')
     def compute_stock_in_no(self):
         for rec in self:
             rec.stock_in_no = rec.stockin_id.name
+
+    @api.multi
+    def unlink(self):
+        for stockinline in self:
+            if stockinline.state == 'approved':
+                raise ValidationError(_("You cannot delete an approved stock in product."))
+        return super(InventoryStockInLines, self).unlink()
 
 
 class InventoryStockOut(models.Model):
