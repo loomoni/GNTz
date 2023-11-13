@@ -90,7 +90,7 @@
                             <field name="line_ids">
                                 <tree editable="bottom">
                                     <field name="product_id"
-                                           options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"  attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
+                                           options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
                                     <field name="quantity"/>
                                     <field name="department" invisible="1"/>
                                     <field name="stockin_id" invisible="1"/>
@@ -108,12 +108,6 @@
                                             <field name="project"/>
                                             <field name="cost"/>
                                             <field name="uom_id"/>
-<!--                                            <field name="lpo_number"/>-->
-<!--                                            <field name="lpo_attachment"/>-->
-<!--                                            <field name="gin_number"/>-->
-<!--                                            <field name="gin_attachment"/>-->
-<!--                                            <field name="grn_number"/>-->
-<!--                                            <field name="grn_attachment"/>-->
                                         </group>
                                     </sheet>
                                 </form>
