@@ -220,12 +220,12 @@ class InventoryStockOut(models.Model):
     line_ids = fields.One2many('inventory.stockout.lines', 'stockout_id', string="Stock Out Lines", index=True,
                                track_visibility='onchange')
 
-    # @api.multi
-    # def unlink(self):
-    #     for stockout in self:
-    #         if stockout.state == 'issued':
-    #             raise ValidationError(_("You cannot delete an approved stockout."))
-    #     return super(InventoryStockOut, self).unlink()
+    @api.multi
+    def unlink(self):
+        for stockout in self:
+            if stockout.state == 'issued':
+                raise ValidationError(_("You cannot delete an approved stockout."))
+        return super(InventoryStockOut, self).unlink()
 
     @api.multi
     def button_requested(self):
@@ -391,12 +391,12 @@ class InventoryStockOutLines(models.Model):
     state = fields.Selection(STATE_SELECTION, index=True, track_visibility='onchange', related='stockout_id.state',
                              store=True)
 
-    # @api.multi
-    # def unlink(self):
-    #     for stockout in self:
-    #         if stockout.state == 'issued':
-    #             raise ValidationError(_("You cannot delete an approved stockout."))
-    #     return super(InventoryStockOutLines, self).unlink()
+    @api.multi
+    def unlink(self):
+        for stockout in self:
+            if stockout.state == 'issued':
+                raise ValidationError(_("You cannot delete an approved stockout."))
+        return super(InventoryStockOutLines, self).unlink()
 
     @api.depends('stockout_id.requester_id.name')
     def requested_by_compute(self):
