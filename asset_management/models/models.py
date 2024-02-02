@@ -40,6 +40,7 @@ class AssetQRCodeReport(models.AbstractModel):
 class AssetsInherit(models.Model):
     _inherit = 'account.asset.asset'
     _name = "account.asset.asset"
+    _order = 'id desc'
 
     ASSET_ORIGIN_SELECTION = [
         ("donated", "Donations"),
@@ -138,7 +139,9 @@ class AssetsInherit(models.Model):
         if employee and employee.department_id:
             return employee.department_id.id
 
-    code = fields.Char(string='Asset Number', searchable=True, compute='_default_serial_no', store=True, readonly=False)
+    code = fields.Char(string='Asset Number', search=True, compute='_default_serial_no', store=True,
+                       readonly=True)
+    # computed_code = fields.Char(string='Computed Asset Number', compute='_compute_serial_no', store=True)
     # code = fields.Char(string='Asset Number', readonly=False)
     cummulative_amount = fields.Float(string='Accumulated Depreciation', compute='_compute_accumulated_depreciation',
                                       method=True, digits=0)
@@ -185,6 +188,39 @@ class AssetsInherit(models.Model):
     #      'unique(code)',
     #      'Choose another reference no - it has to be unique!')
     # ]
+
+    # def _compute_serial_no(self):
+    #     asset_count = self.env['account.asset.asset'].search_count([])
+    #     for record in self:
+    #         branch_code = str(record.department_id.branch_id.code) if record.department_id.branch_id.code else ""
+    #         category_code = str(
+    #             record.category_id.asset_category_code) if record.category_id.asset_category_code else ""
+    #
+    #         computed_code = 'GNTZ' + '-' + branch_code + '-' + category_code + '-' + str(asset_count + 1)
+    #         record.write({'computed_code': computed_code, 'code': computed_code})
+    #
+    # @api.model
+    # @api.depends_context('search_default_code')
+    # def _search_code(self, operator, value):
+    #     if self.env.context.get('search_default_code'):
+    #         records = self.search([('computed_code', operator, value)])
+    #     else:
+    #         records = self.search([('code', operator, value)])
+    #     return records
+
+    # @api.model
+    # @api.depends('code')
+    # @api.onchange('code')
+    # def _name_search(self, name='', args=None, operator='ilike', limit=100):
+    #     # Custom search method
+    #     args = args or []
+    #     domain = []
+    #
+    #     if name:
+    #         domain += [('code', operator, name)]
+    #
+    #     records = self.search(domain + args, limit=limit)
+    #     return records.name_get()
 
     @api.onchange('journal_id')
     def onchange_journal_id(self):
@@ -698,10 +734,12 @@ class AssetListWizard(models.TransientModel):
         worksheet.write('I8:I8', 'Status', cell_text_sub_title_format)
 
         department_asset = self.env['account.asset.asset'].sudo().search(
-            [('department_id', '=', self.department_name), ('date', '<=', self.date_to), ('date', '>=', self.date_from)])
+            [('department_id', '=', self.department_name), ('date', '<=', self.date_to),
+             ('date', '>=', self.date_from)])
 
         # all_asset = self.env['account.asset.asset'].sudo().search([])
-        all_asset = self.env['account.asset.asset'].sudo().search([('date', '<=', self.date_to), ('date', '>=', self.date_from)])
+        all_asset = self.env['account.asset.asset'].sudo().search(
+            [('date', '<=', self.date_to), ('date', '>=', self.date_from)])
 
         row = 8
         col = 0
