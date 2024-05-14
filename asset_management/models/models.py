@@ -862,6 +862,13 @@ class AssetAssign(models.Model):
     state = fields.Selection(STATE_SELECTION, index=True, track_visibility='onchange', required=True, copy=False,
                              default='draft')
 
+    @api.multi
+    def unlink(self):
+        for assigned in self:
+            if assigned.state == 'assigned':
+                raise ValidationError(_("You cannot delete an approved assigned asset."))
+        return super(AssetAssign, self).unlink()
+
     def get_custodian_report(self):
         return self.env.ref('asset_management.asset_custodian_report_excel').report_action(self)
 
