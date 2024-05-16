@@ -65,7 +65,7 @@
                     <button name="validate" states="review,non_fixed" string="Approve Asset" type="object"
                             class="oe_highlight"
                             groups="asset_management.asset_cd,asset_management.asset_dm"/>
-                    <button name="back_to_draft" states="review,non_fixed,inuse,open,repair" string="Review Asset" type="object"
+                    <button name="back_to_draft" states="review,non_fixed" string="Review Asset" type="object"
                             groups="asset_management.asset_cd,asset_management.asset_dm"/>
                     <button name="button_reject" states="review,non_fixed" string="Reject" type="object"
                             groups="asset_management.asset_cd,asset_management.asset_dm" class="oe_highlight"/>
