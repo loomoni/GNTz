@@ -23,7 +23,7 @@
         <field name="model">account.asset.asset</field>
         <field name="arch" type="xml">
             <search string="Asset">
-<!--                <field name="code" string="code" filter_domain="[('code','ilike',self)]"/>-->
+                <!--                <field name="code" string="code" filter_domain="[('code','ilike',self)]"/>-->
                 <group expand="0" string="Group by">
                     <filter string="Branch" name="branch" domain="[]" context="{'group_by':'branch'}"/>
                 </group>
@@ -127,6 +127,7 @@
                 <field name="name" string="Asset Name"/>
                 <field name="category_id" string="Class of Asset"/>
                 <field name="code" string="Asset No."/>
+                <field name="branch" string="Asset No."/>
                 <field name="value" string="Original Cost"/>
                 <field name="cummulative_amount" string="Accumulated Depreciation"/>
                 <field name="value_residual" string="Net Book Value"/>
@@ -147,7 +148,7 @@
                 <!--                <field name="branch" string="Branch"/>-->
                 <!--                <field name="code" string="Asset Number"/>-->
                 <field name="code" string="code" domain="[('code','ilike',self)]"/>
-                <!--                <field name="branch" string="branch" domain="[('branch','ilike',self)]"/>-->
+                <field name="branch" string="branch" domain="[('branch','ilike',self)]"/>
                 <filter string="Branch" name="branch" context="{'group_by': 'branch'}"/>
                 <field name="date" string="Purchase Date"/>
                 <filter string="Current" name="current" domain="[('state','in', ('draft','open'))]"

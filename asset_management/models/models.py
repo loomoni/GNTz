@@ -140,7 +140,7 @@ class AssetsInherit(models.Model):
             return employee.department_id.id
 
     code = fields.Char(string='Asset Number', search=True, compute='_default_serial_no', store=True,
-                       readonly=True)
+                       readonly=False)
     # computed_code = fields.Char(string='Computed Asset Number', compute='_compute_serial_no', store=True)
     # code = fields.Char(string='Asset Number', readonly=False)
     cummulative_amount = fields.Float(string='Accumulated Depreciation', compute='_compute_accumulated_depreciation',
@@ -149,7 +149,7 @@ class AssetsInherit(models.Model):
                                     default='procured')
     department_id = fields.Many2one('hr.department', string='Asset Location/Department', required=True,
                                     default=_default_department, store=True)
-    branch = fields.Char(string='Branch', related='department_id.branch_id.name')
+    branch = fields.Char(string='Branch', related='department_id.branch_id.name', search=True)
     # name = fields.Char(readonly=False)
     method = fields.Selection(readonly=False)
     value = fields.Float(readonly=False)
