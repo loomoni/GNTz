@@ -150,7 +150,7 @@ class AssetsInherit(models.Model):
     department_id = fields.Many2one('hr.department', string='Asset Location/Department', required=True,
                                     default=_default_department, store=True)
     branch = fields.Char(string='Branch', related='department_id.branch_id.name')
-    name = fields.Char(readonly=False)
+    # name = fields.Char(readonly=False)
     method = fields.Selection(readonly=False)
     value = fields.Float(readonly=False)
     salvage_value = fields.Float(readonly=False)
