@@ -14,7 +14,7 @@ class CompanyBranches(models.Model):
         "Small-sized image", attachment=True)
     code = fields.Char('Branch Code', required=True)
     main_branch = fields.Boolean('HQ Branch', default=False)
-    manager_id = fields.Many2many('hr.employee', string='Procurement Team', track_visibility='onchange')
+    manager_id = fields.Many2one('hr.employee', string='Procurement Team', track_visibility='onchange', required=False)
     accountant_id = fields.Many2many('res.users', string='Finance Team', track_visibility='onchange')
     ict_officer_id = fields.Many2one('hr.employee', string='ICT Officer', track_visibility='onchange')
     hr_manager_id = fields.Many2one('hr.employee', string='Branch HR', track_visibility='onchange')
