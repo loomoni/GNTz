@@ -115,6 +115,6 @@
               id="asset_transfer_menu"
               parent="asset_management.menu_root"
               action="asset_checkout_action"
-              sequence="6"
-              groups="asset_management.all_staff,asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_dm,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_ho"/>
+              sequence="6"/>
+<!--              groups="asset_management.all_staff,asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_dm,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_ho"/>-->
 </odoo>

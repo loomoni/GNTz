@@ -309,18 +309,18 @@
     <menuitem name="Asset Reporting"
               id="asset_reporting_menu"
               parent="asset_management.menu_root"
-              sequence="4"
-              groups="asset_management.all_staff,asset_management.all_ict_officer,asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_dm,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"/>
+              sequence="4"/>
+<!--              groups="asset_management.all_staff,asset_management.all_ict_officer,asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_dm,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"/>-->
     <menuitem name="Damage"
               id="asset_reporting_damage"
               action="asset_reporting_damage_action"
               parent="asset_management.asset_reporting_menu"
-              sequence="1"
-              groups="asset_management.all_staff,asset_management.all_ict_officer,asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_dm,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"/>
+              sequence="1"/>
+<!--              groups="asset_management.all_staff,asset_management.all_ict_officer,asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_dm,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"/>-->
     <menuitem name="Loss/Theft"
               id="asset_reporting_lost"
               action="asset_reporting_lost_action"
               parent="asset_management.asset_reporting_menu"
-              sequence="2"
-              groups="asset_management.all_staff,asset_management.asset_lm,asset_management.all_ict_officer,asset_management.asset_cd,asset_management.asset_dm,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"/>
+              sequence="2"/>
+<!--              groups="asset_management.all_staff,asset_management.asset_lm,asset_management.all_ict_officer,asset_management.asset_cd,asset_management.asset_dm,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"/>-->
 </odoo>
