@@ -149,7 +149,8 @@ class AssetsInherit(models.Model):
                                     default='procured')
     department_id = fields.Many2one('hr.department', string='Asset Location/Department', required=True,
                                     default=_default_department, store=True)
-    branch = fields.Char(string='Branch', related='department_id.branch_id.name', search=True)
+    # branch = fields.Char(string='Branch', related='department_id.branch_id.name', search=True, store=True, readonly=True)
+    branch = fields.Char(string='Branch', compute='_compute_branch', store=True, readonly=True)
     branch_id = fields.Integer(string='Branch', related='department_id.branch_id.id', search=True)
     # name = fields.Char(readonly=False)
     method = fields.Selection(readonly=False)
@@ -180,6 +181,11 @@ class AssetsInherit(models.Model):
     asset_assignment_line_ids = fields.One2many(comodel_name='account.asset.assign',
                                                 string="Asset Assignment IDS",
                                                 inverse_name="asset_ids")
+
+    @api.depends('department_id', 'department_id.branch_id')
+    def _compute_branch(self):
+        for asset in self:
+            asset.branch = asset.department_id.branch_id.name if asset.department_id.branch_id else ''
 
     # asset_assignment_ids = fields.Many2many(comodel_name='account.asset.assign', string="Assets Assignment",
     #                                         inverse_name="asset_ids")
