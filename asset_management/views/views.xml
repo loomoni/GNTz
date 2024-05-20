@@ -323,7 +323,7 @@
     <menuitem action="action_asset_custodian_print_report"
               id="assets_custodian_report_print"
               sequence="31"
-              groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"
+              groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_ho"
               parent="asset_management.assets_report_id"/>
 
 </odoo>
