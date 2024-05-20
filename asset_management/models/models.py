@@ -150,6 +150,7 @@ class AssetsInherit(models.Model):
     department_id = fields.Many2one('hr.department', string='Asset Location/Department', required=True,
                                     default=_default_department, store=True)
     branch = fields.Char(string='Branch', related='department_id.branch_id.name', search=True)
+    branch_id = fields.Integer(string='Branch', related='department_id.branch_id.id', search=True)
     # name = fields.Char(readonly=False)
     method = fields.Selection(readonly=False)
     value = fields.Float(readonly=False)
@@ -579,6 +580,18 @@ class AccountAssetAssignWizard(models.TransientModel):
         }
 
 
+# class ResUsers(models.Model):
+#     _inherit = 'res.users'
+
+# branch_id = fields.Many2one('hr.branches', string='Branch')
+# is_hq = fields.Boolean(string='Is HQ', compute='_compute_is_hq')
+
+# @api.depends('branch_id')
+# def _compute_is_hq(self):
+#     for user in self:
+#         user.is_hq = user.branch_id and user.branch_id.main_branch
+
+
 class AssetCustodianReportExcel(models.TransientModel):
     _name = 'asset.custodian.excel'
     _description = "Asset Custodian excel table"
@@ -590,8 +603,32 @@ class AssetCustodianReportExcel(models.TransientModel):
 class AssetListWizard(models.TransientModel):
     _name = 'asset.list.wizard'
 
+    @api.onchange('branch_id')
+    def _onchange_branch_id(self):
+        departments = []
+        for department in self.branch_id:
+            departments.append(department.id)
+        return {'domain': {'department_id': [('branch_id', 'in', departments)]}}
+
+    def _default_branch(self):
+        employee = self.env['hr.employee'].sudo().search(
+            [('user_id', '=', self.env.uid)], limit=1)
+        if employee and employee.department_id.branch_id:
+            return employee.department_id.branch_id.id
+
+    @api.depends('branch_id')
+    def _compute_is_hq_branch(self):
+        for record in self:
+            record.is_hq_branch = record.branch_id.main_branch if record.branch_id else False
+
+    branch_id = fields.Many2one('hr.branches', string='Branch', required=False, default=_default_branch)
+    is_hq_branch = fields.Boolean(string='Is HQ Branch', compute='_compute_is_hq_branch', store=True)
+    # branch_id = fields.Many2one('hr.branches', string='Branch', required=True,
+    #                             default=lambda self: self._default_branch())
+    branch_name = fields.Integer(string='Branch', related='branch_id.id', required=False)
     department_id = fields.Many2one('hr.department', string='Department', required=False)
     department_name = fields.Integer(string='Department', related='department_id.id')
+    include_all_branches = fields.Boolean(string='Include All Branches', default=False)
     date_from = fields.Date(string='Date From', required=True,
                             default=lambda self: fields.Date.to_string(date.today().replace(day=1)))
     date_to = fields.Date(string='Date To', required=True,
@@ -599,6 +636,22 @@ class AssetListWizard(models.TransientModel):
                               (datetime.now() + relativedelta(months=+1, day=1, days=-1)).date()))
     company = fields.Many2one('res.company', default=lambda self: self.env['res.company']._company_default_get(),
                               string="Company")
+
+    # @api.model
+    # def default_get(self, fields):
+    #     res = super(AssetListWizard, self).default_get(fields)
+    #     user_branch = self.env.user.branch_id
+    #     res.update({
+    #         'branch_id': user_branch.id if user_branch else False,
+    #         'include_all_branches': user_branch.main_branch if user_branch else False,
+    #     })
+    #     return res
+    #
+    # @api.onchange('branch_id')
+    # def _onchange_branch_id(self):
+    #     user_branch = self.env.user.branch_id
+    #     if user_branch and not user_branch.main_branch:
+    #         self.include_all_branches = False
 
     @api.multi
     def get_report(self):
@@ -733,6 +786,10 @@ class AssetListWizard(models.TransientModel):
         worksheet.write('H8:H8', 'Department', cell_text_sub_title_format)
         worksheet.write('I8:I8', 'Status', cell_text_sub_title_format)
 
+        branch_asset = self.env['account.asset.asset'].sudo().search(
+            [('branch_id', '=', self.branch_name), ('date', '<=', self.date_to),
+             ('date', '>=', self.date_from)])
+
         department_asset = self.env['account.asset.asset'].sudo().search(
             [('department_id', '=', self.department_name), ('date', '<=', self.date_to),
              ('date', '>=', self.date_from)])
@@ -741,12 +798,45 @@ class AssetListWizard(models.TransientModel):
         all_asset = self.env['account.asset.asset'].sudo().search(
             [('date', '<=', self.date_to), ('date', '>=', self.date_from)])
 
+        # all_asset = self.env['account.asset.asset'].search([('branch_id', '=', self.branch_id.id)])
+        # if self.include_all_branches:
+        #     all_asset = self.env['account.asset.asset'].search([])
+
+        # domain = [('branch_id', '=', self.branch_id.id)]
+        # if self.include_all_branches:
+        #     domain = []
+        # all_asset = self.env['account.asset.asset'].search(domain)
+
         row = 8
         col = 0
         index = 1
 
         if department_asset:
             for asset in department_asset:
+                index = index
+                asset_name = asset.name
+                asset_id = asset.asset_id_no
+                asset_number = asset.code
+                purchase_date = datetime.strftime(asset.date, '%d-%m-%Y')
+                amount = asset.value
+                assigned_to = 'Null'
+                department = asset.department_id.name
+                status = asset.state
+
+                worksheet.write(row, col, index or '', cell_text_body_format)
+                worksheet.write(row, col + 1, asset_name or '', cell_text_body_format)
+                worksheet.write(row, col + 2, asset_id or '', cell_text_body_format)
+                worksheet.write(row, col + 3, asset_number or '', cell_text_body_format)
+                worksheet.write(row, col + 4, purchase_date or '', cell_text_body_format)
+                worksheet.write(row, col + 5, amount or '', cell_text_body_format)
+                worksheet.write(row, col + 6, assigned_to or '', cell_text_body_format)
+                worksheet.write(row, col + 7, department or '', cell_text_body_format)
+                worksheet.write(row, col + 8, status or '', cell_text_body_format)
+
+                row = row + 1
+                index = index + 1
+        elif branch_asset:
+            for asset in branch_asset:
                 index = index
                 asset_name = asset.name
                 asset_id = asset.asset_id_no

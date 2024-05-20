@@ -39,6 +39,7 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='invoice_id']" position="after">
                 <field name="branch"/>
+<!--                <field name="branch_id"/>-->
             </xpath>
             <!--            <xpath expr="//field[@name='name']" position="attributes">-->
             <!--                <field name="name" attrs="{'readonly': [('state', 'in', ('open', 'inuse'))]}"/>-->
@@ -127,7 +128,7 @@
                 <field name="name" string="Asset Name"/>
                 <field name="category_id" string="Class of Asset"/>
                 <field name="code" string="Asset No."/>
-                <field name="branch" string="Asset No."/>
+                <field name="branch" string="Branch"/>
                 <field name="value" string="Original Cost"/>
                 <field name="cummulative_amount" string="Accumulated Depreciation"/>
                 <field name="value_residual" string="Net Book Value"/>
@@ -202,6 +203,8 @@
         <field name="arch" type="xml">
             <form string="Asset List">
                 <group>
+                    <field name="is_hq_branch" invisible="1"/>
+                    <field name="branch_id" options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" attrs="{'readonly': [('is_hq_branch', '=', False)]}"/>
                     <field name="department_id" options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
                 </group>
                 <group>
@@ -302,7 +305,7 @@
               action="action_fixed_assets"
               parent="asset_management.menu_root"
               sequence="9"
-              groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_dm,asset_management.asset_procurement_ho"/>
+              groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_dm,asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"/>
     <menuitem name="Fixed Assets Report"
               id="menu_fixed_assets_report"
               action="action_fixed_assets"
@@ -314,13 +317,13 @@
     <menuitem action="action_asset_print_report"
               id="assets_report_print"
               sequence="30"
-              groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_ho"
+              groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"
               parent="asset_management.assets_report_id"/>
 
     <menuitem action="action_asset_custodian_print_report"
               id="assets_custodian_report_print"
               sequence="31"
-              groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_ho"
+              groups="asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"
               parent="asset_management.assets_report_id"/>
 
 </odoo>
