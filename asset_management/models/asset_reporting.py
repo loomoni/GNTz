@@ -250,10 +250,16 @@ class AssetReportingLost(models.Model):
 
     SELECTION = [
         ("draft", "Draft"),
+        ("submit", "Submitted"),
         ("line_manager", "Line Manager"),
         ("procurement", "Procurement"),
         ("adm_cd", "AD Manager/Country Director"),
     ]
+
+    @api.multi
+    def button_staff_send_lost_report(self):
+        self.write({'state': 'send'})
+        return True
 
     @api.multi
     def button_line_manager_review(self):

@@ -8,7 +8,7 @@
         <field name="arch" type="xml">
             <tree string="Asset Reporting">
                 <field name="name"/>
-<!--                <field name="damage_asset_name"/>-->
+                <!--                <field name="damage_asset_name"/>-->
                 <field name="report_date"/>
                 <field name="recommendation" string="Action Taken"/>
             </tree>
@@ -123,10 +123,12 @@
                         <page string="Equipment Information">
                             <field name="asset_reporting_damage_line_ids">
                                 <tree editable="bottom">
-                                    <field name="name" options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
+                                    <field name="name"
+                                           options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
 
                                     <!-- options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>                                   <field name="identification_number"/>-->
-                                    <field name="report_attachment" filename="report_attachment_name" widget="download_link"/>
+                                    <field name="report_attachment" filename="report_attachment_name"
+                                           widget="download_link"/>
                                     <field name="report_attachment_name" invisible="1"/>
                                     <field name="location"/>
                                     <field name="state" invisible="1"/>
@@ -218,7 +220,10 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="button_line_manager_review" states="draft" string="Line Manager Review" type="object"
+                    <button name="button_staff_send_lost_report" states="draft" string="Submit Report" type="object"
+                            class="oe_highlight"
+                           />
+                    <button name="button_line_manager_review" states="submit" string="Line Manager Review" type="object"
                             class="oe_highlight"
                             groups="asset_management.asset_lm"/>
                     <button name="button_procurement_review" states="line_manager" string="Review" type="object"
@@ -228,7 +233,7 @@
                             type="object"
                             class="oe_highlight"
                             groups="asset_management.asset_dm,asset_management.asset_cd"/>
-                    <field name="state" widget="statusbar" statusbar_visible="draft,line_manager,procurement,adm_cd"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,send,line_manager,procurement,adm_cd"/>
                 </header>
                 <sheet>
                     <group string="Lost/Theft - Reported By">
@@ -310,17 +315,17 @@
               id="asset_reporting_menu"
               parent="asset_management.menu_root"
               sequence="4"/>
-<!--              groups="asset_management.all_staff,asset_management.all_ict_officer,asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_dm,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"/>-->
+    <!--              groups="asset_management.all_staff,asset_management.all_ict_officer,asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_dm,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"/>-->
     <menuitem name="Damage"
               id="asset_reporting_damage"
               action="asset_reporting_damage_action"
               parent="asset_management.asset_reporting_menu"
               sequence="1"/>
-<!--              groups="asset_management.all_staff,asset_management.all_ict_officer,asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_dm,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"/>-->
+    <!--              groups="asset_management.all_staff,asset_management.all_ict_officer,asset_management.asset_lm,asset_management.asset_cd,asset_management.asset_dm,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"/>-->
     <menuitem name="Loss/Theft"
               id="asset_reporting_lost"
               action="asset_reporting_lost_action"
               parent="asset_management.asset_reporting_menu"
               sequence="2"/>
-<!--              groups="asset_management.all_staff,asset_management.asset_lm,asset_management.all_ict_officer,asset_management.asset_cd,asset_management.asset_dm,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"/>-->
+    <!--              groups="asset_management.all_staff,asset_management.asset_lm,asset_management.all_ict_officer,asset_management.asset_cd,asset_management.asset_dm,asset_management.asset_fm_ho,asset_management.asset_fm_branch,asset_management.asset_procurement_ho,asset_management.asset_procurement_branch"/>-->
 </odoo>

@@ -139,8 +139,8 @@ class AssetsInherit(models.Model):
         if employee and employee.department_id:
             return employee.department_id.id
 
-    code = fields.Char(string='Asset Number', search=True, compute='_default_serial_no', store=True,
-                       readonly=False)
+    code = fields.Char(string='Asset Number', compute='_default_serial_no', store=True,
+                       readonly=True)
     # computed_code = fields.Char(string='Computed Asset Number', compute='_compute_serial_no', store=True)
     # code = fields.Char(string='Asset Number', readonly=False)
     cummulative_amount = fields.Float(string='Accumulated Depreciation', compute='_compute_accumulated_depreciation',
