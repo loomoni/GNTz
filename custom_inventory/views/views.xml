@@ -51,37 +51,46 @@
                     <group>
                         <group>
                             <field name="name" attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
-                            <field name="goods_received_date"  attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
+                            <field name="goods_received_date"
+                                   attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
                         </group>
                         <group>
-                            <field name="delivery_note_no"  attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
-                            <field name="receiver_id"  attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
+                            <field name="delivery_note_no"
+                                   attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
+                            <field name="receiver_id" attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
                         </group>
                     </group>
                     <group>
                         <group>
-                            <field name="department_id"  attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
-                            <field name="purchaser_id"  attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
-                            <field name="invoice_no"  attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
+                            <field name="department_id"
+                                   attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
+                            <field name="purchaser_id"
+                                   attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
+                            <field name="invoice_no" attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
                         </group>
                         <group>
-                            <field name="supplier_id"  attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
-                            <field name="delivery_attachment" filename="delivery_attachment_name"  attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
-                            <field name="delivery_attachment_name" invisible="1"  attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
+                            <field name="supplier_id" attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
+                            <field name="delivery_attachment" filename="delivery_attachment_name"
+                                   attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
+                            <field name="delivery_attachment_name" invisible="1"
+                                   attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
                         </group>
                     </group>
-                     <group>
+                    <group>
                         <group>
-                            <field name="lpo_number"  attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
-                            <field name="gin_number"  attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
-                            <field name="grn_number"  attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
+                            <field name="lpo_number" attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
+                            <field name="gin_number" attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
+                            <field name="grn_number" attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
                         </group>
                         <group>
-                            <field name="lpo_attachment" filename="lpo_attachment_name"  attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
+                            <field name="lpo_attachment" filename="lpo_attachment_name"
+                                   attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
                             <field name="lpo_attachment_name" invisible="1"/>
-                            <field name="gin_attachment" filename="gin_attachment_name"  attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
+                            <field name="gin_attachment" filename="gin_attachment_name"
+                                   attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
                             <field name="gin_attachment_name" invisible="1"/>
-                            <field name="grn_attachment" filename="grn_attachment_name"  attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
+                            <field name="grn_attachment" filename="grn_attachment_name"
+                                   attrs="{'readonly': [('state', 'in', ('approved','rejected'))]}"/>
                             <field name="grn_attachment_name" invisible="1"/>
                         </group>
                     </group>
@@ -97,7 +106,8 @@
                                     <field name="project"/>
                                     <field name="unit_cost"/>
                                     <field name="cost"/>
-                                     <field name="uom_id"/>
+                                    <field name="uom_id"/>
+
                                 </tree>
                                 <form>
                                     <sheet>
@@ -112,8 +122,22 @@
                                     </sheet>
                                 </form>
                             </field>
+<!--                            <footer>-->
+<!--                                <button string="Total" icon="fa-calculator"/>-->
+<!--                                <div class="oe_total">-->
+<!--                                    -->
+<!--                                    <field name="total_unit_cost" widget="monetary"/>-->
+<!--                                    <field name="total_cost" widget="monetary"/>-->
+<!--                                </div>-->
+<!--                            </footer>-->
                         </page>
                     </notebook>
+                      <group class="oe_subtotal_footer oe_right">
+                        <field name="total_unit_cost"/>
+<!--                        <field name="vat"/>-->
+                        <field name="total_cost" class="oe_subtotal_footer_separator" widget="monetary"
+                               options="{'currency_field': 'currency_id'}"/>
+                    </group>
                 </sheet>
                 <div class="oe_chatter">
                     <field name="message_follower_ids" widget="mail_followers"/>

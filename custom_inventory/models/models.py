@@ -73,6 +73,15 @@ class InventoryStockIn(models.Model):
     grn_attachment = fields.Binary(string="GRN Attachment", attachment=True, store=True, required=True)
     grn_attachment_name = fields.Char('Attachment Name')
 
+    total_unit_cost = fields.Float(string="Total Unit Cost", compute='_compute_total_costs')
+    total_cost = fields.Float(string="Total Cost", compute='_compute_total_costs')
+
+    @api.depends('line_ids.unit_cost', 'line_ids.cost')
+    def _compute_total_costs(self):
+        for record in self:
+            record.total_unit_cost = sum(line.unit_cost for line in record.line_ids)
+            record.total_cost = sum(line.cost for line in record.line_ids)
+
     @api.multi
     def unlink(self):
         for stockin in self:
@@ -157,7 +166,6 @@ class InventoryStockInLines(models.Model):
     purchased_by = fields.Char(string="Purchased by", related="stockin_id.purchaser_id.name")
     state = fields.Selection(STATE_SELECTION, index=True, track_visibility='onchange', related='stockin_id.state',
                              store=True)
-
 
     @api.depends('stockin_id.name')
     def compute_stock_in_no(self):
