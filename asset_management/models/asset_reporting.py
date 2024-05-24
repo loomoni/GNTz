@@ -258,7 +258,7 @@ class AssetReportingLost(models.Model):
 
     @api.multi
     def button_staff_send_lost_report(self):
-        self.write({'state': 'send'})
+        self.write({'state': 'submit'})
         return True
 
     @api.multi
