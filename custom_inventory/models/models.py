@@ -214,6 +214,7 @@ class InventoryStockOut(models.Model):
     name = fields.Char('Serial No', required=True, default=_default_reference, readonly=True)
 
     request_date = fields.Date(string="Request Date", required=True, default=fields.Date.today, readonly=True)
+    released_date = fields.Date(string="Released Date", required=False)
     requester_id = fields.Many2one('hr.employee', string="Requested By", required=True, default=_default_requester,
                                    readonly=True, store=True)
     issuer_id = fields.Many2one('hr.employee', string="Issued By", required=False)
