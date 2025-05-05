@@ -122,19 +122,19 @@
                                     </sheet>
                                 </form>
                             </field>
-<!--                            <footer>-->
-<!--                                <button string="Total" icon="fa-calculator"/>-->
-<!--                                <div class="oe_total">-->
-<!--                                    -->
-<!--                                    <field name="total_unit_cost" widget="monetary"/>-->
-<!--                                    <field name="total_cost" widget="monetary"/>-->
-<!--                                </div>-->
-<!--                            </footer>-->
+                            <!--                            <footer>-->
+                            <!--                                <button string="Total" icon="fa-calculator"/>-->
+                            <!--                                <div class="oe_total">-->
+                            <!--                                    -->
+                            <!--                                    <field name="total_unit_cost" widget="monetary"/>-->
+                            <!--                                    <field name="total_cost" widget="monetary"/>-->
+                            <!--                                </div>-->
+                            <!--                            </footer>-->
                         </page>
                     </notebook>
-                      <group class="oe_subtotal_footer oe_right">
+                    <group class="oe_subtotal_footer oe_right">
                         <field name="total_unit_cost"/>
-<!--                        <field name="vat"/>-->
+                        <!--                        <field name="vat"/>-->
                         <field name="total_cost" class="oe_subtotal_footer_separator" widget="monetary"
                                options="{'currency_field': 'currency_id'}"/>
                     </group>
@@ -185,6 +185,7 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='type']" position="before">
                 <field name="department_id"/>
+                <field name="project_id"/>
             </xpath>
             <!--            <xpath expr="//page[@name='general_information']" position="attributes">-->
             <!--                <attribute name="invisible">1</attribute>-->
@@ -327,7 +328,14 @@
         <field name="arch" type="xml">
             <form string="StockOut Inventory Report">
                 <group>
-                    <field name="department_id" options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
+                    <group>
+                        <field name="department_id"
+                               options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
+                    </group>
+                    <group>
+                        <field name="employee_id"
+                               options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
+                    </group>
                 </group>
                 <group>
                     <group>

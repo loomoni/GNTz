@@ -23,7 +23,7 @@
         <field name="model">account.asset.asset</field>
         <field name="arch" type="xml">
             <search string="Asset">
-                 <field name="code" string="Asset Number"
+                <field name="code" string="Asset Number"
                        filter_domain="[('code','ilike',self)]"/>
                 <!--                <field name="code" string="code" filter_domain="[('code','ilike',self)]"/>-->
                 <group expand="0" string="Group by">
@@ -41,7 +41,7 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='invoice_id']" position="after">
                 <field name="branch"/>
-<!--                <field name="branch_id"/>-->
+                <!--                <field name="branch_id"/>-->
             </xpath>
             <!--            <xpath expr="//field[@name='name']" position="attributes">-->
             <!--                <field name="name" attrs="{'readonly': [('state', 'in', ('open', 'inuse'))]}"/>-->
@@ -151,8 +151,8 @@
                 <!--                <field name="branch" string="Branch"/>-->
                 <!--                <field name="code" string="Asset Number"/>-->
                 <field name="code" string="Asset Number" domain="[('code','ilike',self)]"/>
-<!--                <field name="branch" string="branch" domain="[('branch','ilike',self)]"/>-->
-<!--                <filter string="Branch" name="branch" context="{'group_by': 'branch'}"/>-->
+                <!--                <field name="branch" string="branch" domain="[('branch','ilike',self)]"/>-->
+                <!--                <filter string="Branch" name="branch" context="{'group_by': 'branch'}"/>-->
                 <field name="date" string="Purchase Date"/>
                 <filter string="Current" name="current" domain="[('state','in', ('draft','open'))]"
                         help="Assets in draft and open states"/>
@@ -206,7 +206,8 @@
             <form string="Asset List">
                 <group>
                     <field name="is_hq_branch" invisible="1"/>
-                    <field name="branch_id" options="{'no_create_edit': True, 'no_create': True, 'no_open': True}" attrs="{'readonly': [('is_hq_branch', '=', False)]}"/>
+                    <field name="branch_id" options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"
+                           attrs="{'readonly': [('is_hq_branch', '=', False)]}"/>
                     <field name="department_id" options="{'no_create_edit': True, 'no_create': True, 'no_open': True}"/>
                 </group>
                 <group>

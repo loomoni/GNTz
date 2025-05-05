@@ -40,6 +40,7 @@ class AssetQRCodeReport(models.AbstractModel):
 class AssetsInherit(models.Model):
     _inherit = 'account.asset.asset'
     _name = "account.asset.asset"
+    _rec_name = "code"
     _order = 'id desc'
 
     ASSET_ORIGIN_SELECTION = [
@@ -90,6 +91,7 @@ class AssetsInherit(models.Model):
         self.write({'state': 'close'})
         return True
 
+
     name = fields.Char(string="name", readonly=True)
     state = fields.Selection(SELECTION, 'Status', required=True, copy=False, default='draft',
                              help="When an asset is created, the status is 'Draft'.\n"
@@ -138,9 +140,10 @@ class AssetsInherit(models.Model):
             [('user_id', '=', self.env.uid)], limit=1)
         if employee and employee.department_id:
             return employee.department_id.id
-
+    #
     code = fields.Char(string='Asset Number', compute='_default_serial_no', store=True,
                        readonly=True)
+
     # computed_code = fields.Char(string='Computed Asset Number', compute='_compute_serial_no', store=True)
     # code = fields.Char(string='Asset Number', readonly=False)
     cummulative_amount = fields.Float(string='Accumulated Depreciation', compute='_compute_accumulated_depreciation',
@@ -950,7 +953,9 @@ class AssetAssign(models.Model):
     asset_ids = fields.Many2many('account.asset.asset', string="Assets To Assign")
     asset_name = fields.Char(string='Asset Name', related='asset_ids.name')
     asset_category = fields.Char(string='Asset Category', related='asset_ids.category_id.name')
-    asset_number = fields.Char(string='Asset Number', related='asset_ids.code')
+    # asset_number = fields.Char(string='Asset Number', )
+    asset_number = fields.Char(string='Asset Number', related='asset_ids.code', required=True, search=True)
+
     asset_branch = fields.Char(string='Asset Branch', related='asset_ids.branch')
     asset_category_ids = fields.One2many(comodel_name='account.asset.assign.category.line', string="Assets Category",
                                          inverse_name="category_line_id")

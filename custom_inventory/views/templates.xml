@@ -85,7 +85,7 @@
                             <field name="issuer_id"
                                    attrs="{'invisible':[('state','in',['draft', 'requested'])], 'readonly':[('state','=','issued')]}"/>
 
-                            <field name="released_date"/>
+                            <field name="released_date" attrs="{'invisible':[('state','in',['draft', 'requested'])], 'readonly':[('state','=','issued')]}"/>
                             <field name="parent_department" invisible="1"/>
                         </group>
                     </group>

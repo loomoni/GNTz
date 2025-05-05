@@ -303,7 +303,7 @@ class InventoryStockOut(models.Model):
     @api.onchange('line.balance_stock', 'line.issued_quantity')
     def button_checked(self):
         for line in self.line_ids:
-            if line.issued_quantity < 0:
+            if line.issued_quantity <= -1:
                 raise ValidationError(_("You can't issue less than 0 goods"))
             elif line.balance_stock - line.issued_quantity < 0:
                 raise ValidationError(_("There is no enough Item to issue please check stock balance"))
@@ -380,7 +380,7 @@ class InventoryStockOutLines(models.Model):
             rec.parent_department = rec.stockout_id.requester_id.department_parent_id.id
 
     product_id = fields.Many2one('product.template', string="Product", required=True)
-    department = fields.Integer(string='Department', required=True, compute="department_stockout_compute")
+
     parent_department = fields.Integer(string='Parent Department', compute="parent_department_compute")
     request_reason = fields.Text(string='Purpose', required=True)
     project = fields.Many2one(comodel_name='project.configuration', string='Project', required=True)
@@ -393,8 +393,10 @@ class InventoryStockOutLines(models.Model):
     uom_id = fields.Many2one('uom.uom', string='Unit of Measure',
                              default=lambda self: self.env['uom.uom'].search([], limit=1, order='id'))
     stockout_id = fields.Many2one(comodel_name='inventory.stockout', string="Stock Out")
+    department = fields.Integer(string='Department', required=True,related='stockout_id.department_id.id')
     department_name = fields.Char(string="Department", related="stockout_id.department_id.name")
-    department_id = fields.Integer(string="Department", related="stockout_id.department_id.id")
+    department_id = fields.Integer(string="Department", related="stockout_id.department_id.id", store=True)
+    employee_id = fields.Integer(string="Employee", related="stockout_id.requester_id.id", store=True)
     stock_out_no = fields.Char(string="Stock Out No", related="stockout_id.name", store=True)
     requested_date = fields.Date(string='Requested Date', related="stockout_id.request_date", store=True)
     state = fields.Selection(STATE_SELECTION, index=True, track_visibility='onchange', related='stockout_id.state',
@@ -459,6 +461,7 @@ class InventoryProductStock(models.Model):
     stockin_ids = fields.One2many('inventory.stockin.lines', 'product_id', string="Stock In Lines", index=True,
                                   track_visibility='onchange', store=True)
     department_id = fields.Many2one(comodel_name='hr.department', string="Department", required=True)
+    project_id = fields.Many2one(comodel_name='project.configuration', string="Project", required=False)
     stockout_ids = fields.One2many('inventory.stockout.lines', 'product_id', string="Stock Out Lines", index=True,
                                    track_visibility='onchange', store=True)
     stock_adjustment_ids = fields.One2many('inventory.stock.adjustment.line', 'product_id',
@@ -734,7 +737,7 @@ class GeneralInventoryListWizard(models.TransientModel):
             'Inventory report ' + str(self.date_from) + ' - ' + str(self.date_to) + ' report.xlsx')
         normal_num_bold = workbook.add_format({'bold': True, 'num_format': '#,###0.00', 'size': 9, })
         normal_num_bold.set_border()
-        worksheet.set_column('A:E', 20)
+        worksheet.set_column('A:F', 20)
         # worksheet.set_default_row(45)
 
         worksheet.set_row(0, 20)
@@ -772,7 +775,7 @@ class GeneralInventoryListWizard(models.TransientModel):
             company_info = "\n".join(filter(None, [company.name, company.street2, company.street, company.city,
                                                    company.country_id.name,
                                                    'Phone: ' + company.phone + ' Email: ' + company.email + ' Web: ' + company.website]))
-            worksheet.merge_range('A1:E1', company_info, heading_company_format)
+            worksheet.merge_range('A1:F1', company_info, heading_company_format)
 
             # Convert the logo from base64 to binary data
             logo_data = base64.b64decode(company.logo)
@@ -783,12 +786,12 @@ class GeneralInventoryListWizard(models.TransientModel):
             worksheet.insert_image('D1', 'logo.png', {'image_data': image_stream, 'x_scale': 0.43, 'y_scale': 0.43})
 
             worksheet.set_row(1, 26)
-            worksheet.merge_range('A2:E2', "GNTZ HO General Report", title_format)
+            worksheet.merge_range('A2:F2', "GNTZ HO General Report", title_format)
 
             worksheet.set_row(2, 17)
             worksheet.set_row(6, 17)
-            worksheet.merge_range('A3:E3', '', divider_format)
-            worksheet.merge_range('A7:E7', '', divider_format)
+            worksheet.merge_range('A3:F3', '', divider_format)
+            worksheet.merge_range('A7:F7', '', divider_format)
 
             worksheet.write('A4:A4', 'Extracted by', cell_text_info_format)
             worksheet.merge_range('B4:C4', user_name or '', cell_text_info_body_format)
@@ -797,66 +800,64 @@ class GeneralInventoryListWizard(models.TransientModel):
             worksheet.merge_range('B5:C5', date_1, cell_text_info_body_format)
 
             worksheet.write('D5:D5', 'TO', cell_text_info_format)
-            worksheet.write('E5:E5', date_2, cell_text_info_body_format)
+            worksheet.merge_range('E5:F5', date_2, cell_text_info_body_format)
 
             worksheet.write('A6:A6', 'Email', cell_text_info_format)
             worksheet.merge_range('B6:C6', email or '', cell_text_info_body_format)
 
             worksheet.write('D4:D4', 'Designation', cell_text_info_format)
-            worksheet.write('E4:E4', job_position or '', cell_text_info_body_format)
+            worksheet.merge_range('E4:F4', job_position or '', cell_text_info_body_format)
 
             worksheet.write('D6:D6', 'Department', cell_text_info_format)
-            worksheet.write('E6:E6', department_name or '', cell_text_info_body_format)
+            worksheet.merge_range('E6:F6', department_name or '', cell_text_info_body_format)
 
             row = 7
 
             # End of the header part
             worksheet.write(row, 0, 'Item', cell_text_format)
             worksheet.write(row, 1, 'Total Purchased', cell_text_format)
-            worksheet.write(row, 2, 'Total Used', cell_text_format)
-            worksheet.write(row, 3, 'Balance', cell_text_format)
-            worksheet.write(row, 4, 'Action', cell_text_format)
+            worksheet.write(row, 2, 'Total Adjusted', cell_text_format)
+            worksheet.write(row, 3, 'Total Used', cell_text_format)
+            worksheet.write(row, 4, 'Balance', cell_text_format)
+            worksheet.write(row, 5, 'Action', cell_text_format)
 
-            department_general_inventory = self.env['product.template'].sudo().search(
-                [('department_id', '=', self.department_name)])
-            general_inventory_report = self.env['product.template'].sudo().search([])
+            # department_general_inventory = self.env['product.template'].sudo().search(
+            #     [('department_id', '=', self.department_name)])
+            # general_inventory_report = self.env['product.template'].sudo().search([])
+
+            domain = []
+
+            if self.department_id:
+                domain.append(('department_id', '=', self.department_name))
+
+            # if self.date_from:
+            #     domain.append(('received_date', '>=', self.date_from))
+            #
+            # if self.date_to:
+            #     domain.append(('received_date', '<=', self.date_to))
+
+            general_inventory_report = self.env['product.template'].sudo().search(domain)
 
             row = row + 1
             col = 0
             index = 1
 
-            # if self.department_id != '':
-            if department_general_inventory:
-                for department_inventory in department_general_inventory:
-                    item = department_inventory.name
-                    total_purchased = department_inventory.purchased_quantity
-                    total_used = department_inventory.issued_quantity
-                    balance = department_inventory.balance_stock
+            for all_inventory_available in general_inventory_report:
+                item = all_inventory_available.name
+                total_purchased = all_inventory_available.purchased_quantity
+                total_adjusted = all_inventory_available.adjustment_quantity
+                total_used = all_inventory_available.issued_quantity
+                balance = all_inventory_available.balance_stock
 
-                    worksheet.write(row, col, index or '', cell_text_format_new)
-                    worksheet.write(row, col, item or '', cell_text_format_new)
-                    worksheet.write(row, col + 1, total_purchased or '', cell_text_format_new)
-                    worksheet.write(row, col + 2, total_used or '', cell_text_format_new)
-                    worksheet.write(row, col + 3, balance or '', cell_text_format_new)
-                    worksheet.write(row, col + 4, '', cell_text_format_new)
-                    row = row + 1
-                    index = index + 1
-            # elif self.department_id == '':
-            else:
-                for all_inventory_available in general_inventory_report:
-                    item = all_inventory_available.name
-                    total_purchased = all_inventory_available.purchased_quantity
-                    total_used = all_inventory_available.issued_quantity
-                    balance = all_inventory_available.balance_stock
-
-                    worksheet.write(row, col, index or '', cell_text_format_new)
-                    worksheet.write(row, col, item or '', cell_text_format_new)
-                    worksheet.write(row, col + 1, total_purchased or '', cell_text_format_new)
-                    worksheet.write(row, col + 2, total_used or '', cell_text_format_new)
-                    worksheet.write(row, col + 3, balance or '', cell_text_format_new)
-                    worksheet.write(row, col + 4, '', cell_text_format_new)
-                    row = row + 1
-                    index = index + 1
+                worksheet.write(row, col, index or '', cell_text_format_new)
+                worksheet.write(row, col, item or '', cell_text_format_new)
+                worksheet.write(row, col + 1, total_purchased or '', cell_text_format_new)
+                worksheet.write(row, col + 2, total_adjusted or '', cell_text_format_new)
+                worksheet.write(row, col + 3, total_used or '', cell_text_format_new)
+                worksheet.write(row, col + 4, balance or '', cell_text_format_new)
+                worksheet.write(row, col + 5, '', cell_text_format_new)
+                row = row + 1
+                index = index + 1
 
         workbook.close()
         file_download = base64.b64encode(fp.getvalue())
@@ -1042,80 +1043,54 @@ class StockInInventoryListWizard(models.TransientModel):
 
         # Body part of the Excel starts
 
-        department_stockin_inventory = self.env['inventory.stockin.lines'].sudo().search(
-            [('department_id', '=', self.department_name), ('received_date', '<=', self.date_to),
-             ('received_date', '>=', self.date_from)])
-        stockin_inventory_report = self.env['inventory.stockin.lines'].sudo().search(
-            [('received_date', '<=', self.date_to), ('received_date', '>=', self.date_from)])
+        domain = []
+
+        if self.department_id:
+            domain.append(('department_id', '=', self.department_name))
+
+        if self.date_from:
+            domain.append(('received_date', '>=', self.date_from))
+
+        if self.date_to:
+            domain.append(('received_date', '<=', self.date_to))
+
+        stockin_inventory_report = self.env['inventory.stockin.lines'].sudo().search(domain)
 
         ro = 8
         col = 0
         index = 1
 
-        if department_stockin_inventory:
-            for department_inventory in department_stockin_inventory:
-                index = index
-                stock_in_no = department_inventory.stock_in_no
-                project = department_inventory.project.name
-                lpo_number = department_inventory.lpo_no
-                item = department_inventory.product_id.name
-                supplier_info = department_inventory.supplier_info
-                department = department_inventory.department_name
-                purchaser_id = department_inventory.purchased_by
-                received_by = department_inventory.receiver_id
-                received_date = datetime.strftime(department_inventory.received_date, '%d/%m/%Y')
-                quantity = department_inventory.quantity
-                unit_cost = department_inventory.unit_cost
-                total_cost = department_inventory.cost
+        for all_stock_in_inventory in stockin_inventory_report:
+            index = index
+            stock_in_no = all_stock_in_inventory.stock_in_no
+            project = all_stock_in_inventory.project.name
+            lpo_number = all_stock_in_inventory.lpo_no
+            item = all_stock_in_inventory.product_id.name
+            supplier_info = all_stock_in_inventory.supplier_info
+            department = all_stock_in_inventory.department_name
+            purchaser_id = all_stock_in_inventory.purchased_by
+            received_by = all_stock_in_inventory.receiver_id
+            received_date = datetime.strftime(all_stock_in_inventory.received_date, '%d/%m/%Y')
+            quantity = all_stock_in_inventory.quantity
+            unit_cost = all_stock_in_inventory.unit_cost
+            total_cost = all_stock_in_inventory.cost
 
-                worksheet.write(ro, col, index or '', cell_text_body_format)
-                worksheet.write(ro, col + 1, stock_in_no or '', cell_text_body_format)
-                worksheet.write(ro, col + 2, project or '', cell_text_body_format)
-                worksheet.write(ro, col + 3, lpo_number or '', cell_text_body_format)
-                worksheet.write(ro, col + 4, item or '', cell_text_body_format)
-                worksheet.write(ro, col + 5, supplier_info or '', cell_text_body_format)
-                worksheet.write(ro, col + 6, department or '', cell_text_body_format)
-                worksheet.write(ro, col + 7, purchaser_id or '', cell_text_body_format)
-                worksheet.write(ro, col + 8, received_by or '', cell_text_body_format)
-                worksheet.write(ro, col + 9, received_date or '', cell_text_body_format)
-                worksheet.write(ro, col + 10, quantity or '', cell_text_body_format)
-                worksheet.write(ro, col + 11, unit_cost or '', cell_text_body_format)
-                worksheet.write(ro, col + 12, total_cost or '', cell_text_body_format)
+            worksheet.write(ro, col, index or '', cell_text_body_format)
+            worksheet.write(ro, col + 1, stock_in_no or '', cell_text_body_format)
+            worksheet.write(ro, col + 2, project or '', cell_text_body_format)
+            worksheet.write(ro, col + 3, lpo_number or '', cell_text_body_format)
+            worksheet.write(ro, col + 4, item or '', cell_text_body_format)
+            worksheet.write(ro, col + 5, supplier_info or '', cell_text_body_format)
+            worksheet.write(ro, col + 6, department or '', cell_text_body_format)
+            worksheet.write(ro, col + 7, purchaser_id or '', cell_text_body_format)
+            worksheet.write(ro, col + 8, received_by or '', cell_text_body_format)
+            worksheet.write(ro, col + 9, received_date or '', cell_text_body_format)
+            worksheet.write(ro, col + 10, quantity or '', cell_text_body_format)
+            worksheet.write(ro, col + 11, unit_cost or '', cell_text_body_format)
+            worksheet.write(ro, col + 12, total_cost or '', cell_text_body_format)
 
-                ro = ro + 1
-                index = index + 1
-        else:
-            for all_stock_in_inventory in stockin_inventory_report:
-                index = index
-                stock_in_no = all_stock_in_inventory.stock_in_no
-                project = all_stock_in_inventory.project.name
-                lpo_number = all_stock_in_inventory.lpo_no
-                item = all_stock_in_inventory.product_id.name
-                supplier_info = all_stock_in_inventory.supplier_info
-                department = all_stock_in_inventory.department_name
-                purchaser_id = all_stock_in_inventory.purchased_by
-                received_by = all_stock_in_inventory.receiver_id
-                received_date = datetime.strftime(all_stock_in_inventory.received_date, '%d/%m/%Y')
-                quantity = all_stock_in_inventory.quantity
-                unit_cost = all_stock_in_inventory.unit_cost
-                total_cost = all_stock_in_inventory.cost
-
-                worksheet.write(ro, col, index or '', cell_text_body_format)
-                worksheet.write(ro, col + 1, stock_in_no or '', cell_text_body_format)
-                worksheet.write(ro, col + 2, project or '', cell_text_body_format)
-                worksheet.write(ro, col + 3, lpo_number or '', cell_text_body_format)
-                worksheet.write(ro, col + 4, item or '', cell_text_body_format)
-                worksheet.write(ro, col + 5, supplier_info or '', cell_text_body_format)
-                worksheet.write(ro, col + 6, department or '', cell_text_body_format)
-                worksheet.write(ro, col + 7, purchaser_id or '', cell_text_body_format)
-                worksheet.write(ro, col + 8, received_by or '', cell_text_body_format)
-                worksheet.write(ro, col + 9, received_date or '', cell_text_body_format)
-                worksheet.write(ro, col + 10, quantity or '', cell_text_body_format)
-                worksheet.write(ro, col + 11, unit_cost or '', cell_text_body_format)
-                worksheet.write(ro, col + 12, total_cost or '', cell_text_body_format)
-
-                ro = ro + 1
-                index = index + 1
+            ro = ro + 1
+            index = index + 1
 
         # Body of the Excel End
 
@@ -1149,6 +1124,8 @@ class StockOutInventoryListWizard(models.TransientModel):
 
     department_id = fields.Many2one('hr.department', string='Department', required=False)
     department_name = fields.Integer(string='Department', related='department_id.id')
+    employee_id = fields.Many2one('hr.employee', string='Employee', required=False)
+    employee_name = fields.Integer(string='Employee', related='employee_id.id')
     date_from = fields.Date(string='Date From', required=True,
                             default=lambda self: fields.Date.to_string(date.today().replace(day=1)))
     date_to = fields.Date(string='Date To', required=True,
@@ -1244,7 +1221,7 @@ class StockOutInventoryListWizard(models.TransientModel):
         company_info = "\n".join(filter(None, [company.name, company.street2, company.street, company.city,
                                                company.country_id.name,
                                                'Phone: ' + company.phone + ' Email: ' + company.email + ' Web: ' + company.website]))
-        worksheet.merge_range('A1:K1', company_info, heading_format)
+        worksheet.merge_range('A1:L1', company_info, heading_format)
 
         # Convert the logo from base64 to binary data
         logo_data = base64.b64decode(company.logo)
@@ -1255,7 +1232,7 @@ class StockOutInventoryListWizard(models.TransientModel):
         worksheet.insert_image('G1', 'logo.png', {'image_data': image_stream, 'x_scale': 0.43, 'y_scale': 0.43})
 
         worksheet.set_row(1, 26)
-        worksheet.merge_range('A2:K2', 'GNTZ HO Stock Out Report', title_format)
+        worksheet.merge_range('A2:L2', 'GNTZ HO Stock Out Report', title_format)
 
         worksheet.set_row(2, 12)
         worksheet.set_column('A:A', 9)
@@ -1266,8 +1243,8 @@ class StockOutInventoryListWizard(models.TransientModel):
         worksheet.set_column('G:G', 35)
         worksheet.set_column('H:K', 9)
         worksheet.set_row(6, 12)
-        worksheet.merge_range('A3:K3', '', divider_format)
-        worksheet.merge_range('A7:K7', '', divider_format)
+        worksheet.merge_range('A3:L3', '', divider_format)
+        worksheet.merge_range('A7:L7', '', divider_format)
 
         worksheet.write('A4:A4', 'Extracted by', cell_text_info_format)
         worksheet.merge_range('B4:D4', user_name, cell_text_info_body_format)
@@ -1276,16 +1253,16 @@ class StockOutInventoryListWizard(models.TransientModel):
         worksheet.merge_range('B5:D5', datetime.strftime(self.date_from, '%d-%m-%Y'), cell_text_info_body_format)
 
         worksheet.write('E5:E5', 'To', cell_text_info_format)
-        worksheet.merge_range('F5:K5', datetime.strftime(self.date_to, '%d-%m-%Y'), cell_text_info_body_format)
+        worksheet.merge_range('F5:L5', datetime.strftime(self.date_to, '%d-%m-%Y'), cell_text_info_body_format)
 
         worksheet.write('A6:A6', 'Email', cell_text_info_format)
         worksheet.merge_range('B6:D6', email, cell_text_info_body_format)
 
         worksheet.write('E4:E4', 'Designation', cell_text_info_format)
-        worksheet.merge_range('F4:K4', job_position, cell_text_info_body_format)
+        worksheet.merge_range('F4:L4', job_position, cell_text_info_body_format)
 
         worksheet.write('E6:E6', 'Department', cell_text_info_format)
-        worksheet.merge_range('F6:K6', department_name, cell_text_info_body_format)
+        worksheet.merge_range('F6:L6', department_name, cell_text_info_body_format)
 
         worksheet.write('A8:A8', 'S/N', cell_text_sub_title_format)
         worksheet.write('B8:B8', 'Stock out No', cell_text_sub_title_format)
@@ -1296,84 +1273,111 @@ class StockOutInventoryListWizard(models.TransientModel):
         worksheet.write('G8:G8', 'Requested Purpose', cell_text_sub_title_format)
         worksheet.write('H8:H8', 'Requested Quantity', cell_text_sub_title_format)
         worksheet.write('I8:I8', 'Issued Quantity', cell_text_sub_title_format)
-        worksheet.write('J8:J8', 'Date', cell_text_sub_title_format)
-        worksheet.write('K8KJ8', 'Status', cell_text_sub_title_format)
+        worksheet.write('J8:J8', 'Requested Date', cell_text_sub_title_format)
+        worksheet.write('K8:K8', 'Issued Date', cell_text_sub_title_format)
+        worksheet.write('L8:L8', 'Status', cell_text_sub_title_format)
         # End of the header part
 
         # Start the Excell body part.
-        department_stock_out_inventory = self.env['inventory.stockout.lines'].sudo().search(
-            [('department_id', '=', self.department_name), ('requested_date', '<=', self.date_to),
-             ('requested_date', '>=', self.date_from)])
-        stock_out_inventory_report = self.env['inventory.stockout.lines'].sudo().search(
-            [('requested_date', '<=', self.date_to),
-             ('requested_date', '>=', self.date_from)])
+        # department_stock_out_inventory = self.env['inventory.stockout.lines'].sudo().search(
+        #     [('department_id', '=', self.department_id), ('requested_date', '<=', self.date_to),
+        #      ('requested_date', '>=', self.date_from)])
+
+        # department_stock_out_inventory = self.env['inventory.stockout.lines'].sudo().search([
+        #     ('department', '=', self.department_name),
+        #     ('requested_date', '>=', self.date_from),
+        #     ('requested_date', '<=', self.date_to)
+        # ])
+
+        domain = []
+
+        if self.department_id:
+            domain.append(('department', '=', self.department_name))
+
+        if self.employee_id:
+            domain.append(('employee_id', '=', self.employee_name))
+
+        if self.date_from:
+            domain.append(('requested_date', '>=', self.date_from))
+
+        if self.date_to:
+            domain.append(('requested_date', '<=', self.date_to))
+
+        stock_out_inventory_report = self.env['inventory.stockout.lines'].sudo().search(domain)
+
+        # stock_out_inventory_report = self.env['inventory.stockout.lines'].sudo().search(
+        #     [('requested_date', '<=', self.date_to),
+        #      ('department', '=', self.department_name),
+        #      ('requested_date', '>=', self.date_from)])
 
         row = 8
         col = 0
         index = 1
-        if department_stock_out_inventory:
-            for department_inventory in department_stock_out_inventory:
-                index = index
-                stock_out_no = department_inventory.stock_out_no
-                item = department_inventory.product_id.name
-                project = department_inventory.project.name
-                department = department_inventory.stockout_id.department_id.name
-                requester = department_inventory.stockout_id.requester_id.name
-                purpose = department_inventory.request_reason
-                requested_quantity = department_inventory.requested_quantity
-                issued_quantity = department_inventory.issued_quantity
-                request_date_format = datetime.strftime(department_inventory.requested_date, '%d/%m/%Y')
-                status = department_inventory.stockout_id.state
+        # if department_stock_out_inventory:
+        #     for department_inventory in department_stock_out_inventory:
+        #         index = index
+        #         stock_out_no = department_inventory.stock_out_no
+        #         item = department_inventory.product_id.name
+        #         project = department_inventory.project.name
+        #         department = department_inventory.stockout_id.department_id.name
+        #         requester = department_inventory.stockout_id.requester_id.name
+        #         purpose = department_inventory.request_reason
+        #         requested_quantity = department_inventory.requested_quantity
+        #         issued_quantity = department_inventory.issued_quantity
+        #         request_date_format = datetime.strftime(department_inventory.requested_date, '%d/%m/%Y')
+        #         status = department_inventory.stockout_id.state
+        #
+        #         worksheet.write(row, col, index or '', cell_text_body_format)
+        #         worksheet.write(row, col + 1, stock_out_no or '', cell_text_body_format)
+        #         worksheet.write(row, col + 2, item or '', cell_text_body_format)
+        #         worksheet.write(row, col + 3, project or '', cell_text_body_format)
+        #         worksheet.write(row, col + 4, department or '', cell_text_body_format)
+        #         worksheet.write(row, col + 5, requester or '', cell_text_body_format)
+        #         worksheet.write(row, col + 6, purpose or '', cell_text_body_format)
+        #         worksheet.write(row, col + 7, requested_quantity or '', cell_text_body_format)
+        #         worksheet.write(row, col + 8, issued_quantity or '', cell_text_body_format)
+        #         worksheet.write(row, col + 9, request_date_format or '', cell_text_body_format)
+        #         worksheet.write(row, col + 10, request_date_format or '', cell_text_body_format)
+        #         worksheet.write(row, col + 11, status or '', cell_text_body_format)
+        #
+        #         # worksheet.write(ro, col + 7, issuer or '', cell_text_body_format)
+        #         #
+        #         #
+        #         row = row + 1
+        #         index = index + 1
+        #
+        # else:
+        for all_stock_out in stock_out_inventory_report:
+            index = index
+            stock_out_no = all_stock_out.stock_out_no
+            item = all_stock_out.product_id.name
+            project = all_stock_out.project.name
+            department = all_stock_out.stockout_id.department_id.name
+            requester = all_stock_out.stockout_id.requester_id.name
+            purpose = all_stock_out.request_reason
+            requested_quantity = all_stock_out.requested_quantity
+            issued_quantity = all_stock_out.issued_quantity
+            request_date_format = datetime.strftime(all_stock_out.requested_date, '%d/%m/%Y')
+            status = all_stock_out.stockout_id.state
 
-                worksheet.write(row, col, index or '', cell_text_body_format)
-                worksheet.write(row, col + 1, stock_out_no or '', cell_text_body_format)
-                worksheet.write(row, col + 2, item or '', cell_text_body_format)
-                worksheet.write(row, col + 3, project or '', cell_text_body_format)
-                worksheet.write(row, col + 4, department or '', cell_text_body_format)
-                worksheet.write(row, col + 5, requester or '', cell_text_body_format)
-                worksheet.write(row, col + 6, purpose or '', cell_text_body_format)
-                worksheet.write(row, col + 7, requested_quantity or '', cell_text_body_format)
-                worksheet.write(row, col + 8, issued_quantity or '', cell_text_body_format)
-                worksheet.write(row, col + 9, request_date_format or '', cell_text_body_format)
-                worksheet.write(row, col + 10, status or '', cell_text_body_format)
+            worksheet.write(row, col, index or '', cell_text_body_format)
+            worksheet.write(row, col + 1, stock_out_no or '', cell_text_body_format)
+            worksheet.write(row, col + 2, item or '', cell_text_body_format)
+            worksheet.write(row, col + 3, project or '', cell_text_body_format)
+            worksheet.write(row, col + 4, department or '', cell_text_body_format)
+            worksheet.write(row, col + 5, requester or '', cell_text_body_format)
+            worksheet.write(row, col + 6, purpose or '', cell_text_body_format)
+            worksheet.write(row, col + 7, requested_quantity or '', cell_text_body_format)
+            worksheet.write(row, col + 8, issued_quantity or '', cell_text_body_format)
+            worksheet.write(row, col + 9, request_date_format or '', cell_text_body_format)
+            worksheet.write(row, col + 10, request_date_format or '', cell_text_body_format)
+            worksheet.write(row, col + 11, status or '', cell_text_body_format)
 
-                # worksheet.write(ro, col + 7, issuer or '', cell_text_body_format)
-                #
-                #
-                row = row + 1
-                index = index + 1
-
-        else:
-            for all_stock_out in stock_out_inventory_report:
-                index = index
-                stock_out_no = all_stock_out.stock_out_no
-                item = all_stock_out.product_id.name
-                project = all_stock_out.project.name
-                department = all_stock_out.stockout_id.department_id.name
-                requester = all_stock_out.stockout_id.requester_id.name
-                purpose = all_stock_out.request_reason
-                requested_quantity = all_stock_out.requested_quantity
-                issued_quantity = all_stock_out.issued_quantity
-                request_date_format = datetime.strftime(all_stock_out.requested_date, '%d/%m/%Y')
-                status = all_stock_out.stockout_id.state
-
-                worksheet.write(row, col, index or '', cell_text_body_format)
-                worksheet.write(row, col + 1, stock_out_no or '', cell_text_body_format)
-                worksheet.write(row, col + 2, item or '', cell_text_body_format)
-                worksheet.write(row, col + 3, project or '', cell_text_body_format)
-                worksheet.write(row, col + 4, department or '', cell_text_body_format)
-                worksheet.write(row, col + 5, requester or '', cell_text_body_format)
-                worksheet.write(row, col + 6, purpose or '', cell_text_body_format)
-                worksheet.write(row, col + 7, requested_quantity or '', cell_text_body_format)
-                worksheet.write(row, col + 8, issued_quantity or '', cell_text_body_format)
-                worksheet.write(row, col + 9, request_date_format or '', cell_text_body_format)
-                worksheet.write(row, col + 10, status or '', cell_text_body_format)
-
-                # worksheet.write(ro, col + 7, issuer or '', cell_text_body_format)
-                #
-                #
-                row = row + 1
-                index = index + 1
+            # worksheet.write(ro, col + 7, issuer or '', cell_text_body_format)
+            #
+            #
+            row = row + 1
+            index = index + 1
 
         workbook.close()
         file_download = base64.b64encode(fp.getvalue())
